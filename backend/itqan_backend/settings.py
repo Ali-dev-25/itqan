@@ -144,8 +144,8 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise storage لضغط الملفات الثابتة وتخزينها
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise storage لضغط الملفات الثابتة وتخزينها (بدون تغيير الأسماء بالـ Hash لمنع مشاكل التحميل الديناميكي من الـ JavaScript)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 
 # ============================================================
