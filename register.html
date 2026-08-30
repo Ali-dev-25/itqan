@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التسجيل الإلكتروني — منصة إتقان</title>
+  <meta name="description" content="نموذج التسجيل الإلكتروني في البرامج والدورات التدريبية المتاحة على منصة إتقان.">
+
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%232563EB'/%3E%3Ctext x='50%25' y='65%25' font-size='50' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'%3Eإ%3C/text%3E%3C/svg%3E">
+
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="assets/css/public.css">
+  <link rel="stylesheet" href="assets/css/register.css">
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= 1. PUBLIC NAVBAR ================= -->
+  <div id="navbar-container"></div>
+
+  <!-- ================= 2. MAIN REGISTRATION PAGE ================= -->
+  <main class="register-page-wrapper">
+    <div class="container register-container">
+      
+      <!-- Breadcrumb -->
+      <nav class="register-breadcrumb" aria-label="مسار التصفح">
+        <a href="index.html">الرئيسية</a>
+        <span class="sep">/</span>
+        <a href="index.html#courses">البرامج والدورات</a>
+        <span class="sep">/</span>
+        <span class="current">التسجيل الإلكتروني</span>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="register-header">
+        <div class="register-tag">
+          <i data-lucide="user-plus"></i>
+          <span>بوابة القبول والتسجيل</span>
+        </div>
+        <h1 class="register-title">طلب الالتحاق بالبرامج التدريبية</h1>
+        <p class="register-desc">
+          أكمل بياناتك الشخصية واطّلع على بيانات السداد البنكي لإرفاق سند التحويل وتأكيد طلب انضمامك لمنصة «إتقان».
+        </p>
+      </div>
+
+      <!-- Registration Form Container Card -->
+      <div class="register-card">
+        <form id="student-registration-form" novalidate>
+          
+          <!-- 1. PERSONAL DETAILS SECTION -->
+          <div class="form-section-title">
+            <div class="form-section-icon">
+              <i data-lucide="user"></i>
+            </div>
+            <span>البيانات الشخصية للمتدرب</span>
+          </div>
+
+          <!-- Row 1: Name Arabic & English -->
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="student-name-ar">
+                <span class="req">*</span> الاسم الكامل بالعربي:
+              </label>
+              <div class="input-wrap">
+                <input type="text" id="student-name-ar" class="form-input" placeholder="مثال: أحمد محمد علي السالمي" required autocomplete="name">
+                <span class="input-icon"><i data-lucide="user"></i></span>
+              </div>
+              <div class="form-error" id="student-name-ar-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="student-name-en">
+                الاسم الكامل بالإنجليزي (كما في الجواز / الشهادة):
+              </label>
+              <div class="input-wrap">
+                <input type="text" id="student-name-en" class="form-input" placeholder="e.g. Ahmed Mohammed Ali" dir="ltr" style="text-align: right;" autocomplete="name">
+                <span class="input-icon"><i data-lucide="globe"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Phone & Course Selection -->
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="student-phone">
+                <span class="req">*</span> رقم الجوال / الواتساب (للتواصل والتأكيد):
+              </label>
+              <div class="input-wrap">
+                <input type="tel" id="student-phone" class="form-input" placeholder="مثال: 771234567" dir="ltr" style="text-align: right;" required autocomplete="tel">
+                <span class="input-icon"><i data-lucide="phone"></i></span>
+              </div>
+              <div class="form-error" id="student-phone-error"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="student-course-select">
+                <span class="req">*</span> الدورة / البرنامج التدريبي المطلوب:
+              </label>
+              <div class="input-wrap">
+                <select id="student-course-select" class="form-select" required>
+                  <option value="">-- اختر البرنامج التدريبي * --</option>
+                  <!-- Injected dynamically via register.js -->
+                </select>
+                <span class="input-icon"><i data-lucide="book-open"></i></span>
+              </div>
+              <div class="form-error" id="student-course-select-error"></div>
+            </div>
+          </div>
+
+          <!-- Row 3: Birth Date & Birth Place -->
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="student-birth-date">
+                تاريخ الميلاد:
+              </label>
+              <div class="input-wrap">
+                <input type="date" id="student-birth-date" class="form-input">
+                <span class="input-icon"><i data-lucide="calendar"></i></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="student-birth-place">
+                مكان الميلاد / المدينة:
+              </label>
+              <div class="input-wrap">
+                <input type="text" id="student-birth-place" class="form-input" placeholder="مثال: صنعاء">
+                <span class="input-icon"><i data-lucide="map-pin"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BANK PAYMENT DETAILS CARD -->
+          <div class="bank-details-card">
+            <div class="bank-header">
+              <div class="bank-title-wrap">
+                <div class="bank-icon-box">
+                  <i data-lucide="landmark"></i>
+                </div>
+                <div>
+                  <h4>بيانات الحساب البنكي للسداد</h4>
+                  <div style="font-size: 0.72rem; color: #1E40AF;">يرجى التحويل إلى الحساب المعتمد أدناه</div>
+                </div>
+              </div>
+              <span class="bank-badge">حساب معتمد</span>
+            </div>
+
+            <div class="bank-info-grid">
+              <div class="bank-info-item">
+                <div class="bank-info-label">اسم البنك:</div>
+                <div class="bank-info-val">بنك الكريمي للتمويل الأصغر الإسلامي</div>
+              </div>
+
+              <div class="bank-info-item">
+                <div class="bank-info-label">اسم صاحب الحساب:</div>
+                <div class="bank-info-val">منصة إتقان للمحتوى والتدريب</div>
+              </div>
+
+              <div class="bank-info-item">
+                <div class="bank-info-label">رقم الحساب:</div>
+                <div class="bank-info-val">
+                  <span id="bank-account-number" style="font-family: monospace; letter-spacing: 0.05em;">300 123 45678</span>
+                  <button type="button" class="btn-copy-account" id="btn-copy-bank-account" title="نسخ رقم الحساب">
+                    <i data-lucide="copy"></i>
+                    <span>نسخ</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="bank-info-item">
+                <div class="bank-info-label">رقم الآيبان (IBAN):</div>
+                <div class="bank-info-val" style="font-family: monospace; font-size: 0.8rem;" dir="ltr">YE50 0001 0000 0300 1234 5678</div>
+              </div>
+            </div>
+
+            <div class="bank-note-alert">
+              <i data-lucide="alert-circle"></i>
+              <div>
+                <strong>تنبيه هام:</strong> بعد إتمام عملية التحويل أو الإيداع، يرجى الاحتفاظ بصورة أو مستند إشعار السداد (السند) ورفعه في الخانة المخصصة أدناه لإتمام طلب التسجيل.
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. PAYMENT RECEIPT UPLOAD ZONE -->
+          <div class="receipt-upload-section">
+            <div class="form-section-title">
+              <div class="form-section-icon" style="background: #F5F3FF; color: #8B5CF6;">
+                <i data-lucide="paperclip"></i>
+              </div>
+              <span>إرفاق سند الحوالة / الإيداع <span class="req" style="color: var(--clr-danger); font-size: 1rem;">*</span></span>
+            </div>
+
+            <!-- Hidden File Input -->
+            <input type="file" id="receipt-file-input" accept="image/jpeg,image/png,image/jpg,application/pdf" style="display: none;">
+
+            <!-- Drag & Drop Zone -->
+            <div class="dropzone-container" id="receipt-dropzone">
+              <div class="dropzone-icon">
+                <i data-lucide="upload-cloud"></i>
+              </div>
+              <h4 class="dropzone-title">اضغط هنا لاختيار السند أو اسحب الملف وأفلته هنا</h4>
+              <p class="dropzone-desc">الصيغ المدعومة: صور (JPG, PNG, JPEG) أو مستندات (PDF) — الحد الأقصى للحجم: 5MB</p>
+              <button type="button" class="btn-choose-file" id="btn-browse-file">
+                <i data-lucide="folder-open"></i>
+                <span>استعراض الملفات من جهازك</span>
+              </button>
+            </div>
+
+            <!-- Selected File Preview Card -->
+            <div class="file-preview-box" id="receipt-preview-box">
+              <div class="file-preview-left">
+                <div class="file-thumb-container" id="receipt-thumb-container">
+                  <i data-lucide="file-check"></i>
+                </div>
+                <div class="file-info-text">
+                  <span class="file-info-name" id="receipt-file-name">receipt_2026.jpg</span>
+                  <span class="file-info-size" id="receipt-file-size">1.4 MB</span>
+                </div>
+              </div>
+
+              <button type="button" class="btn-remove-file" id="btn-remove-receipt" title="إزالة الملف">
+                <i data-lucide="trash-2"></i>
+                <span>إزالة وتغيير الملف</span>
+              </button>
+            </div>
+
+            <div class="form-error" id="receipt-file-error" style="margin-top: 6px;"></div>
+          </div>
+
+          <!-- 4. SUBMIT ACTION BUTTON -->
+          <div class="register-submit-wrap">
+            <button type="submit" class="btn-submit-registration" id="btn-submit-form">
+              <i data-lucide="send"></i>
+              <span>إرسال طلب التسجيل الإلكتروني</span>
+            </button>
+            <p class="submit-disclaimer">
+              بالضغط على إرسال، فإنك تؤكد صحة البيانات المدخلة وموافقتك على شروط الالتحاق ببرامج منصة «إتقان».
+            </p>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= 3. SUCCESS CONFIRMATION MODAL ================= -->
+  <div class="success-modal-backdrop" id="registration-success-modal">
+    <div class="success-modal-card">
+      
+      <div class="success-icon-badge">
+        <i data-lucide="check"></i>
+      </div>
+
+      <h2 class="success-title">تم استلام طلب التسجيل بنجاح!</h2>
+      <p class="success-subtitle">
+        شكراً لك. تم استلام بياناتك وسند السداد بنجاح، وسيتم مراجعة الطلب والتواصل معك هاتفياً أو عبر الواتساب لتأكيد القبول وموعد انطلاق الدورة.
+      </p>
+
+      <!-- Reference ID Box -->
+      <div class="reference-pill-box">
+        <span class="reference-label">الرقم المرجعي لطلب التسجيل:</span>
+        <div class="reference-code-row">
+          <span class="reference-code" id="success-reference-code">ITQ-2026-5821</span>
+          <button type="button" class="btn-copy-ref" id="btn-copy-reference" title="نسخ الرقم المرجعي">
+            <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+            <span>نسخ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Registration Summary Table -->
+      <div class="success-summary-list">
+        <div class="summary-row">
+          <span class="summary-label">اسم المتدرب:</span>
+          <span class="summary-val" id="summary-student-name">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">البرنامج / الدورة:</span>
+          <span class="summary-val" id="summary-course-title" style="color: var(--clr-primary);">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">رقم الجوال:</span>
+          <span class="summary-val" id="summary-phone" dir="ltr">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">سند السداد:</span>
+          <span class="summary-val" style="color: var(--clr-success); display: flex; align-items: center; gap: 4px;">
+            <i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i>
+            <span>تم الإرفاق بنجاح</span>
+          </span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">تاريخ ووقت الإرسال:</span>
+          <span class="summary-val" id="summary-timestamp">—</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="success-actions-row">
+        <a href="index.html" class="btn-success-home">
+          <i data-lucide="home"></i>
+          <span>العودة للصفحة الرئيسية</span>
+        </a>
+        <button type="button" class="btn-success-print" id="btn-print-receipt">
+          <i data-lucide="printer"></i>
+          <span>طباعة إشعار الاستلام</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 4. PUBLIC FOOTER ================= -->
+  <div id="footer-container"></div>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Application Modules -->
+  <script src="assets/js/data/courses.js?v=15"></script>
+  <script src="assets/js/utils/helpers.js?v=15"></script>
+  <script src="assets/js/components/toast.js?v=15"></script>
+  <script src="assets/js/utils/api.js?v=15"></script>
+  <script src="assets/js/components/navbar.js?v=15"></script>
+  <script src="assets/js/components/footer.js?v=15"></script>
+
+  <!-- Page Logic -->
+  <script src="assets/js/pages/register.js?v=15"></script>
+</body>
+</html>

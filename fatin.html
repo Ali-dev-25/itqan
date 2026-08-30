@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فَطِن — منصة إتقان</title>
+  <meta name="description" content="فَطِن - رفيقك التفاعلي في منصة إتقان للمحتوى التقني التعليمي.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%232563EB'/%3E%3Ctext x='50%25' y='65%25' font-size='50' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'%3Eإ%3C/text%3E%3C/svg%3E">
+
+  <!-- Google Fonts: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Fatin Stylesheet -->
+  <link rel="stylesheet" href="assets/css/fatin.css">
+</head>
+<body class="fatin-standalone-page" id="fatin-standalone-page">
+
+  <!-- Minimal Ambient Background Glow -->
+  <div class="fatin-bg-glow"></div>
+
+  <!-- Center Stage Container -->
+  <main class="fatin-center-stage">
+    
+    <!-- Fatin Interactive Character Container -->
+    <div class="fatin-avatar-box" id="fatin-container" role="button" tabindex="0" aria-label="اضغط للتحدث مع فَطِن" title="اضغط على فَطِن للتحدث معه">
+      <img src="assets/images/fatin/reading-professional.webp?v=2" alt="فَطِن يقرأ كتاباً" class="fatin-avatar-img" id="fatin" />
+      <div class="fatin-avatar-shadow"></div>
+    </div>
+
+    <!-- Speech Dialogue Box (Hidden initially, appears on click) -->
+    <div class="fatin-dialogue-card" id="fatin-dialogue-card" aria-live="polite">
+      <p class="fatin-dialogue-greeting" id="fatin-dialogue-greeting">مرحبًا! أنا فَطِن، رفيقك في إتقان المعرفة.</p>
+      <p class="fatin-dialogue-message" id="fatin-dialogue-message">يسعدني تواجدكم معنا في منصة إتقان.</p>
+      
+      <button type="button" class="btn-fatin-action" id="btn-fatin-start">
+        <span>هيا بنا</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Fatin Component Scripts -->
+  <script src="assets/js/data/fatin-tour.js?v=14"></script>
+  <script src="assets/js/components/fatin.js?v=14"></script>
+
+  <script>
+    function initializeFatin() {
+      if (window.Fatin && typeof window.Fatin.initStandalonePage === 'function') {
+        window.Fatin.initStandalonePage();
+      } else {
+        console.warn('[Fatin] window.Fatin not ready yet, retrying...');
+        setTimeout(initializeFatin, 50);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeFatin);
+    } else {
+      initializeFatin();
+    }
+  </script>
+</body>
+</html>

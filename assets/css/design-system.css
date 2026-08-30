@@ -1,0 +1,151 @@
+/* ==========================================================================
+   ITQAN PLATFORM — Core Design System & Tokens
+   هوية منصة «إتقان» — نظام التصميم المعتمد
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* Primary Brand Colors */
+  --clr-primary: #2563EB;
+  --clr-primary-dark: #1D4ED8;
+  --clr-primary-hover: #1E40AF;
+  --clr-primary-light: #EFF6FF;
+  --clr-primary-subtle: #DBEAFE;
+
+  /* Neutral & Background Colors */
+  --clr-bg: #F8FAFC;
+  --clr-bg-alt: #F1F5F9;
+  --clr-surface: #FFFFFF;
+  --clr-surface-glass: rgba(255, 255, 255, 0.9);
+
+  /* Typography Colors */
+  --clr-text: #1E293B;
+  --clr-text-secondary: #64748B;
+  --clr-text-muted: #94A3B8;
+  --clr-text-inverse: #FFFFFF;
+
+  /* Borders & Dividers */
+  --clr-border: #E2E8F0;
+  --clr-border-focus: #93C5FD;
+  --clr-divider: #F1F5F9;
+
+  /* Functional / Status Colors */
+  --clr-success: #22C55E;
+  --clr-success-light: #F0FDF4;
+  --clr-warning: #F59E0B;
+  --clr-warning-light: #FFFBEB;
+  --clr-danger: #EF4444;
+  --clr-danger-light: #FEF2F2;
+  --clr-info: #0284C7;
+  --clr-info-light: #F0F9FF;
+
+  /* Typography Scale */
+  --font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --fs-xs: 0.75rem;    /* 12px */
+  --fs-sm: 0.875rem;   /* 14px */
+  --fs-base: 1rem;     /* 16px */
+  --fs-lg: 1.125rem;   /* 18px */
+  --fs-xl: 1.25rem;    /* 20px */
+  --fs-2xl: 1.5rem;    /* 24px */
+  --fs-3xl: 1.875rem;  /* 30px */
+  --fs-4xl: 2.25rem;   /* 36px */
+  --fs-5xl: 3rem;      /* 48px */
+
+  /* Font Weights */
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-extrabold: 800;
+  --fw-black: 900;
+
+  /* Spacing Scale */
+  --sp-1: 0.25rem;  /* 4px */
+  --sp-2: 0.5rem;   /* 8px */
+  --sp-3: 0.75rem;  /* 12px */
+  --sp-4: 1rem;     /* 16px */
+  --sp-5: 1.25rem;  /* 20px */
+  --sp-6: 1.5rem;   /* 24px */
+  --sp-8: 2rem;     /* 32px */
+  --sp-10: 2.5rem;  /* 40px */
+  --sp-12: 3rem;    /* 48px */
+  --sp-16: 4rem;    /* 64px */
+  --sp-20: 5rem;    /* 80px */
+
+  /* Border Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.09), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
+
+  /* Transitions */
+  --tr-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --tr-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --tr-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout Max Width */
+  --container-max: 1200px;
+  --navbar-height: 76px;
+}
+
+/* Base Reset & RTL Setup */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--clr-bg);
+  color: var(--clr-text);
+  line-height: 1.6;
+  direction: rtl;
+  text-align: right;
+  overflow-x: hidden;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--tr-fast);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* Container Utility */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--sp-6);
+}

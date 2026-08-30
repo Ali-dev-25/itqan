@@ -1,0 +1,567 @@
+/* ==========================================================================
+   ITQAN PLATFORM — Fatin Mascot Performance & Style System
+   تنسيقات ونظام الأداء الحركي والبصري لشخصية «فَطِن»
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. STANDALONE ENTRANCE PAGE (fatin.html)
+   -------------------------------------------------------------------------- */
+.fatin-standalone-page {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, rgba(37, 99, 235, 0.16) 0%, transparent 65%),
+              linear-gradient(135deg, #090E1A 0%, #0F172A 60%, #0B132B 100%);
+  font-family: 'Cairo', sans-serif;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  direction: rtl;
+  position: relative;
+  transition: opacity 0.35s ease-in-out;
+}
+
+.fatin-standalone-page.page-transition-out {
+  opacity: 0;
+}
+
+/* Ambient glow in background */
+.fatin-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(30, 58, 138, 0.08) 50%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Center Stage */
+.fatin-center-stage {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 520px;
+  width: 90%;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+/* Fatin Interactive Avatar Container */
+.fatin-avatar-box {
+  position: relative;
+  width: 290px;
+  height: 290px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: fatinReadingIdle 5s ease-in-out infinite;
+}
+
+.fatin-avatar-box:hover {
+  transform: scale(1.03);
+}
+
+.fatin-avatar-box:focus-visible {
+  outline: 2px dashed #3B82F6;
+  outline-offset: 10px;
+  border-radius: 20px;
+}
+
+.fatin-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.45));
+  display: block;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fatin-avatar-img.switching {
+  opacity: 0.35;
+  transform: scale(0.96);
+}
+
+.fatin-avatar-shadow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 15px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, rgba(37, 99, 235, 0.25) 45%, transparent 75%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Idle Animations */
+@keyframes fatinReadingIdle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  35% { transform: translateY(-4px) rotate(-0.75deg); }
+  70% { transform: translateY(-2px) rotate(0.5deg); }
+}
+
+@keyframes fatinGentleBreathe {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-4px) scale(1.01); }
+}
+
+@keyframes fatinIdleFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Dialogue Card on fatin.html */
+.fatin-dialogue-card {
+  display: none;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  border-radius: 1.25rem;
+  padding: 1.5rem 1.8rem;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 25px rgba(37, 99, 235, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-top: 1.25rem;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+  animation: dialogueCardEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fatin-dialogue-card.show {
+  display: block;
+}
+
+@keyframes dialogueCardEnter {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fatin-dialogue-greeting {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #60A5FA;
+  margin: 0 0 0.5rem 0;
+}
+
+.fatin-dialogue-message {
+  font-size: 0.94rem;
+  color: #E2E8F0;
+  line-height: 1.75;
+  margin: 0 0 1.25rem 0;
+  min-height: 48px;
+}
+
+.btn-fatin-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.75rem 2.2rem;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.45);
+  transition: all 0.2s ease;
+}
+
+.btn-fatin-action:hover {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.6);
+}
+
+.btn-fatin-action:active {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   2. FLOATING TOUR COMPANION WIDGET (index.html)
+   مكون موحد يجمع شخصية فَطِن وفقاعة الحوار المتصلة به مباشرة
+   -------------------------------------------------------------------------- */
+.fatin-tour-widget {
+  position: fixed;
+  bottom: 24px;
+  left: 28px;
+  z-index: 2500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 400px;
+  width: calc(100% - 56px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  direction: rtl;
+}
+
+.fatin-tour-widget.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* فقاعة الكلام (Speech Bubble) */
+.fatin-widget-card {
+  background: #FFFFFF;
+  border: 1.5px solid #BFDBFE;
+  border-radius: 1.35rem;
+  padding: 1.2rem 1.4rem;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(191, 219, 254, 0.45);
+  width: 100%;
+  text-align: right;
+  position: relative;
+  margin-bottom: 14px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* ذيل الفقاعة المتجه مباشرة نحو فَطِن */
+.fatin-widget-card::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 65px;
+  width: 18px;
+  height: 18px;
+  background: #FFFFFF;
+  border-right: 1.5px solid #BFDBFE;
+  border-bottom: 1.5px solid #BFDBFE;
+  transform: rotate(45deg);
+  border-radius: 0 0 3px 0;
+  z-index: 10;
+}
+
+.fatin-widget-card.speech-fade {
+  opacity: 0.25;
+  transform: translateY(3px);
+}
+
+.fatin-widget-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.fatin-widget-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #EFF6FF;
+  color: #1D4ED8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid #DBEAFE;
+}
+
+.fatin-widget-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #1E293B;
+  margin: 0 0 6px 0;
+}
+
+.fatin-widget-dialogue {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.7;
+  margin: 0 0 12px 0;
+  min-height: 44px;
+}
+
+.fatin-widget-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.btn-tour-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2563EB;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.5rem 1.3rem;
+  border-radius: 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.btn-tour-next:hover {
+  background: #1D4ED8;
+  transform: translateY(-1px);
+}
+
+.btn-tour-skip {
+  background: transparent;
+  color: #64748B;
+  border: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-tour-skip:hover {
+  color: #EF4444;
+  background: #FEE2E2;
+}
+
+/* شخصية فَطِن بحجم واضح أسفل الفقاعة مباشرة */
+.fatin-widget-avatar-wrap {
+  width: clamp(145px, 13vw, 195px);
+  height: clamp(145px, 13vw, 195px);
+  margin-left: 10px;
+  flex-shrink: 0;
+  position: relative;
+  filter: drop-shadow(0 15px 30px rgba(15, 23, 42, 0.32));
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: fatinIdleFloat 4.2s ease-in-out infinite;
+}
+
+.fatin-widget-avatar-wrap:hover {
+  transform: scale(1.04);
+}
+
+.fatin-widget-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fatin-widget-avatar.switching {
+  opacity: 0.25;
+  transform: scale(0.94);
+}
+
+/* --------------------------------------------------------------------------
+   3. SYNCHRONIZED PERFORMANCE MICRO-GESTURES
+   حركات تعبيرية طبيعية وذكية متزامنة مع نطق الكلمات
+   -------------------------------------------------------------------------- */
+.fatin-widget-avatar-wrap.gesture-wave,
+.fatin-avatar-box.gesture-wave {
+  transform: translateY(-5px) rotate(2.5deg) scale(1.02);
+}
+
+.fatin-widget-avatar-wrap.gesture-self,
+.fatin-avatar-box.gesture-self {
+  transform: translateY(-2px) rotate(-2deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-welcome,
+.fatin-avatar-box.gesture-welcome {
+  transform: translateY(-3px) scale(1.025);
+}
+
+.fatin-widget-avatar-wrap.gesture-book,
+.fatin-avatar-box.gesture-book {
+  transform: translateY(-2px) rotate(1.8deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-invite,
+.fatin-avatar-box.gesture-invite {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.fatin-widget-avatar-wrap.gesture-forward,
+.fatin-avatar-box.gesture-forward {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.fatin-widget-avatar-wrap.gesture-present,
+.fatin-avatar-box.gesture-present {
+  transform: translateY(-3px) rotate(2deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-explain,
+.fatin-avatar-box.gesture-explain {
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-point,
+.fatin-avatar-box.gesture-point {
+  transform: translateY(-4px) rotate(2deg) scale(1.02);
+}
+
+.fatin-widget-avatar-wrap.gesture-grow,
+.fatin-avatar-box.gesture-grow {
+  transform: translateY(-6px) scale(1.03);
+}
+
+.fatin-widget-avatar-wrap.gesture-practical,
+.fatin-avatar-box.gesture-practical {
+  transform: translateY(-3px) rotate(-1.5deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-choose,
+.fatin-avatar-box.gesture-choose {
+  transform: translateY(-3px) rotate(2deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-organize,
+.fatin-avatar-box.gesture-organize {
+  transform: translateY(-2px) rotate(-1.2deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-write,
+.fatin-avatar-box.gesture-write {
+  transform: translateY(-3px) rotate(1.2deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-nod,
+.fatin-avatar-box.gesture-nod {
+  transform: translateY(2px) scale(1.01);
+}
+
+.fatin-widget-avatar-wrap.gesture-next,
+.fatin-avatar-box.gesture-next {
+  transform: translateY(-3px) scale(1.02);
+}
+
+.fatin-widget-avatar-wrap.gesture-doc,
+.fatin-avatar-box.gesture-doc {
+  transform: translateY(-4px) rotate(1.5deg);
+}
+
+.fatin-widget-avatar-wrap.gesture-success,
+.fatin-avatar-box.gesture-success {
+  transform: translateY(-6px) scale(1.035);
+}
+
+.fatin-widget-avatar-wrap.gesture-save,
+.fatin-avatar-box.gesture-save {
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+/* --------------------------------------------------------------------------
+   4. SECTION SPOTLIGHT / HIGHLIGHT
+   -------------------------------------------------------------------------- */
+.fatin-section-highlight {
+  position: relative;
+  transition: box-shadow 0.5s ease, outline 0.5s ease;
+  outline: 3px solid rgba(37, 99, 235, 0.45);
+  outline-offset: -3px;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 35px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. HERO CTA BUTTON
+   -------------------------------------------------------------------------- */
+.btn-hero-fatin-tour {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  color: #1D4ED8;
+  border: 1.5px solid #BFDBFE;
+  padding: 0.85rem 1.5rem;
+  border-radius: 1rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-hero-fatin-tour:hover {
+  border-color: #2563EB;
+  background: #EFF6FF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   6. RESPONSIVE QUERIES (Mobile & Tablet)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .fatin-tour-widget {
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+    width: auto;
+    max-width: 360px;
+    margin-inline: auto;
+    align-items: center;
+  }
+
+  .fatin-widget-card {
+    padding: 1rem 1.15rem;
+    margin-bottom: 12px;
+  }
+
+  .fatin-widget-card::after {
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .fatin-widget-avatar-wrap {
+    width: clamp(110px, 30vw, 145px);
+    height: clamp(110px, 30vw, 145px);
+    margin-left: 0;
+  }
+
+  .fatin-widget-title {
+    font-size: 0.9rem;
+  }
+
+  .fatin-widget-dialogue {
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 375px) {
+  .fatin-tour-widget {
+    max-width: 320px;
+  }
+
+  .fatin-widget-avatar-wrap {
+    width: 100px;
+    height: 100px;
+  }
+
+  .fatin-widget-card {
+    padding: 0.85rem 1rem;
+  }
+}
