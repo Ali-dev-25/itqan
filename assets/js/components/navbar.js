@@ -4,26 +4,34 @@
  */
 const Navbar = (() => {
   const NAV_LINKS = [
-    { label: 'الرئيسية', href: '#hero', id: 'hero' },
-    { label: 'عن إتقان', href: '#about', id: 'about' },
-    { label: 'البرامج والدورات', href: '#courses', id: 'courses' },
-    { label: 'المميزات', href: '#features', id: 'features' },
-    { label: 'طريقة التسجيل', href: '#how-it-works', id: 'how-it-works' },
-    { label: 'تواصل معنا', href: '#contact', id: 'contact' },
+    { label: 'الرئيسية', id: 'hero' },
+    { label: 'عن إتقان', id: 'about' },
+    { label: 'البرامج والدورات', id: 'courses' },
+    { label: 'المميزات', id: 'features' },
+    { label: 'طريقة التسجيل', id: 'how-it-works' },
+    { label: 'تواصل معنا', id: 'contact' },
   ];
+
+  function isCurrentPageHome() {
+    return Boolean(document.getElementById('hero'));
+  }
 
   function render(containerId = 'navbar-container') {
     const el = document.getElementById(containerId);
     if (!el) return;
 
+    const isHome = isCurrentPageHome();
+    const prefix = isHome ? '#' : 'index.html#';
+    const brandHref = isHome ? '#hero' : 'index.html';
+
     const linksHtml = NAV_LINKS.map((item, idx) => `
-      <a href="${item.href}" class="nav-item ${idx === 0 ? 'active' : ''}" data-target="${item.id}">
+      <a href="${prefix}${item.id}" class="nav-item ${isHome && idx === 0 ? 'active' : ''}" data-target="${item.id}">
         ${item.label}
       </a>
     `).join('');
 
     const mobileLinksHtml = NAV_LINKS.map(item => `
-      <a href="${item.href}" class="mobile-nav-link" data-target="${item.id}">
+      <a href="${prefix}${item.id}" class="mobile-nav-link" data-target="${item.id}">
         <span>${item.label}</span>
         <i data-lucide="chevron-left"></i>
       </a>
@@ -34,7 +42,7 @@ const Navbar = (() => {
         <div class="container navbar-container">
           
           <!-- Logo & Brand -->
-          <a href="#hero" class="navbar-brand">
+          <a href="${brandHref}" class="navbar-brand">
             ${Helpers.getLogoSVG({ size: 38, variant: 'navbar', withText: true })}
           </a>
 
@@ -123,31 +131,52 @@ const Navbar = (() => {
     if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
     if (overlay) overlay.addEventListener('click', closeDrawer);
 
-    // Smooth scroll for all internal anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // Smooth scroll for internal anchor links if target exists on the page
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         const href = this.getAttribute('href');
-        if (!href || href === '#') return;
-        const targetId = href.substring(1);
-        if (targetId) {
+        if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+        const hashIndex = href.indexOf('#');
+        if (hashIndex === -1) return;
+
+        const targetId = href.substring(hashIndex + 1);
+        if (!targetId) return;
+
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          // الهدف موجود في نفس الصفحة الحالية: تمرير سلس
           e.preventDefault();
           closeDrawer();
           if (window.Helpers && typeof window.Helpers.scrollToSection === 'function') {
             window.Helpers.scrollToSection(targetId);
           } else {
-            const targetEl = document.getElementById(targetId);
-            if (targetEl) {
-              const navH = navbar ? navbar.offsetHeight : 80;
-              const pos = targetEl.getBoundingClientRect().top + window.pageYOffset - (navH + 12);
-              window.scrollTo({ top: pos >= 0 ? pos : 0, behavior: 'smooth' });
-            }
+            const navH = navbar ? navbar.offsetHeight : 80;
+            const pos = targetEl.getBoundingClientRect().top + window.pageYOffset - (navH + 12);
+            window.scrollTo({ top: pos >= 0 ? pos : 0, behavior: 'smooth' });
           }
+        } else {
+          // الهدف في صفحة أخرى (مثل الانتقال من صفحة التسجيل للصفحة الرئيسية): إغلاق القائمة والسماح بالانتقال
+          closeDrawer();
         }
       });
     });
+
+    // التمرير التلقائي نحو القسم إذا تم فتح الصفحة مع هاش (Hash)
+    if (window.location.hash) {
+      setTimeout(() => {
+        const hashId = window.location.hash.substring(1);
+        if (document.getElementById(hashId) && window.Helpers && typeof window.Helpers.scrollToSection === 'function') {
+          window.Helpers.scrollToSection(hashId);
+        }
+      }, 150);
+    }
   }
 
   function updateActiveSection() {
+    const isHome = isCurrentPageHome();
+    if (!isHome) return;
+
     const scrollY = window.pageYOffset;
     const sections = document.querySelectorAll('section[id]');
 

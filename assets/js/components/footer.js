@@ -76,11 +76,11 @@ const Footer = (() => {
             <div class="footer-col">
               <h4 class="footer-col-title">روابط سريعة</h4>
               <ul class="footer-links-list">
-                <li><a href="#hero"><i data-lucide="chevron-left"></i><span>الرئيسية</span></a></li>
-                <li><a href="#about"><i data-lucide="chevron-left"></i><span>عن إتقان</span></a></li>
-                <li><a href="#courses"><i data-lucide="chevron-left"></i><span>البرامج والدورات</span></a></li>
-                <li><a href="#features"><i data-lucide="chevron-left"></i><span>مميزات المنصة</span></a></li>
-                <li><a href="#how-it-works"><i data-lucide="chevron-left"></i><span>طريقة التسجيل</span></a></li>
+                <li><a href="index.html#hero"><i data-lucide="chevron-left"></i><span>الرئيسية</span></a></li>
+                <li><a href="index.html#about"><i data-lucide="chevron-left"></i><span>عن إتقان</span></a></li>
+                <li><a href="index.html#courses"><i data-lucide="chevron-left"></i><span>البرامج والدورات</span></a></li>
+                <li><a href="index.html#features"><i data-lucide="chevron-left"></i><span>مميزات المنصة</span></a></li>
+                <li><a href="index.html#how-it-works"><i data-lucide="chevron-left"></i><span>طريقة التسجيل</span></a></li>
               </ul>
             </div>
 
