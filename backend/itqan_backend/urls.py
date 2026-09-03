@@ -16,20 +16,20 @@ urlpatterns = [
     # 2. نقاط النهاية للـ API
     path('api/v1/', include('registrations.urls')),
 
-    # 3. توجيه صفحات الـ Frontend المباشرة
-    re_path(r'^(?:index\.html)?$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'index.html'}),
-    re_path(r'^register\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'register.html'}),
+    # 3. توجيه صفحات الـ Frontend المباشرة (شاشة فَطِن هي الصفحة الافتتاحية الأولى عند الفتح)
+    re_path(r'^$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin.html'}),
     re_path(r'^fatin\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin.html'}),
+    re_path(r'^index\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'index.html'}),
+    re_path(r'^register\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'register.html'}),
     re_path(r'^fatin_voice_test\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin_voice_test.html'}),
 ]
 
 # تقديم ملفات الـ Media (سندات الدفع) أثناء التطوير
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    # تقديم مجلد assets كملفات ثابتة
-    urlpatterns += [
-        re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.FRONTEND_DIR / 'assets'}),
-    ]
+# خدمة مباشرة للمجلد assets/ والـ media/ (حل لمشكلة اختفاء القسم الأول عند النشر)
+urlpatterns += [
+    re_path(r'^assets/(?P<path>.*)$', serve, {'document_root': settings.FRONTEND_DIR / 'assets'}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
 # تخصيص عناوين لوحة الإدارة
 admin.site.site_header = "إدارة منصة «إتقان» التعليمية"

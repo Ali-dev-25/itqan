@@ -1,26 +1,20 @@
 @echo off
 chcp 65001 > nul
-title منصة إتقان — تشغيل خادم Django الكامل
+title منصة إتقان — تشغيل السيرفر المحلي
 color 0B
 
 echo =======================================================
-echo        🚀 جاري تشغيل منصة إتقان التعليمية (Django Backend)...
+echo        🚀 جاري تشغيل منصة إتقان التعليمية...
 echo =======================================================
 echo.
 echo 🦊 رفيقك «فَطِن» بانتظارك!
-echo 🌐 واجهة الموقع: http://localhost:8000/fatin.html
-echo 📋 صفحة التسجيل: http://localhost:8000/register.html
-echo ⚙️ لوحة الإدارة: http://localhost:8000/admin/
-echo 👤 حساب المشرف الافتراضي: admin / admin123
+echo 🌐 العنوان المحلي: http://localhost:8000
 echo.
 
-:: الانتقال إلى مجلد الباكاند
-cd /d "%~dp0backend"
-
-:: فتح المتصفح تلقائياً بعد ثانيتين
+:: فتح المتصفح تلقائياً بعد ثانية واحدة
 start "" "http://localhost:8000/fatin.html"
 
-:: تشغيل خادم Django على المنفذ 8000
-python manage.py runserver 8000
+:: تشغيل خادم بايثون المحلي على المنفذ 8000
+python -m http.server 8000
 
 pause

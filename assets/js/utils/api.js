@@ -3,10 +3,10 @@
  * طبقة التجريد للاتصال بالـ Django Backend API
  */
 const Api = (() => {
-  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django أو عبر خادم مستقل)
-  const API_BASE_URL = window.location.origin.includes('8000')
-    ? ''
-    : 'http://127.0.0.1:8000';
+  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django محلياً/على Render أو عبر خادم تجربة مستقل)
+  const API_BASE_URL = (window.location.protocol === 'file:' || window.location.port === '5500' || window.location.port === '3000' || window.location.port === '8080')
+    ? 'http://127.0.0.1:8000'
+    : '';
 
   /**
    * إرسال طلب تسجيل طالب جديد مع المرفقات إلى سيرفر Django
@@ -15,7 +15,7 @@ const Api = (() => {
    */
   async function submitRegistration(formData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/`, {
+      const response = await fetch(${API_BASE_URL}/api/v1/registrations/, {
         method: 'POST',
         body: formData // يتم إرسال multipart/form-data تلقائياً
       });

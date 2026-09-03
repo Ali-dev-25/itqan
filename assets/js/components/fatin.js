@@ -244,11 +244,43 @@ window.Fatin = (() => {
           e.stopPropagation();
         }
         stopAudio();
-        if (pageBody) pageBody.classList.add('page-transition-out');
 
-        setTimeout(() => {
+        const splashEl = document.getElementById('fatin-splash');
+        const mainContentEl = document.getElementById('main-content');
+
+        if (splashEl && mainContentEl) {
+          splashEl.style.transition = 'opacity 0.35s ease-out';
+          splashEl.style.opacity = '0';
+
+          setTimeout(() => {
+            splashEl.style.display = 'none';
+            mainContentEl.style.display = 'block';
+            mainContentEl.style.opacity = '0';
+            mainContentEl.style.transition = 'opacity 0.4s ease-in';
+
+            setTimeout(() => {
+              mainContentEl.style.opacity = '1';
+              if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                window.lucide.createIcons();
+              }
+              if (typeof startTour === 'function') {
+                startTour(0);
+              }
+            }, 50);
+          }, 350);
+        } else if (
+          window.location.pathname.endsWith('fatin.html') ||
+          window.location.pathname === '/' ||
+          window.location.pathname === '' ||
+          document.getElementById('fatin-standalone-page') ||
+          !document.getElementById('hero')
+        ) {
           window.location.href = 'index.html?tour=auto';
-        }, 280);
+        } else {
+          const heroEl = document.getElementById('hero');
+          if (heroEl) heroEl.scrollIntoView({ behavior: 'smooth' });
+          if (typeof startTour === 'function') startTour(0);
+        }
       });
     }
   }
@@ -259,6 +291,9 @@ window.Fatin = (() => {
   function initSiteTour() {
     console.log('[Fatin] initSiteTour started');
     preloadPoses();
+    if (document.getElementById('fatin-container')) {
+      initStandalonePage();
+    }
     createTourWidget();
     attachKeyboardEvents();
     attachSectionListeners();

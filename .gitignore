@@ -31,7 +31,10 @@ db.sqlite3-journal
 staticfiles/
 media/receipts/*
 !media/receipts/.gitkeep
+backend/media/receipts/*
+!backend/media/receipts/.gitkeep
 exports/*.xlsx
+backend/exports/*.xlsx
 
 # OS
 .DS_Store

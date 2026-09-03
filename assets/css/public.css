@@ -1062,6 +1062,120 @@
 }
 
 /* --------------------------------------------------------------------------
+   5. TECHLINGO FEATURED DIPLOMA CARD
+   -------------------------------------------------------------------------- */
+.techlingo-diploma-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-2xl);
+  padding: var(--sp-8);
+  margin-top: var(--sp-10);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--tr-normal);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.techlingo-diploma-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -6px rgba(0, 0, 0, 0.08);
+  border-color: var(--clr-primary-subtle);
+}
+
+.techlingo-card-header {
+  margin-bottom: var(--sp-4);
+}
+
+.techlingo-levels-scroll-wrapper {
+  margin: var(--sp-5) 0 var(--sp-6) 0;
+  padding: var(--sp-6) 0;
+  border-top: 1px solid var(--clr-divider);
+  border-bottom: 1px solid var(--clr-divider);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.techlingo-levels-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(150px, 1fr));
+  gap: var(--sp-4);
+  min-width: 920px;
+}
+
+.techlingo-level-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding-inline-end: var(--sp-4);
+  border-inline-end: 1px solid var(--clr-divider);
+}
+
+.techlingo-level-col:last-child {
+  border-inline-end: none;
+  padding-inline-end: 0;
+}
+
+.techlingo-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-extrabold);
+  color: #8B5CF6;
+  background: #F5F3FF;
+  border: 1px solid #DDD6FE;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--r-full);
+  width: fit-content;
+  letter-spacing: 0.05em;
+}
+
+.techlingo-level-title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--clr-text);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.techlingo-level-desc {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+.techlingo-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  padding-top: var(--sp-2);
+}
+
+.techlingo-btn-enroll {
+  min-width: 220px;
+  justify-content: center;
+}
+
+@media (max-width: 991px) {
+  .techlingo-diploma-card {
+    padding: var(--sp-6);
+  }
+
+  .techlingo-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .techlingo-btn-enroll {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
    6. FEATURES SECTION
    -------------------------------------------------------------------------- */
 .features-grid {

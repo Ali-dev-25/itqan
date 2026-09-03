@@ -1,6 +1,6 @@
 /**
  * ITQAN — Home Page Controller
- * إدارة تفاعلات وعرض الصفحة الرئيسية ونافذة مواضيع الدورات
+ * إدارة تفاعلات وعرض الصفحة الرئيسية
  */
 const HomePage = (() => {
   let activeTrack = 'all';
@@ -10,7 +10,6 @@ const HomePage = (() => {
     Footer.render('footer-container');
     renderCourses();
     attachFilterEvents();
-    attachModalEvents();
 
     if (window.Fatin && typeof window.Fatin.initSiteTour === 'function') {
       window.Fatin.initSiteTour();
@@ -75,31 +74,16 @@ const HomePage = (() => {
           </div>
 
           <div class="course-card-footer">
-            <div class="course-card-actions">
-              <button type="button" class="btn-course-topics" data-course-id="${course.id}" title="عرض المحاور والمواضيع التفصيلية">
-                <i data-lucide="list"></i>
-                <span>مواضيع الدورة</span>
-              </button>
-              <a href="register.html?course=${course.id}" class="btn-course-register">
-                <span>سجل الآن</span>
-                <i data-lucide="arrow-left"></i>
-              </a>
-            </div>
+            <a href="register.html?course=${course.id}" class="btn-course-register">
+              <span>سجل في هذه الدورة</span>
+              <i data-lucide="arrow-left"></i>
+            </a>
           </div>
         </div>
       </div>
     `).join('');
 
     container.innerHTML = html;
-    
-    // ربط أحداث النقر على أزرار مواضيع الدورة
-    container.querySelectorAll('.btn-course-topics').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const courseId = btn.getAttribute('data-course-id');
-        openCourseTopicsModal(courseId);
-      });
-    });
-
     if (window.lucide) {
       lucide.createIcons({ root: container });
     }
@@ -113,165 +97,17 @@ const HomePage = (() => {
         this.classList.add('active');
         activeTrack = this.getAttribute('data-track');
         renderCourses();
+
+        const techLingoCard = document.getElementById('techlingo-card');
+        if (techLingoCard) {
+          techLingoCard.style.display = (activeTrack === 'all' || activeTrack === 'languages') ? 'flex' : 'none';
+        }
       });
     });
   }
 
-  /**
-   * إنشاء وتهيئة نافذة مواضيع الدورة المنبثقة
-   */
-  function ensureTopicsModal() {
-    let modal = document.getElementById('course-topics-modal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'course-topics-modal';
-      modal.className = 'topics-modal-backdrop';
-      modal.innerHTML = `
-        <div class="topics-modal-card">
-          <div class="topics-modal-header">
-            <div class="topics-modal-title-wrap">
-              <div class="topics-modal-icon" id="modal-course-icon-box">
-                <i data-lucide="book-open" id="modal-course-icon"></i>
-              </div>
-              <div class="topics-modal-heading">
-                <span id="modal-course-track">المسار التدريبي</span>
-                <h3 id="modal-course-title">عنوان الدورة</h3>
-              </div>
-            </div>
-            <button type="button" class="btn-close-topics-modal" id="btn-close-topics-modal" aria-label="إغلاق">
-              <i data-lucide="x"></i>
-            </button>
-          </div>
-
-          <div class="topics-modal-body">
-            <div class="topics-modal-meta">
-              <div class="topics-modal-meta-item">
-                <i data-lucide="clock"></i>
-                <span id="modal-course-duration">—</span>
-              </div>
-              <div class="topics-modal-meta-item">
-                <i data-lucide="award"></i>
-                <span id="modal-course-level">—</span>
-              </div>
-            </div>
-
-            <div class="topics-list-title">
-              <i data-lucide="check-circle-2" style="width: 16px; height: 16px; color: var(--clr-primary);"></i>
-              <span>المحاور والمواضيع الرئيسية المعتمدة:</span>
-            </div>
-
-            <ul class="topics-list" id="modal-topics-list">
-              <!-- Injected dynamically -->
-            </ul>
-          </div>
-
-          <div class="topics-modal-footer">
-            <button type="button" class="btn-modal-close-secondary" id="btn-modal-close-secondary">إغلاق</button>
-            <a href="register.html" class="btn-modal-enroll" id="btn-modal-enroll">
-              <span>سجل في هذه الدورة</span>
-              <i data-lucide="arrow-left"></i>
-            </a>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-    return modal;
-  }
-
-  function openCourseTopicsModal(courseId) {
-    const course = CoursesData.find(c => c.id === courseId);
-    if (!course) return;
-
-    const modal = ensureTopicsModal();
-
-    // تعبئة بيانات الدورة في النافذة
-    const iconBox = document.getElementById('modal-course-icon-box');
-    if (iconBox) {
-      iconBox.style.background = course.bgColor;
-      iconBox.style.color = course.color;
-      iconBox.innerHTML = `<i data-lucide="${course.icon}"></i>`;
-    }
-
-    const trackEl = document.getElementById('modal-course-track');
-    if (trackEl) trackEl.textContent = course.track;
-
-    const titleEl = document.getElementById('modal-course-title');
-    if (titleEl) titleEl.textContent = course.title;
-
-    const durationEl = document.getElementById('modal-course-duration');
-    if (durationEl) durationEl.textContent = course.duration;
-
-    const levelEl = document.getElementById('modal-course-level');
-    if (levelEl) levelEl.textContent = course.level;
-
-    const enrollBtn = document.getElementById('btn-modal-enroll');
-    if (enrollBtn) {
-      enrollBtn.href = `register.html?course=${course.id}`;
-    }
-
-    // توليد قائمة المحاور والمواضيع
-    const listEl = document.getElementById('modal-topics-list');
-    if (listEl) {
-      if (course.topics && course.topics.length > 0) {
-        listEl.innerHTML = course.topics.map((topic, index) => `
-          <li class="topic-list-item">
-            <span class="topic-num-badge">${index + 1}</span>
-            <span>${Helpers.escape(topic)}</span>
-          </li>
-        `).join('');
-      } else {
-        listEl.innerHTML = `
-          <li class="topic-list-item">
-            <span>${Helpers.escape(course.description)}</span>
-          </li>
-        `;
-      }
-    }
-
-    // فتح النافذة
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-
-    if (window.lucide) {
-      lucide.createIcons({ root: modal });
-    }
-  }
-
-  function closeCourseTopicsModal() {
-    const modal = document.getElementById('course-topics-modal');
-    if (modal) {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  }
-
-  function attachModalEvents() {
-    const modal = ensureTopicsModal();
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeCourseTopicsModal();
-      }
-    });
-
-    const closeBtn = document.getElementById('btn-close-topics-modal');
-    if (closeBtn) closeBtn.addEventListener('click', closeCourseTopicsModal);
-
-    const closeSecondary = document.getElementById('btn-modal-close-secondary');
-    if (closeSecondary) closeSecondary.addEventListener('click', closeCourseTopicsModal);
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeCourseTopicsModal();
-      }
-    });
-  }
-
   return {
-    init,
-    openCourseTopicsModal,
-    closeCourseTopicsModal
+    init
   };
 })();
 
