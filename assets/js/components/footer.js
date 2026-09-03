@@ -29,8 +29,8 @@ const Footer = (() => {
                   </svg>
                 </a>
                 
-                <!-- 2. واتساب -->
-                <a href="https://wa.me/967771234567" target="_blank" class="social-icon-btn" aria-label="واتساب" title="واتساب">
+                <!-- 2. قناة واتساب -->
+                <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="قناة الواتساب" title="قناة منصة إتقان على واتساب">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path>
                     <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path>
@@ -46,8 +46,8 @@ const Footer = (() => {
                   </svg>
                 </a>
 
-                <!-- 4. تيليجرام -->
-                <a href="javascript:void(0)" class="social-icon-btn" aria-label="تيليجرام" title="تيليجرام">
+                <!-- 4. قناة تيليجرام -->
+                <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="قناة التيليجرام" title="قناة منصة إتقان على تيليجرام">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -106,14 +106,22 @@ const Footer = (() => {
                 <span>سجل في الدورات الآن</span>
               </a>
               <div class="footer-contact-mini">
-                <div class="footer-contact-item">
+                <a href="mailto:info@itqan-platform.com" class="footer-contact-item">
                   <i data-lucide="mail"></i>
                   <span>info@itqan-platform.com</span>
-                </div>
-                <div class="footer-contact-item">
+                </a>
+                <a href="https://wa.me/967771807595" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
                   <i data-lucide="phone"></i>
-                  <span dir="ltr">+967 771 234 567</span>
-                </div>
+                  <span dir="ltr">+967 771 807 595</span>
+                </a>
+                <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #4ADE80;">
+                  <i data-lucide="message-circle"></i>
+                  <span>قناة واتساب الرسمية</span>
+                </a>
+                <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #38BDF8;">
+                  <i data-lucide="send"></i>
+                  <span>قناة تيليجرام الرسمية</span>
+                </a>
               </div>
             </div>
 
