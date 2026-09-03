@@ -38,7 +38,7 @@ const Footer = (() => {
                 </a>
 
                 <!-- 3. انستغرام -->
-                <a href="javascript:void(0)" class="social-icon-btn" aria-label="انستغرام" title="انستغرام">
+                <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="انستغرام" title="حساب الانستغرام الرسمي">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -121,6 +121,10 @@ const Footer = (() => {
                 <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #38BDF8;">
                   <i data-lucide="send"></i>
                   <span>قناة تيليجرام الرسمية</span>
+                </a>
+                <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #F472B6;">
+                  <i data-lucide="instagram"></i>
+                  <span>حساب انستغرام الرسمي</span>
                 </a>
               </div>
             </div>

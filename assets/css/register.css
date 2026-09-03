@@ -324,34 +324,122 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   border: 1px solid #BFDBFE;
 }
 
-.bank-info-grid {
+.payment-accounts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-4);
   margin-bottom: var(--sp-4);
 }
 
-.bank-info-item {
-  background: rgba(255, 255, 255, 0.7);
-  border-radius: var(--r-lg);
-  padding: var(--sp-3) var(--sp-4);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+.payment-account-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  border-radius: var(--r-xl);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--tr-fast);
 }
 
-.bank-info-label {
-  font-size: var(--fs-xs);
-  color: var(--clr-text-secondary);
-  margin-bottom: 2px;
-  font-weight: var(--fw-semibold);
+.payment-account-card:hover {
+  background: #FFFFFF;
+  border-color: var(--clr-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.bank-info-val {
-  font-size: var(--fs-sm);
-  font-weight: var(--fw-bold);
-  color: var(--clr-text);
+.pay-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: var(--sp-3);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.pay-provider-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--r-md);
+}
+
+.pay-provider-badge.kuraimi {
+  background: #EFF6FF;
+  color: #1D4ED8;
+}
+
+.pay-provider-badge.sharq {
+  background: #ECFDF5;
+  color: #047857;
+}
+
+.pay-provider-badge.shilin {
+  background: #FFFBEB;
+  color: #B45309;
+}
+
+.pay-provider-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pay-type-tag {
+  font-size: 0.68rem;
+  font-weight: var(--fw-semibold);
+  color: var(--clr-text-muted);
+}
+
+.pay-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pay-number-label {
+  font-size: 0.72rem;
+  color: var(--clr-text-secondary);
+  font-weight: var(--fw-semibold);
+}
+
+.pay-number-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--r-md);
+  padding: 0.35rem 0.6rem;
+  gap: 8px;
+}
+
+.account-num-val {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  font-weight: var(--fw-bold);
+  color: var(--clr-text);
+  letter-spacing: 0.05em;
+}
+
+.pay-owner-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--clr-text-secondary);
+  margin-top: 2px;
+}
+
+.pay-owner-name svg {
+  width: 12px;
+  height: 12px;
+  color: var(--clr-primary);
+  flex-shrink: 0;
 }
 
 .btn-copy-account {
@@ -360,21 +448,24 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   gap: 4px;
   background: var(--clr-primary);
   color: #FFFFFF;
-  padding: 0.3rem 0.65rem;
-  border-radius: var(--r-md);
-  font-size: var(--fs-xs);
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--r-sm);
+  font-size: 0.72rem;
   font-weight: var(--fw-bold);
   cursor: pointer;
+  border: none;
   transition: all var(--tr-fast);
+  flex-shrink: 0;
 }
 
 .btn-copy-account:hover {
   background: var(--clr-primary-dark);
+  transform: scale(1.03);
 }
 
 .btn-copy-account svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 .bank-note-alert {
@@ -856,7 +947,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     gap: var(--sp-4);
   }
 
-  .bank-info-grid {
+  .payment-accounts-grid {
     grid-template-columns: 1fr;
   }
 

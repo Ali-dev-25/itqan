@@ -50,18 +50,23 @@ const RegisterPage = (() => {
    * ربط كافة أحداث الصفحة والنماذج
    */
   function attachEvents() {
-    // 1. نسخ رقم الحساب البنكي
-    const copyBtn = document.getElementById('btn-copy-bank-account');
-    if (copyBtn) {
-      copyBtn.addEventListener('click', () => {
-        const accNum = document.getElementById('bank-account-number')?.innerText || '30012345678';
+    // 1. نسخ أرقام الحسابات والمحافظ
+    const copyBtns = document.querySelectorAll('.btn-copy-account');
+    copyBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const accNum = btn.getAttribute('data-copy') || btn.parentElement?.querySelector('.account-num-val')?.innerText || '';
+        const providerName = btn.getAttribute('data-name') || 'الحساب';
+        if (!accNum) return;
+
         navigator.clipboard.writeText(accNum.replace(/\s+/g, '')).then(() => {
-          Toast.success('تم نسخ رقم الحساب البنكي بنجاح');
+          Toast.success(`تم نسخ رقم ${providerName} بنجاح: ${accNum}`);
         }).catch(() => {
-          Toast.info('رقم الحساب: ' + accNum);
+          Toast.info(`رقم ${providerName}: ${accNum}`);
         });
       });
-    }
+    });
 
     // 2. معالجة رفع وسحب وإفلات السند
     const dropzone = document.getElementById('receipt-dropzone');

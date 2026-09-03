@@ -143,53 +143,96 @@
             </div>
           </div>
 
-          <!-- 2. BANK PAYMENT DETAILS CARD -->
+          <!-- 2. BANK & WALLET PAYMENT DETAILS CARD -->
           <div class="bank-details-card">
             <div class="bank-header">
               <div class="bank-title-wrap">
                 <div class="bank-icon-box">
-                  <i data-lucide="landmark"></i>
+                  <i data-lucide="wallet-cards"></i>
                 </div>
                 <div>
-                  <h4>بيانات الحساب البنكي للسداد</h4>
-                  <div style="font-size: 0.72rem; color: #1E40AF;">يرجى التحويل إلى الحساب المعتمد أدناه</div>
+                  <h4>بيانات وخيارات سداد رسوم الدورة</h4>
+                  <div style="font-size: 0.76rem; color: #1E40AF; margin-top: 2px;">اختر الحساب أو المحفظة الأنسب لك للتحويل أو الإيداع:</div>
                 </div>
               </div>
-              <span class="bank-badge">حساب معتمد</span>
+              <span class="bank-badge">3 خيارات معتمدة</span>
             </div>
 
-            <div class="bank-info-grid">
-              <div class="bank-info-item">
-                <div class="bank-info-label">اسم البنك:</div>
-                <div class="bank-info-val">بنك الكريمي للتمويل الأصغر الإسلامي</div>
-              </div>
+            <!-- 3 Accounts Grid -->
+            <div class="payment-accounts-grid">
 
-              <div class="bank-info-item">
-                <div class="bank-info-label">اسم صاحب الحساب:</div>
-                <div class="bank-info-val">منصة إتقان للمحتوى والتدريب</div>
-              </div>
-
-              <div class="bank-info-item">
-                <div class="bank-info-label">رقم الحساب:</div>
-                <div class="bank-info-val">
-                  <span id="bank-account-number" style="font-family: monospace; letter-spacing: 0.05em;">300 123 45678</span>
-                  <button type="button" class="btn-copy-account" id="btn-copy-bank-account" title="نسخ رقم الحساب">
-                    <i data-lucide="copy"></i>
-                    <span>نسخ</span>
-                  </button>
+              <!-- 1. بنك الكريمي -->
+              <div class="payment-account-card">
+                <div class="pay-card-top">
+                  <div class="pay-provider-badge kuraimi">
+                    <i data-lucide="building-2"></i>
+                    <span>بنك الكريمي</span>
+                  </div>
+                  <span class="pay-type-tag">حساب بنكي</span>
+                </div>
+                <div class="pay-card-body">
+                  <div class="pay-number-label">رقم الحساب:</div>
+                  <div class="pay-number-display">
+                    <span class="account-num-val" dir="ltr">3135900442</span>
+                    <button type="button" class="btn-copy-account" data-copy="3135900442" data-name="بنك الكريمي" title="نسخ رقم حساب الكريمي">
+                      <i data-lucide="copy"></i>
+                      <span>نسخ</span>
+                    </button>
+                  </div>
+                  <div class="pay-owner-name"><i data-lucide="user-check"></i> <span>صهيب سريج / منصة إتقان</span></div>
                 </div>
               </div>
 
-              <div class="bank-info-item">
-                <div class="bank-info-label">رقم الآيبان (IBAN):</div>
-                <div class="bank-info-val" style="font-family: monospace; font-size: 0.8rem;" dir="ltr">YE50 0001 0000 0300 1234 5678</div>
+              <!-- 2. شركة / صرافة الشرق -->
+              <div class="payment-account-card">
+                <div class="pay-card-top">
+                  <div class="pay-provider-badge sharq">
+                    <i data-lucide="landmark"></i>
+                    <span>الشرق (صرافة / بنك)</span>
+                  </div>
+                  <span class="pay-type-tag">تحويل مالي</span>
+                </div>
+                <div class="pay-card-body">
+                  <div class="pay-number-label">رقم الحساب:</div>
+                  <div class="pay-number-display">
+                    <span class="account-num-val" dir="ltr">411568012</span>
+                    <button type="button" class="btn-copy-account" data-copy="411568012" data-name="الشرق" title="نسخ رقم حساب الشرق">
+                      <i data-lucide="copy"></i>
+                      <span>نسخ</span>
+                    </button>
+                  </div>
+                  <div class="pay-owner-name"><i data-lucide="user-check"></i> <span>صهيب سريج / منصة إتقان</span></div>
+                </div>
               </div>
+
+              <!-- 3. محفظة شلن الإلكترونية -->
+              <div class="payment-account-card">
+                <div class="pay-card-top">
+                  <div class="pay-provider-badge shilin">
+                    <i data-lucide="smartphone"></i>
+                    <span>محفظة شِلن (Shilin)</span>
+                  </div>
+                  <span class="pay-type-tag">محفظة إلكترونية</span>
+                </div>
+                <div class="pay-card-body">
+                  <div class="pay-number-label">رقم المحفظة / الحساب:</div>
+                  <div class="pay-number-display">
+                    <span class="account-num-val" dir="ltr">600102402</span>
+                    <button type="button" class="btn-copy-account" data-copy="600102402" data-name="محفظة شلن" title="نسخ رقم محفظة شلن">
+                      <i data-lucide="copy"></i>
+                      <span>نسخ</span>
+                    </button>
+                  </div>
+                  <div class="pay-owner-name"><i data-lucide="user-check"></i> <span>صهيب سريج / منصة إتقان</span></div>
+                </div>
+              </div>
+
             </div>
 
             <div class="bank-note-alert">
               <i data-lucide="alert-circle"></i>
               <div>
-                <strong>تنبيه هام:</strong> بعد إتمام عملية التحويل أو الإيداع، يرجى الاحتفاظ بصورة أو مستند إشعار السداد (السند) ورفعه في الخانة المخصصة أدناه لإتمام طلب التسجيل.
+                <strong>تنبيه وتعليمات السداد:</strong> يمكنك سداد الرسوم باختيار <strong>أي من الحسابات الثلاثة أعلاه</strong>، وبعد إتمام التحويل أو الإيداع يرجى إرفاق صورة السند / إشعار التحويل بالأسفل لتأكيد حجز مقعدك مباشرة.
               </div>
             </div>
           </div>
