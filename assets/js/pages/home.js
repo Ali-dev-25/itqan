@@ -59,6 +59,17 @@ const HomePage = (() => {
           <span class="course-track-tag">${Helpers.escape(course.track)}</span>
           <h3 class="course-title">${Helpers.escape(course.title)}</h3>
           <p class="course-desc">${Helpers.escape(course.description)}</p>
+
+          ${course.topics && course.topics.length ? `
+            <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">
+              ${course.topics.map(topic => `
+                <li style="display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-xs); color: var(--clr-text-secondary); line-height: 1.5;">
+                  <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: ${course.color}; flex-shrink: 0; margin-top: 2px;"></i>
+                  <span>${Helpers.escape(topic)}</span>
+                </li>
+              `).join('')}
+            </ul>
+          ` : ''}
         </div>
 
         <div>
