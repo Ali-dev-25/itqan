@@ -94,19 +94,19 @@ class RegistrationSerializer(serializers.Serializer):
 
         # التحقق من نوع الملف
         allowed_types = [
-            'image/jpeg', 'image/jpg', 'image/png', 'application/pdf'
+            'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/pjpeg', 'application/pdf'
         ]
         if hasattr(value, 'content_type') and value.content_type.lower() not in allowed_types:
             raise serializers.ValidationError(
-                'صيغة الملف غير مدعومة. الصيغ المسموحة: JPG, PNG, PDF'
+                'صيغة الملف غير مدعومة. الصيغ المسموحة: JPG, PNG, WEBP, PDF'
             )
 
         # التحقق من الامتداد
-        allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf']
+        allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'pdf']
         ext = value.name.rsplit('.', 1)[-1].lower() if '.' in value.name else ''
         if ext not in allowed_extensions:
             raise serializers.ValidationError(
-                'امتداد الملف غير مدعوم. الامتدادات المسموحة: jpg, jpeg, png, pdf'
+                'امتداد الملف غير مدعوم. الامتدادات المسموحة: jpg, jpeg, png, webp, pdf'
             )
 
         return value

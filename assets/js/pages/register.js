@@ -170,10 +170,14 @@ const RegisterPage = (() => {
     const errorEl = document.getElementById('receipt-file-error');
     if (errorEl) errorEl.classList.remove('visible');
 
-    // 1. التحقق من نوع الملف
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-    if (!allowedTypes.includes(file.type.toLowerCase())) {
-      showFileError('صيغة الملف غير مدعومة. يرجى رفع صورة (JPG, PNG) أو مستند (PDF)');
+    // 1. التحقق من نوع وامتداد الملف
+    const ext = file.name.split('.').pop().toLowerCase();
+    const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/pjpeg', 'application/pdf'];
+    const isAllowed = allowedExts.includes(ext) || allowedTypes.includes(file.type.toLowerCase()) || file.type.startsWith('image/');
+
+    if (!isAllowed) {
+      showFileError('صيغة الملف غير مدعومة. يرجى رفع صورة (JPG, PNG, WEBP) أو مستند (PDF)');
       clearSelectedFile();
       return;
     }
@@ -198,13 +202,13 @@ const RegisterPage = (() => {
     if (sizeEl) sizeEl.textContent = formatFileSize(file.size);
 
     if (thumbContainer) {
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith('image/') || ['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          thumbContainer.innerHTML = `<img src="${e.target.result}" alt="معاينة سند الدفع" />`;
+          thumbContainer.innerHTML = `<img src="${e.target.result}" alt="معاينة سند الدفع" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;" />`;
         };
         reader.readAsDataURL(file);
-      } else if (file.type === 'application/pdf') {
+      } else if (file.type === 'application/pdf' || ext === 'pdf') {
         thumbContainer.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; color: #EF4444;">
             <i data-lucide="file-text" style="width: 26px; height: 26px;"></i>

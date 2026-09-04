@@ -15,7 +15,7 @@ const Api = (() => {
    */
   async function submitRegistration(formData) {
     try {
-      const response = await fetch(${API_BASE_URL}/api/v1/registrations/, {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/`, {
         method: 'POST',
         body: formData // يتم إرسال multipart/form-data تلقائياً
       });

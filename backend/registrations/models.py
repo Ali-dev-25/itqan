@@ -69,11 +69,11 @@ class Registration(models.Model):
         verbose_name='سند الدفع',
         validators=[
             FileExtensionValidator(
-                allowed_extensions=['jpg', 'jpeg', 'png', 'pdf'],
-                message='صيغة الملف غير مدعومة. الصيغ المسموحة: JPG, JPEG, PNG, PDF'
+                allowed_extensions=['jpg', 'jpeg', 'png', 'pdf', 'webp'],
+                message='صيغة الملف غير مدعومة. الصيغ المسموحة: JPG, JPEG, PNG, PDF, WEBP'
             )
         ],
-        help_text='صورة أو مستند سند الحوالة / الإيداع (JPG, PNG, PDF — حد أقصى 5MB)'
+        help_text='صورة أو مستند سند الحوالة / الإيداع (JPG, PNG, WEBP, PDF — حد أقصى 5MB)'
     )
 
     # حالة الطلب
