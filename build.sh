@@ -18,22 +18,19 @@ import os
 
 User = get_user_model()
 
-username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+username = os.environ.get("DJANGO_SUPERUSER_USERNAME") or "itqan_admin"
+email = os.environ.get("DJANGO_SUPERUSER_EMAIL") or "admin@itqan-platform.com"
+password = os.environ.get("DJANGO_SUPERUSER_PASSWORD") or "Itqan#Admin2026!Secure"
 
-if username and email and password:
-    if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password
-        )
-        print("✅ Superuser created successfully!")
-    else:
-        print("ℹ️ Superuser already exists.")
+u, created = User.objects.get_or_create(username=username, defaults={'email': email})
+u.set_password(password)
+u.is_superuser = True
+u.is_staff = True
+u.save()
+if created:
+    print("✅ Superuser created successfully!")
 else:
-    print("⚠️ Admin environment variables are not set.")
+    print("✅ Superuser updated successfully!")
 
 EOF
 
