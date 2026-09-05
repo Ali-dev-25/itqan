@@ -23,7 +23,7 @@ const Footer = (() => {
               </p>
               <div class="footer-social-links">
                 <!-- 1. فيسبوك -->
-                <a href="javascript:void(0)" class="social-icon-btn" aria-label="فيسبوك" title="فيسبوك">
+                <a href="https://www.facebook.com/share/1DXH5xnmeG/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="فيسبوك" title="صفحة منصة إتقان على فيسبوك">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
                   </svg>
@@ -125,6 +125,10 @@ const Footer = (() => {
                 <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #F472B6;">
                   <i data-lucide="instagram"></i>
                   <span>حساب انستغرام الرسمي</span>
+                </a>
+                <a href="https://www.facebook.com/share/1DXH5xnmeG/" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #60A5FA;">
+                  <i data-lucide="facebook"></i>
+                  <span>صفحة فيسبوك الرسمية</span>
                 </a>
               </div>
             </div>
