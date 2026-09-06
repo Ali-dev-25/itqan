@@ -79,6 +79,7 @@ const Footer = (() => {
                 <li><a href="index.html#hero"><i data-lucide="chevron-left"></i><span>الرئيسية</span></a></li>
                 <li><a href="index.html#about"><i data-lucide="chevron-left"></i><span>عن إتقان</span></a></li>
                 <li><a href="index.html#courses"><i data-lucide="chevron-left"></i><span>البرامج والدورات</span></a></li>
+                <li><a href="index.html#services"><i data-lucide="chevron-left"></i><span>خدماتنا البرمجية</span></a></li>
                 <li><a href="index.html#features"><i data-lucide="chevron-left"></i><span>مميزات المنصة</span></a></li>
                 <li><a href="index.html#how-it-works"><i data-lucide="chevron-left"></i><span>طريقة التسجيل</span></a></li>
               </ul>
@@ -98,9 +99,9 @@ const Footer = (() => {
 
             <!-- Column 4: Contact & Register -->
             <div class="footer-col">
-              <h4 class="footer-col-title">التسجيل والتواصل</h4>
+              <h4 class="footer-col-title">التسجيل وطلب المشاريع</h4>
               <p class="footer-subtext">
-                باب التسجيل مفتوح الآن في كافة البرامج التدريبية المتاحة.
+                التسجيل متاح في الدورات، كما نستقبل طلبات تطوير المواقع والأنظمة المخصصة.
               </p>
               <a href="register.html" class="btn-footer-cta">
                 <i data-lucide="user-plus"></i>

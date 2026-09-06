@@ -7,6 +7,7 @@ const Navbar = (() => {
     { label: 'الرئيسية', id: 'hero' },
     { label: 'عن إتقان', id: 'about' },
     { label: 'البرامج والدورات', id: 'courses' },
+    { label: 'خدماتنا البرمجية', id: 'services' },
     { label: 'المميزات', id: 'features' },
     { label: 'طريقة التسجيل', id: 'how-it-works' },
     { label: 'تواصل معنا', id: 'contact' },
