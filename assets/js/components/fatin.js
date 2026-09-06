@@ -407,6 +407,7 @@ window.Fatin = (() => {
     const sectionMap = {
       'about': window.FatinTour.about,
       'courses': window.FatinTour.courses,
+      'services': window.FatinTour.services,
       'features': window.FatinTour.features,
       'how-it-works': window.FatinTour.registration,
       'contact': window.FatinTour.goodbye

@@ -75,7 +75,24 @@ window.FatinTour = {
     ]
   },
 
-  // المشهد 5 (3 - 7): مميزات المنصة
+  // المشهد 5: الخدمات البرمجية وتطوير الأنظمة
+  services: {
+    id: 'services',
+    target: '#services',
+    sectionId: 'services',
+    pose: 'pointing.webp',
+    title: 'خدماتنا البرمجية وتطوير الأنظمة 💻',
+    audio: 'assets/audio/fatin/scene_services.mp3?v=5',
+    message: 'إلى جانب التدريب، فريق إتقان البرمجي جاهز لتصميم وتطوير مواقع الويب والأنظمة الإدارية والمحاسبية المخصصة لشركاتكم ومشاريعكم بأعلى معايير الجودة والأمان!',
+    timeline: [
+      { time: 0.0, pose: 'pointing.webp', gesture: 'gesture-point', phrase: 'إلى جانب التدريب،' },
+      { time: 1.5, pose: 'learning.webp', gesture: 'gesture-explain', phrase: 'فريق إتقان البرمجي جاهز لتصميم وتطوير' },
+      { time: 3.6, pose: 'pointing.webp', gesture: 'gesture-forward', phrase: 'مواقع الويب والأنظمة الإدارية والمحاسبية' },
+      { time: 6.0, pose: 'greeting.webp', gesture: 'gesture-welcome', phrase: 'لشركاتكم ومشاريعكم بأعلى معايير الجودة والأمان!' }
+    ]
+  },
+
+  // المشهد 6: مميزات المنصة
   features: {
     id: 'features',
     target: '#features',
@@ -168,6 +185,7 @@ window.FatinTour = {
 window.FatinTourSteps = [
   window.FatinTour.about,
   window.FatinTour.courses,
+  window.FatinTour.services,
   window.FatinTour.features,
   window.FatinTour.registration,
   window.FatinTour.payment,
