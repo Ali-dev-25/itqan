@@ -93,6 +93,23 @@ const HomePage = (() => {
             </div>
           ` : ''}
 
+          ${course.durationDetails ? `
+            <div style="background: var(--clr-surface-alt, #F8FAFC); border: 1px solid var(--clr-border, #E2E8F0); border-radius: var(--r-md); padding: 9px 13px; margin-bottom: var(--sp-4); display: flex; flex-direction: column; gap: 4px;">
+              <div style="font-size: 0.73rem; font-weight: 700; color: ${course.color}; display: flex; align-items: center; gap: 5px;">
+                <i data-lucide="calendar-clock" style="width: 13px; height: 13px;"></i>
+                <span>تفصيل الخطة الزمنية:</span>
+              </div>
+              <div style="font-size: 0.71rem; color: var(--clr-text-secondary); display: flex; align-items: center; gap: 6px;">
+                <span style="width: 5px; height: 5px; border-radius: 50%; background: ${course.color}; flex-shrink: 0;"></span>
+                <span>${Helpers.escape(course.durationDetails.part1)}</span>
+              </div>
+              <div style="font-size: 0.71rem; color: var(--clr-text-secondary); display: flex; align-items: center; gap: 6px;">
+                <span style="width: 5px; height: 5px; border-radius: 50%; background: ${course.color}; flex-shrink: 0;"></span>
+                <span>${Helpers.escape(course.durationDetails.part2)}</span>
+              </div>
+            </div>
+          ` : ''}
+
           ${course.topics && course.topics.length ? `
             <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">
               ${course.topics.map(topic => `
