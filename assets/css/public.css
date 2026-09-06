@@ -1180,7 +1180,7 @@
    -------------------------------------------------------------------------- */
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-6);
   margin-bottom: var(--sp-10);
 }
@@ -1189,42 +1189,30 @@
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
   border-radius: var(--r-2xl);
-  padding: var(--sp-7);
+  padding: 26px 28px;
   display: flex;
   flex-direction: column;
   transition: transform var(--tr-normal), box-shadow var(--tr-normal), border-color var(--tr-normal);
   position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.service-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--service-color, var(--clr-primary));
-  opacity: 0.85;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
-  border-color: rgba(37, 99, 235, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px -6px rgba(15, 23, 42, 0.08);
+  border-color: rgba(37, 99, 235, 0.3);
 }
 
 .service-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--sp-5);
+  margin-bottom: 16px;
 }
 
 .service-icon-box {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--r-xl);
   display: flex;
   align-items: center;
@@ -1233,50 +1221,52 @@
 }
 
 .service-icon-box svg {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 .service-badge {
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-bold);
-  padding: 4px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 12px;
   border-radius: var(--r-full);
 }
 
 .service-title {
-  font-size: var(--fs-lg);
-  font-weight: var(--fw-bold);
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--clr-text);
-  margin-bottom: var(--sp-3);
-  line-height: 1.35;
+  margin-bottom: 8px;
+  line-height: 1.4;
 }
 
 .service-desc {
-  font-size: var(--fs-sm);
+  font-size: 0.88rem;
   color: var(--clr-text-secondary);
-  line-height: 1.7;
-  margin-bottom: var(--sp-5);
+  line-height: 1.75;
+  margin-bottom: 18px;
   flex-grow: 1;
 }
 
 .service-tags-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   margin-top: auto;
-  padding-top: var(--sp-4);
-  border-top: 1px dashed var(--clr-border);
+  padding-top: 14px;
 }
 
 .service-tag-pill {
-  font-size: 0.73rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--clr-text-secondary);
-  background: var(--clr-surface-alt, #F8FAFC);
-  padding: 3px 8px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--clr-border);
+  background: var(--clr-surface-alt, #F1F5F9);
+  padding: 5px 12px;
+  border-radius: var(--r-full);
+  border: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Software CTA Banner */
