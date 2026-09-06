@@ -33,7 +33,7 @@ const Helpers = (() => {
         ${iconHtml}
         <div style="display: flex; flex-direction: column; text-align: right;">
           <span style="font-size: 1.25rem; font-weight: 800; color: ${textColor}; line-height: 1.2; letter-spacing: -0.02em;">إتـقـان</span>
-          <span style="font-size: 0.72rem; font-weight: 600; color: ${subtextColor};">للمحتوى التقني التعليمي</span>
+          <span style="font-size: 0.72rem; font-weight: 600; color: ${subtextColor};">للمحتوى التعليمي والتقني</span>
         </div>
       </div>
     `;

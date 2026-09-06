@@ -139,7 +139,7 @@ const Footer = (() => {
           <!-- Bottom Copyright Bar -->
           <div class="footer-bottom-bar">
             <p class="copyright-text">
-              جميع الحقوق محفوظة © <span id="copyright-year">2026</span> منصة «إتقان» للمحتوى التقني التعليمي.
+              جميع الحقوق محفوظة © <span id="copyright-year">2026</span> منصة «إتقان» للمحتوى التعليمي والتقني.
             </p>
             <div class="footer-bottom-links">
               <a href="javascript:void(0)">الشروط والأحكام</a>
