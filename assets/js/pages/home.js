@@ -24,11 +24,23 @@ const HomePage = (() => {
     const container = document.getElementById('courses-grid-container');
     if (!container || typeof CoursesData === 'undefined') return;
 
+    // استثناء TechLingo من الشبكة العلوية لأن له بطاقة عرض متكاملة ومستقلة بالأسفل مباشرة
+    const availableCourses = CoursesData.filter(c => c.id !== 'C005_TECHLINGO');
+
     const filtered = activeTrack === 'all'
-      ? CoursesData
-      : CoursesData.filter(c => c.trackKey === activeTrack);
+      ? availableCourses
+      : availableCourses.filter(c => {
+          if (activeTrack === 'programming') return c.trackKey === 'programming';
+          if (activeTrack === 'ai') return c.trackKey === 'ai' || (c.tracksOptions && c.tracksOptions.some(t => t.id === 'ai'));
+          return c.trackKey === activeTrack;
+        });
 
     if (filtered.length === 0) {
+      if (activeTrack === 'languages') {
+        // في حالة مسار اللغات، بطاقة TechLingo بالأسفل تكفي تماماً
+        container.innerHTML = '';
+        return;
+      }
       container.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 48px; background: var(--clr-surface); border-radius: var(--r-2xl); border: 1px solid var(--clr-border);">
           <div style="width: 56px; height: 56px; border-radius: var(--r-full); background: var(--clr-primary-light); color: var(--clr-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
@@ -42,7 +54,11 @@ const HomePage = (() => {
       return;
     }
 
-    const html = filtered.map(course => `
+    const html = filtered.map(course => {
+      const isDiploma = course.badge && course.badge.includes('دبلوم');
+      const actionText = isDiploma ? 'سجل في هذا الدبلوم' : 'سجل في هذه الدورة';
+
+      return `
       <div class="course-card" data-track="${course.trackKey}">
         <div>
           <div class="course-card-top">
@@ -59,6 +75,23 @@ const HomePage = (() => {
           <span class="course-track-tag">${Helpers.escape(course.track)}</span>
           <h3 class="course-title">${Helpers.escape(course.title)}</h3>
           <p class="course-desc">${Helpers.escape(course.description)}</p>
+
+          ${course.tracksOptions && course.tracksOptions.length ? `
+            <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: var(--r-md); padding: 10px 14px; margin-bottom: var(--sp-4);">
+              <div style="font-size: 0.74rem; font-weight: 700; color: #166534; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="git-branch" style="width: 13px; height: 13px; color: #10B981;"></i>
+                <span>المساران التخصصيان المتاحان (يحدد الطالب أحدهما):</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 5px;">
+                ${course.tracksOptions.map(t => `
+                  <div style="font-size: 0.72rem; color: #15803D; display: flex; align-items: center; gap: 6px;">
+                    <span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; flex-shrink: 0;"></span>
+                    <span>${Helpers.escape(t.title)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
 
           ${course.topics && course.topics.length ? `
             <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">
@@ -86,13 +119,14 @@ const HomePage = (() => {
 
           <div class="course-card-footer">
             <a href="register.html?course=${course.id}" class="btn-course-register">
-              <span>سجل في هذه الدورة</span>
+              <span>${actionText}</span>
               <i data-lucide="arrow-left"></i>
             </a>
           </div>
         </div>
       </div>
-    `).join('');
+      `;
+    }).join('');
 
     container.innerHTML = html;
     if (window.lucide) {

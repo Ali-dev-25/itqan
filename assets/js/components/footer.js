@@ -86,12 +86,13 @@ const Footer = (() => {
 
             <!-- Column 3: Featured Tracks -->
             <div class="footer-col">
-              <h4 class="footer-col-title">المسارات التدريبية</h4>
+              <h4 class="footer-col-title">الدبلومات والبرامج التدريبية</h4>
               <ul class="footer-links-list">
-                <li><a href="register.html?course=C001"><i data-lucide="chevron-left"></i><span>دبلوم البرمجة بلغة C++</span></a></li>
-                <li><a href="register.html?course=C002"><i data-lucide="chevron-left"></i><span>دبلوم بايثون والمسارات التخصصية</span></a></li>
-                <li><a href="register.html?course=C003"><i data-lucide="chevron-left"></i><span>إنجليزية تخصصية للحاسوب (IT English)</span></a></li>
-                <li><a href="register.html?course=C004"><i data-lucide="chevron-left"></i><span>استخدام نماذج الذكاء الاصطناعي</span></a></li>
+                <li><a href="register.html?course=C001_CPP"><i data-lucide="chevron-left"></i><span>دبلوم البرمجة بلغة C++</span></a></li>
+                <li><a href="register.html?course=C002_PYTHON"><i data-lucide="chevron-left"></i><span>دبلوم بايثون (مساران تخصصيان)</span></a></li>
+                <li><a href="register.html?course=C003_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
+                <li><a href="register.html?course=C004_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
+                <li><a href="register.html?course=C005_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
               </ul>
             </div>
 

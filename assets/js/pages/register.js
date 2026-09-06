@@ -24,24 +24,76 @@ const RegisterPage = (() => {
     const select = document.getElementById('student-course-select');
     if (!select || typeof CoursesData === 'undefined') return;
 
-    let optionsHtml = '<option value="">-- اختر البرنامج / الدورة التدريبية * --</option>';
+    let optionsHtml = '<option value="">-- اختر الدبلوم أو البرنامج التدريبي * --</option>';
     CoursesData.forEach(c => {
-      optionsHtml += `<option value="${c.id}" data-title="${Helpers.escape(c.title)}">${Helpers.escape(c.title)} (${c.duration})</option>`;
+      const typeBadge = c.badge && c.badge.includes('دبلوم') ? '🎓 دبلوم' : '📘 دورة';
+      optionsHtml += `<option value="${c.id}" data-title="${Helpers.escape(c.title)}">${typeBadge}: ${Helpers.escape(c.title)} (${c.duration})</option>`;
     });
 
     select.innerHTML = optionsHtml;
   }
 
   /**
-   * قراءة معرف الدورة من الرابط إن وجد (مثل: register.html?course=C001)
+   * قراءة معرف الدورة والمسار من الرابط إن وجد
    */
   function checkUrlCourseParam() {
     const urlParams = new URLSearchParams(window.location.search);
-    const courseParam = urlParams.get('course');
+    let courseParam = urlParams.get('course');
+    const trackParam = urlParams.get('track');
+
     if (courseParam) {
+      // تطابق وتوافق خلفي لكافة الروابط القديمة والجديدة
+      if (courseParam.startsWith('C001') || courseParam.includes('CPP')) {
+        if (courseParam === 'C001_CPP_SQL') {
+          courseParam = 'C003_SQL';
+        } else {
+          courseParam = 'C001_CPP';
+        }
+      } else if (courseParam.startsWith('C002') || courseParam.includes('PY') || courseParam.includes('PYTHON')) {
+        const isDesktop = courseParam.includes('DESKTOP');
+        const isAI = courseParam.includes('AI');
+        courseParam = 'C002_PYTHON';
+        setTimeout(() => {
+          const trackSelect = document.getElementById('python-track-select');
+          if (trackSelect) {
+            if (isDesktop || trackParam === 'desktop') trackSelect.value = 'desktop';
+            else if (isAI || trackParam === 'ai') trackSelect.value = 'ai';
+          }
+        }, 50);
+      } else if (courseParam === 'C003' || courseParam === 'C005' || courseParam.includes('TECHLINGO')) {
+        courseParam = 'C005_TECHLINGO';
+      } else if (courseParam.includes('SQL')) {
+        courseParam = 'C003_SQL';
+      } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C004') {
+        courseParam = 'C004_AI_PROMPT';
+      }
+
       const select = document.getElementById('student-course-select');
       if (select) {
         select.value = courseParam;
+        togglePythonTrack(courseParam);
+      }
+    }
+  }
+
+  /**
+   * إظهار أو إخفاء محدد المسار التخصصي لدبلوم بايثون
+   */
+  function togglePythonTrack(courseId) {
+    const trackGroup = document.getElementById('python-track-group');
+    const trackSelect = document.getElementById('python-track-select');
+    if (!trackGroup) return;
+
+    if (courseId === 'C002_PYTHON') {
+      trackGroup.style.display = 'block';
+      if (window.lucide) lucide.createIcons({ root: trackGroup });
+    } else {
+      trackGroup.style.display = 'none';
+      if (trackSelect) {
+        trackSelect.value = '';
+        trackSelect.classList.remove('is-invalid');
+        const err = document.getElementById('python-track-select-error');
+        if (err) err.classList.remove('visible');
       }
     }
   }
@@ -124,6 +176,25 @@ const RegisterPage = (() => {
       removeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         clearSelectedFile();
+      });
+    }
+
+    // ربط تغيير الدورة لإظهار أو إخفاء مسار بايثون التخصصي
+    const courseSelect = document.getElementById('student-course-select');
+    if (courseSelect) {
+      courseSelect.addEventListener('change', (e) => {
+        togglePythonTrack(e.target.value);
+      });
+    }
+
+    const pythonTrackSelect = document.getElementById('python-track-select');
+    if (pythonTrackSelect) {
+      pythonTrackSelect.addEventListener('change', () => {
+        if (pythonTrackSelect.value) {
+          pythonTrackSelect.classList.remove('is-invalid');
+          const err = document.getElementById('python-track-select-error');
+          if (err) err.classList.remove('visible');
+        }
       });
     }
 
@@ -278,6 +349,12 @@ const RegisterPage = (() => {
     if (!course.value) {
       showFieldError('student-course-select', 'يرجى اختيار الدورة أو البرنامج التدريبي المطلوب');
       isValid = false;
+    } else if (course.value === 'C002_PYTHON') {
+      const trackSelect = document.getElementById('python-track-select');
+      if (!trackSelect || !trackSelect.value) {
+        showFieldError('python-track-select', 'يرجى تحديد أحد المسارين التخصصيين لدبلوم بايثون');
+        isValid = false;
+      }
     }
 
     // 4. سند الدفع
@@ -324,12 +401,25 @@ const RegisterPage = (() => {
     // 1. تجهيز الـ FormData لإرسالها كـ multipart/form-data
     const formData = new FormData();
     const courseSelect = document.getElementById('student-course-select');
-    const selectedCourseTitle = courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
+    let selectedCourseId = courseSelect.value;
+    let selectedCourseTitle = courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
+
+    if (selectedCourseId === 'C002_PYTHON') {
+      const trackSelect = document.getElementById('python-track-select');
+      const trackVal = trackSelect ? trackSelect.value : '';
+      if (trackVal === 'desktop') {
+        selectedCourseId = 'C002_PYTHON_DESKTOP';
+        selectedCourseTitle = 'دبلوم لغة بايثون التخصصي (مسار تطبيقات سطح المكتب GUI)';
+      } else if (trackVal === 'ai') {
+        selectedCourseId = 'C002_PYTHON_AI';
+        selectedCourseTitle = 'دبلوم لغة بايثون التخصصي (مسار الذكاء الاصطناعي والبيانات AI)';
+      }
+    }
 
     formData.append('fullNameAr', document.getElementById('student-name-ar').value.trim());
     formData.append('fullNameEn', document.getElementById('student-name-en').value.trim());
     formData.append('phone', document.getElementById('student-phone').value.trim());
-    formData.append('courseId', courseSelect.value);
+    formData.append('courseId', selectedCourseId);
     formData.append('courseTitle', selectedCourseTitle);
     formData.append('birthDate', document.getElementById('student-birth-date').value);
     formData.append('birthPlace', document.getElementById('student-birth-place').value.trim());
@@ -341,7 +431,7 @@ const RegisterPage = (() => {
 
       if (response && response.success) {
         // 3. عرض شاشة النجاح وتحديث بياناتها
-        showSuccessModal(response);
+        showSuccessModal(response, selectedCourseTitle);
       } else {
         Toast.error(response?.message || 'تعذر إرسال الطلب، يرجى المحاولة مرة أخرى');
       }
@@ -357,13 +447,13 @@ const RegisterPage = (() => {
   /**
    * عرض شاشة تأكيد النجاح
    */
-  function showSuccessModal(response) {
+  function showSuccessModal(response, customCourseTitle = null) {
     const modal = document.getElementById('registration-success-modal');
     if (!modal) return;
 
     const studentName = document.getElementById('student-name-ar').value.trim();
     const courseSelect = document.getElementById('student-course-select');
-    const courseTitle = courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
+    const courseTitle = customCourseTitle || courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
     const phone = document.getElementById('student-phone').value.trim();
 
     // تحديث بيانات الإيصال

@@ -107,16 +107,36 @@
 
             <div class="form-group">
               <label class="form-label" for="student-course-select">
-                <span class="req">*</span> الدورة / البرنامج التدريبي المطلوب:
+                <span class="req">*</span> الدورة / الدبلوم التدريبي المطلوب:
               </label>
               <div class="input-wrap">
                 <select id="student-course-select" class="form-select" required>
-                  <option value="">-- اختر البرنامج التدريبي * --</option>
+                  <option value="">-- اختر الدبلوم أو البرنامج التدريبي * --</option>
                   <!-- Injected dynamically via register.js -->
                 </select>
                 <span class="input-icon"><i data-lucide="book-open"></i></span>
               </div>
               <div class="form-error" id="student-course-select-error"></div>
+            </div>
+          </div>
+
+          <!-- Python Track Selector (Conditional) -->
+          <div class="form-group" id="python-track-group" style="display: none; margin-top: -4px; margin-bottom: var(--sp-4); background: #F0FDF4; border: 1.5px dashed #10B981; padding: 14px 18px; border-radius: var(--r-xl); transition: all 0.3s ease;">
+            <label class="form-label" for="python-track-select" style="color: #065F46; font-weight: 700; margin-bottom: 8px;">
+              <span class="req">*</span> حدد المسار التخصصي المطلوب في دبلوم بايثون:
+            </label>
+            <div class="input-wrap">
+              <select id="python-track-select" class="form-select" style="background: white; border-color: #10B981;">
+                <option value="">-- اختر المسار المطلوب في دبلوم بايثون * --</option>
+                <option value="desktop">🖥️ مسار تطوير تطبيقات سطح المكتب والواجهات الرسومية (PyQt / GUI)</option>
+                <option value="ai">🤖 مسار الذكاء الاصطناعي وتحليل البيانات والتعلم الآلي (AI & ML)</option>
+              </select>
+              <span class="input-icon" style="color: #10B981;"><i data-lucide="git-branch"></i></span>
+            </div>
+            <div class="form-error" id="python-track-select-error"></div>
+            <div style="font-size: 0.78rem; color: #047857; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="info" style="width: 14px; height: 14px; flex-shrink: 0;"></i>
+              <span>يشمل الدبلوم تأسيس لغة بايثون أولاً، ثم التخصص في المسار المحدد مع مشروع تخرج عملي معتمد.</span>
             </div>
           </div>
 
