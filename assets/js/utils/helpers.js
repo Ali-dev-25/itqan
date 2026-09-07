@@ -23,7 +23,7 @@ const Helpers = (() => {
     const logoSrc = variant === 'footer' ? 'assets/images/logo-footer.png?v=13' : 'assets/images/logo.png?v=13';
 
     const iconHtml = `
-      <img src="${logoSrc}" alt="شعار منصة إتقان" width="${size}" height="${size}" style="width: ${size}px; height: ${size}px; object-fit: contain; flex-shrink: 0;" />
+      <img src="${logoSrc}" alt="شعار منصة إتقان — ITQAN Platform" width="${size}" height="${size}" style="width: ${size}px; height: ${size}px; object-fit: contain; flex-shrink: 0;" />
     `;
 
     if (!withText) return iconHtml;

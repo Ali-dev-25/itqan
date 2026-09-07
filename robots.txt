@@ -1,0 +1,11 @@
+# Robots.txt for ITQAN Platform (منصة إتقان)
+# https://itqan-platform.com
+
+User-agent: *
+Allow: /
+Disallow: /backend/
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap Location
+Sitemap: https://itqan-platform.com/sitemap.xml

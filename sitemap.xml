@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- 1. Main Landing Page (ITQAN Platform) -->
+  <url>
+    <loc>https://itqan-platform.com/</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://itqan-platform.com/assets/images/logo.png</image:loc>
+      <image:title>منصة إتقان للتعليم والتدريب التقني - ITQAN Platform</image:title>
+    </image:image>
+  </url>
+
+  <!-- 2. Main Page alias -->
+  <url>
+    <loc>https://itqan-platform.com/index.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- 3. Electronic Registration Page -->
+  <url>
+    <loc>https://itqan-platform.com/register.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- 4. Interactive Assistant Fatin -->
+  <url>
+    <loc>https://itqan-platform.com/fatin.html</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>
