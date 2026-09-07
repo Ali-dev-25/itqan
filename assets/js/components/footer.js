@@ -23,50 +23,44 @@ const Footer = (() => {
               </p>
               <div class="footer-social-links">
                 <!-- 1. فيسبوك -->
-                <a href="https://www.facebook.com/share/1DXH5xnmeG/" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="فيسبوك" title="صفحة منصة إتقان على فيسبوك">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                <a href="https://www.facebook.com/share/1DXH5xnmeG/" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-facebook" aria-label="فيسبوك" title="صفحة منصة إتقان على فيسبوك">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
                 
                 <!-- 2. قناة واتساب -->
-                <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="قناة الواتساب" title="قناة منصة إتقان على واتساب">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"></path>
-                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"></path>
+                <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-whatsapp" aria-label="قناة الواتساب" title="قناة منصة إتقان على واتساب">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.062-2.115-.526-1.815-.751-2.985-2.597-3.076-2.717-.09-.121-.734-.977-.734-1.86 0-.884.464-1.32.63-1.498.167-.179.364-.224.486-.224.12 0 .241.002.346.007.11.005.257-.042.403.308.15.36.512 1.246.557 1.337.045.09.076.196.015.316-.06.12-.09.196-.18.301-.091.106-.192.237-.274.318-.091.091-.186.19-.08.373.106.183.47.775 1.011 1.256.697.62 1.284.812 1.467.903.182.09.289.076.395-.046.106-.12.454-.528.575-.709.12-.18.241-.15.405-.09.164.06 1.042.492 1.22.582.179.09.298.136.342.211.045.076.045.437-.099.842zM12 0C5.373 0 0 5.373 0 12c0 2.116.55 4.103 1.517 5.832L0 24l6.335-1.482A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.848 0-3.578-.506-5.068-1.385l-.364-.216-3.757.878.899-3.66-.236-.376A9.943 9.943 0 012 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/>
                   </svg>
                 </a>
 
                 <!-- 3. انستغرام -->
-                <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="انستغرام" title="حساب الانستغرام الرسمي">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-instagram" aria-label="انستغرام" title="حساب الانستغرام الرسمي">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                   </svg>
                 </a>
 
                 <!-- 4. قناة تيليجرام -->
-                <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="قناة التيليجرام" title="قناة منصة إتقان على تيليجرام">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-telegram" aria-label="قناة التيليجرام" title="قناة منصة إتقان على تيليجرام">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.538-.196 1.006.128.832.943z"/>
                   </svg>
                 </a>
 
                 <!-- 5. لينكد إن -->
-                <a href="javascript:void(0)" class="social-icon-btn" aria-label="لينكد إن" title="لينكد إن">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
+                <a href="javascript:void(0)" class="social-icon-btn social-linkedin" aria-label="لينكد إن" title="لينكد إن">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
                   </svg>
                 </a>
 
                 <!-- 6. جيت هب -->
-                <a href="javascript:void(0)" class="social-icon-btn" aria-label="جيت هب" title="جيت هب">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                <a href="javascript:void(0)" class="social-icon-btn social-github" aria-label="جيت هب" title="جيت هب">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                   </svg>
                 </a>
               </div>
@@ -89,11 +83,12 @@ const Footer = (() => {
             <div class="footer-col">
               <h4 class="footer-col-title">الدبلومات والبرامج التدريبية</h4>
               <ul class="footer-links-list">
-                <li><a href="register.html?course=C001_CPP"><i data-lucide="chevron-left"></i><span>دبلوم البرمجة بلغة C++</span></a></li>
-                <li><a href="register.html?course=C002_PYTHON"><i data-lucide="chevron-left"></i><span>دبلوم بايثون (مساران تخصصيان)</span></a></li>
-                <li><a href="register.html?course=C003_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
-                <li><a href="register.html?course=C004_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
-                <li><a href="register.html?course=C005_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
+                <li><a href="register.html?course=C001_CPP_BASICS"><i data-lucide="chevron-left"></i><span>دورة أساسيات البرمجة بلغة C++</span></a></li>
+                <li><a href="register.html?course=C002_CPP_OOP"><i data-lucide="chevron-left"></i><span>دورة البرمجة كائنية التوجه C++ OOP</span></a></li>
+                <li><a href="register.html?course=C003_PYTHON"><i data-lucide="chevron-left"></i><span>دبلوم بايثون (مساران تخصصيان)</span></a></li>
+                <li><a href="register.html?course=C004_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
+                <li><a href="register.html?course=C005_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
+                <li><a href="register.html?course=C006_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
               </ul>
             </div>
 

@@ -236,6 +236,22 @@
   height: 18px;
 }
 
+.mobile-drawer-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-4);
+  border-top: 1px dashed var(--clr-border);
+}
+
+.mobile-drawer-socials .social-icon-btn {
+  background: var(--clr-surface-alt, #F1F5F9);
+  color: var(--clr-text-secondary, #475569);
+  border: 1px solid var(--clr-border);
+}
+
 .mobile-overlay {
   position: fixed;
   inset: 0;
@@ -726,7 +742,140 @@
   font-size: var(--fs-sm);
   color: var(--clr-text-secondary);
   line-height: 1.7;
-  margin-bottom: var(--sp-5);
+  margin-bottom: var(--sp-4);
+}
+
+/* Course Pricing Box */
+.course-price-card {
+  background: var(--clr-surface-alt, #F8FAFC);
+  border: 1px solid var(--clr-border, #E2E8F0);
+  border-radius: var(--r-xl);
+  padding: 10px 12px;
+  margin-bottom: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-pills-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.price-pill {
+  background: #FFFFFF;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.price-pill.in-person {
+  border-color: #BFDBFE;
+  background: #EFF6FF;
+}
+
+.price-pill.online {
+  border-color: #BBF7D0;
+  background: #F0FDF4;
+}
+
+.price-pill.flat-pill {
+  grid-column: 1 / -1;
+  background: #FFFBEB;
+  border-color: #FDE68A;
+}
+
+.price-pill-lbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--clr-text-secondary);
+  margin-bottom: 2px;
+}
+
+.price-pill-nums {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.price-curr {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--clr-text);
+}
+
+.price-curr.highlight-amber {
+  color: #D97706;
+}
+
+.price-orig {
+  font-size: 0.7rem;
+  color: #94A3B8;
+  text-decoration: line-through;
+}
+
+.price-phases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.price-phase-row {
+  background: #FFFFFF;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-md);
+  padding: 6px 8px;
+  font-size: 0.72rem;
+}
+
+.phase-title {
+  font-weight: 700;
+  color: var(--clr-text);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.phase-nums {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--clr-text-secondary);
+  font-size: 0.71rem;
+  flex-wrap: wrap;
+}
+
+.phase-nums del {
+  color: #94A3B8;
+  font-size: 0.65rem;
+}
+
+.phase-sep {
+  color: #CBD5E1;
+}
+
+.price-cert-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.08);
+  padding: 4px 8px;
+  border-radius: var(--r-md);
+}
+
+.price-cert-badge svg {
+  width: 14px;
+  height: 14px;
 }
 
 .course-meta-row {
@@ -1672,6 +1821,48 @@
   background: var(--clr-primary);
   color: #FFFFFF;
   transform: translateY(-2px);
+}
+
+.social-icon-btn.social-facebook:hover {
+  background: #1877F2;
+  color: #FFFFFF;
+  border-color: #1877F2;
+  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.4);
+}
+
+.social-icon-btn.social-instagram:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(225, 48, 108, 0.4);
+}
+
+.social-icon-btn.social-whatsapp:hover {
+  background: #25D366;
+  color: #FFFFFF;
+  border-color: #25D366;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
+}
+
+.social-icon-btn.social-telegram:hover {
+  background: #229ED9;
+  color: #FFFFFF;
+  border-color: #229ED9;
+  box-shadow: 0 4px 14px rgba(34, 158, 217, 0.4);
+}
+
+.social-icon-btn.social-linkedin:hover {
+  background: #0A66C2;
+  color: #FFFFFF;
+  border-color: #0A66C2;
+  box-shadow: 0 4px 14px rgba(10, 102, 194, 0.4);
+}
+
+.social-icon-btn.social-github:hover {
+  background: #24292e;
+  color: #FFFFFF;
+  border-color: #24292e;
+  box-shadow: 0 4px 14px rgba(36, 41, 46, 0.4);
 }
 
 .social-icon-btn svg {

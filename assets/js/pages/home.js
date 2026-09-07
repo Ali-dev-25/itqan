@@ -20,12 +20,97 @@ const HomePage = (() => {
     }
   }
 
+  function getCoursePriceHTML(course) {
+    if (!course.pricing) return '';
+
+    if (course.pricing.type === 'standard') {
+      const inP = course.pricing.inPerson;
+      const onL = course.pricing.online;
+      return `
+        <div class="course-price-card">
+          <div class="price-pills-row">
+            <div class="price-pill in-person">
+              <span class="price-pill-lbl">حضوري بالمقر</span>
+              <div class="price-pill-nums">
+                <span class="price-curr">${Helpers.formatCurrency(inP.current)}</span>
+                ${inP.original > inP.current ? `<del class="price-orig">${Helpers.formatCurrency(inP.original)}</del>` : ''}
+              </div>
+            </div>
+            <div class="price-pill online">
+              <span class="price-pill-lbl">أونلاين (Online)</span>
+              <div class="price-pill-nums">
+                <span class="price-curr">${Helpers.formatCurrency(onL.current)}</span>
+                ${onL.original > onL.current ? `<del class="price-orig">${Helpers.formatCurrency(onL.original)}</del>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="price-cert-badge">
+            <i data-lucide="award"></i>
+            <span>${course.pricing.certificate || 'شاملة الشهادة المعتمدة'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    if (course.pricing.type === 'phases') {
+      const p1 = course.pricing.phase1;
+      const p2 = course.pricing.phase2;
+      return `
+        <div class="course-price-card">
+          <div class="price-phases-list">
+            <div class="price-phase-row">
+              <div class="phase-title">📌 ${p1.name}:</div>
+              <div class="phase-nums">
+                <span>حضوري: <strong>${Helpers.formatCurrency(p1.inPerson.current)}</strong> <del>${Helpers.formatCurrency(p1.inPerson.original)}</del></span>
+                <span class="phase-sep">•</span>
+                <span>أونلاين: <strong>${Helpers.formatCurrency(p1.online.current)}</strong> <del>${Helpers.formatCurrency(p1.online.original)}</del></span>
+              </div>
+            </div>
+            <div class="price-phase-row">
+              <div class="phase-title">📌 ${p2.name}:</div>
+              <div class="phase-nums">
+                <span>حضوري: <strong>${Helpers.formatCurrency(p2.inPerson.current)}</strong> <del>${Helpers.formatCurrency(p2.inPerson.original)}</del></span>
+                <span class="phase-sep">•</span>
+                <span>أونلاين: <strong>${Helpers.formatCurrency(p2.online.current)}</strong></span>
+              </div>
+            </div>
+          </div>
+          <div class="price-cert-badge">
+            <i data-lucide="award"></i>
+            <span>${course.pricing.certificate || 'شاملة الشهادة المعتمدة'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    if (course.pricing.type === 'flat') {
+      return `
+        <div class="course-price-card">
+          <div class="price-pills-row">
+            <div class="price-pill flat-pill">
+              <span class="price-pill-lbl">رسوم الدورة (حضوري أو Online)</span>
+              <div class="price-pill-nums">
+                <span class="price-curr highlight-amber">${Helpers.formatCurrency(course.pricing.amount)} فقط</span>
+              </div>
+            </div>
+          </div>
+          <div class="price-cert-badge">
+            <i data-lucide="award"></i>
+            <span>${course.pricing.certificate || 'شاملة الشهادة المعتمدة'}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    return '';
+  }
+
   function renderCourses() {
     const container = document.getElementById('courses-grid-container');
     if (!container || typeof CoursesData === 'undefined') return;
 
     // استثناء TechLingo من الشبكة العلوية لأن له بطاقة عرض متكاملة ومستقلة بالأسفل مباشرة
-    const availableCourses = CoursesData.filter(c => c.id !== 'C005_TECHLINGO');
+    const availableCourses = CoursesData.filter(c => !c.id.includes('TECHLINGO'));
 
     const filtered = activeTrack === 'all'
       ? availableCourses
@@ -37,7 +122,6 @@ const HomePage = (() => {
 
     if (filtered.length === 0) {
       if (activeTrack === 'languages') {
-        // في حالة مسار اللغات، بطاقة TechLingo بالأسفل تكفي تماماً
         container.innerHTML = '';
         return;
       }
@@ -109,6 +193,9 @@ const HomePage = (() => {
               </div>
             </div>
           ` : ''}
+
+          <!-- Price & Certification Box -->
+          ${getCoursePriceHTML(course)}
 
           ${course.topics && course.topics.length ? `
             <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">

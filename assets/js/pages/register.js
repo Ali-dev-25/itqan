@@ -43,16 +43,20 @@ const RegisterPage = (() => {
 
     if (courseParam) {
       // تطابق وتوافق خلفي لكافة الروابط القديمة والجديدة
-      if (courseParam.startsWith('C001') || courseParam.includes('CPP')) {
+      if (courseParam.includes('CPP_OOP') || courseParam === 'C002_CPP_OOP') {
+        courseParam = 'C002_CPP_OOP';
+      } else if (courseParam.includes('CPP_BASICS') || courseParam === 'C001_CPP_BASICS' || courseParam.startsWith('C001') || courseParam.includes('CPP')) {
         if (courseParam === 'C001_CPP_SQL') {
-          courseParam = 'C003_SQL';
+          courseParam = 'C004_SQL';
+        } else if (courseParam === 'C002_CPP_OOP') {
+          courseParam = 'C002_CPP_OOP';
         } else {
-          courseParam = 'C001_CPP';
+          courseParam = 'C001_CPP_BASICS';
         }
-      } else if (courseParam.startsWith('C002') || courseParam.includes('PY') || courseParam.includes('PYTHON')) {
+      } else if (courseParam.includes('PYTHON') || courseParam.includes('PY') || courseParam === 'C003_PYTHON' || courseParam === 'C002_PYTHON') {
         const isDesktop = courseParam.includes('DESKTOP');
         const isAI = courseParam.includes('AI');
-        courseParam = 'C002_PYTHON';
+        courseParam = 'C003_PYTHON';
         setTimeout(() => {
           const trackSelect = document.getElementById('python-track-select');
           if (trackSelect) {
@@ -60,12 +64,12 @@ const RegisterPage = (() => {
             else if (isAI || trackParam === 'ai') trackSelect.value = 'ai';
           }
         }, 50);
-      } else if (courseParam === 'C003' || courseParam === 'C005' || courseParam.includes('TECHLINGO')) {
-        courseParam = 'C005_TECHLINGO';
-      } else if (courseParam.includes('SQL')) {
-        courseParam = 'C003_SQL';
-      } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C004') {
-        courseParam = 'C004_AI_PROMPT';
+      } else if (courseParam.includes('TECHLINGO') || courseParam === 'C006_TECHLINGO' || courseParam === 'C005_TECHLINGO' || courseParam === 'C003' || courseParam === 'C005') {
+        courseParam = 'C006_TECHLINGO';
+      } else if (courseParam.includes('SQL') || courseParam === 'C004_SQL' || courseParam === 'C003_SQL') {
+        courseParam = 'C004_SQL';
+      } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C005_AI_PROMPT' || courseParam === 'C004_AI_PROMPT' || courseParam === 'C004') {
+        courseParam = 'C005_AI_PROMPT';
       }
 
       const select = document.getElementById('student-course-select');
@@ -84,7 +88,7 @@ const RegisterPage = (() => {
     const trackSelect = document.getElementById('python-track-select');
     if (!trackGroup) return;
 
-    if (courseId === 'C002_PYTHON') {
+    if (courseId === 'C003_PYTHON' || courseId === 'C002_PYTHON') {
       trackGroup.style.display = 'block';
       if (window.lucide) lucide.createIcons({ root: trackGroup });
     } else {
@@ -349,7 +353,7 @@ const RegisterPage = (() => {
     if (!course.value) {
       showFieldError('student-course-select', 'يرجى اختيار الدورة أو البرنامج التدريبي المطلوب');
       isValid = false;
-    } else if (course.value === 'C002_PYTHON') {
+    } else if (course.value === 'C003_PYTHON' || course.value === 'C002_PYTHON') {
       const trackSelect = document.getElementById('python-track-select');
       if (!trackSelect || !trackSelect.value) {
         showFieldError('python-track-select', 'يرجى تحديد أحد المسارين التخصصيين لدبلوم بايثون');
@@ -404,14 +408,14 @@ const RegisterPage = (() => {
     let selectedCourseId = courseSelect.value;
     let selectedCourseTitle = courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
 
-    if (selectedCourseId === 'C002_PYTHON') {
+    if (selectedCourseId === 'C003_PYTHON' || selectedCourseId === 'C002_PYTHON') {
       const trackSelect = document.getElementById('python-track-select');
       const trackVal = trackSelect ? trackSelect.value : '';
       if (trackVal === 'desktop') {
-        selectedCourseId = 'C002_PYTHON_DESKTOP';
+        selectedCourseId = 'C003_PYTHON_DESKTOP';
         selectedCourseTitle = 'دبلوم لغة بايثون التخصصي (مسار تطبيقات سطح المكتب GUI)';
       } else if (trackVal === 'ai') {
-        selectedCourseId = 'C002_PYTHON_AI';
+        selectedCourseId = 'C003_PYTHON_AI';
         selectedCourseTitle = 'دبلوم لغة بايثون التخصصي (مسار الذكاء الاصطناعي والبيانات AI)';
       }
     }

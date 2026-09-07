@@ -85,6 +85,20 @@ const Navbar = (() => {
               <i data-lucide="user-plus"></i>
               <span>سجل في الدورات الآن</span>
             </a>
+            <div class="mobile-drawer-socials">
+              <a href="https://www.facebook.com/share/1DXH5xnmeG/" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-facebook" aria-label="فيسبوك" title="صفحة فيسبوك">
+                <i data-lucide="facebook"></i>
+              </a>
+              <a href="https://www.instagram.com/sohaib_sraij?igsi=ZmJrdDRwY2R4ejFp" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-instagram" aria-label="انستغرام" title="حساب انستغرام">
+                <i data-lucide="instagram"></i>
+              </a>
+              <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-whatsapp" aria-label="واتساب" title="قناة واتساب">
+                <i data-lucide="message-circle"></i>
+              </a>
+              <a href="https://t.me/+2Rx3MF0sgLE1NWY8" target="_blank" rel="noopener noreferrer" class="social-icon-btn social-telegram" aria-label="تيليجرام" title="قناة تيليجرام">
+                <i data-lucide="send"></i>
+              </a>
+            </div>
           </div>
         </div>
         <div class="mobile-overlay" id="mobile-overlay"></div>
