@@ -54,6 +54,7 @@ const CoursesData = [
     bgColor: '#EFF6FF',
     featured: true,
     badge: 'دورة تخصصية (شهر)',
+    prerequisite: 'شرط الالتحاق: يتطلب اجتياز أساسيات C++ أو امتلاك خلفية برمجية سابقة.',
     pricing: {
       type: 'standard',
       inPerson: { original: 25000, current: 20000, label: 'حضوري بالمقر' },
@@ -120,6 +121,7 @@ const CoursesData = [
     bgColor: '#F0FDFA',
     featured: true,
     badge: 'مسار تخصصي (شهر ونصف)',
+    prerequisite: 'تنبيه: لا يتم الانتقال لهذا المسار التخصصي إلا بعد تجاوز مرحلة الأساسيات بنجاح.',
     pricing: {
       type: 'standard',
       inPerson: { original: 30000, current: 25000, label: 'حضوري بالمقر' },
@@ -153,6 +155,7 @@ const CoursesData = [
     bgColor: '#ECFDF5',
     featured: true,
     badge: 'مسار تخصصي (شهر ونصف)',
+    prerequisite: 'تنبيه: لا يتم الانتقال لهذا المسار التخصصي إلا بعد تجاوز مرحلة الأساسيات بنجاح.',
     pricing: {
       type: 'standard',
       inPerson: { original: 30000, current: 25000, label: 'حضوري بالمقر' },

@@ -194,6 +194,13 @@ const HomePage = (() => {
             </div>
           ` : ''}
 
+          ${course.prerequisite ? `
+            <div class="course-prerequisite-box">
+              <i data-lucide="alert-circle"></i>
+              <span>${Helpers.escape(course.prerequisite)}</span>
+            </div>
+          ` : ''}
+
           <!-- Price & Certification Box -->
           ${getCoursePriceHTML(course)}
 

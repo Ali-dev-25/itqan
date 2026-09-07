@@ -70,7 +70,29 @@ const RegisterPage = (() => {
       const select = document.getElementById('student-course-select');
       if (select) {
         select.value = courseParam;
+        updatePrerequisiteNotice(courseParam);
+        togglePythonTrack(courseParam);
       }
+    }
+  }
+
+  /**
+   * إظهار أو إخفاء تنبيه المتطلب السابق للدورة
+   */
+  function updatePrerequisiteNotice(courseId) {
+    const prereqNotice = document.getElementById('course-prerequisite-notice');
+    const prereqText = document.getElementById('course-prerequisite-text');
+    if (!prereqNotice || !prereqText || typeof CoursesData === 'undefined') return;
+
+    const course = CoursesData.find(c => c.id === courseId);
+    if (course && course.prerequisite) {
+      prereqText.textContent = course.prerequisite;
+      prereqNotice.style.display = 'flex';
+      if (window.lucide) {
+        lucide.createIcons({ root: prereqNotice });
+      }
+    } else {
+      prereqNotice.style.display = 'none';
     }
   }
 
@@ -177,10 +199,11 @@ const RegisterPage = (() => {
       });
     }
 
-    // ربط تغيير الدورة لإظهار أو إخفاء مسار بايثون التخصصي
+    // ربط تغيير الدورة لإظهار تنبيه المتطلب السابق وتحديث المسارات إن وجدت
     const courseSelect = document.getElementById('student-course-select');
     if (courseSelect) {
       courseSelect.addEventListener('change', (e) => {
+        updatePrerequisiteNotice(e.target.value);
         togglePythonTrack(e.target.value);
       });
     }
