@@ -85,10 +85,12 @@ const Footer = (() => {
               <ul class="footer-links-list">
                 <li><a href="register.html?course=C001_CPP_BASICS"><i data-lucide="chevron-left"></i><span>دورة أساسيات البرمجة بلغة C++</span></a></li>
                 <li><a href="register.html?course=C002_CPP_OOP"><i data-lucide="chevron-left"></i><span>دورة البرمجة كائنية التوجه C++ OOP</span></a></li>
-                <li><a href="register.html?course=C003_PYTHON"><i data-lucide="chevron-left"></i><span>دبلوم بايثون (مساران تخصصيان)</span></a></li>
-                <li><a href="register.html?course=C004_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
-                <li><a href="register.html?course=C005_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
-                <li><a href="register.html?course=C006_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
+                <li><a href="register.html?course=C003_PYTHON_BASICS"><i data-lucide="chevron-left"></i><span>دورة أساسيات لغة بايثون</span></a></li>
+                <li><a href="register.html?course=C004_PYTHON_DESKTOP"><i data-lucide="chevron-left"></i><span>دورة تطبيقات سطح المكتب PyQt</span></a></li>
+                <li><a href="register.html?course=C005_PYTHON_AI"><i data-lucide="chevron-left"></i><span>دورة الذكاء الاصطناعي وبايثون</span></a></li>
+                <li><a href="register.html?course=C006_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
+                <li><a href="register.html?course=C007_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
+                <li><a href="register.html?course=C008_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
               </ul>
             </div>
 

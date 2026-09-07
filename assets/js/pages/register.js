@@ -47,35 +47,29 @@ const RegisterPage = (() => {
         courseParam = 'C002_CPP_OOP';
       } else if (courseParam.includes('CPP_BASICS') || courseParam === 'C001_CPP_BASICS' || courseParam.startsWith('C001') || courseParam.includes('CPP')) {
         if (courseParam === 'C001_CPP_SQL') {
-          courseParam = 'C004_SQL';
+          courseParam = 'C006_SQL';
         } else if (courseParam === 'C002_CPP_OOP') {
           courseParam = 'C002_CPP_OOP';
         } else {
           courseParam = 'C001_CPP_BASICS';
         }
-      } else if (courseParam.includes('PYTHON') || courseParam.includes('PY') || courseParam === 'C003_PYTHON' || courseParam === 'C002_PYTHON') {
-        const isDesktop = courseParam.includes('DESKTOP');
-        const isAI = courseParam.includes('AI');
-        courseParam = 'C003_PYTHON';
-        setTimeout(() => {
-          const trackSelect = document.getElementById('python-track-select');
-          if (trackSelect) {
-            if (isDesktop || trackParam === 'desktop') trackSelect.value = 'desktop';
-            else if (isAI || trackParam === 'ai') trackSelect.value = 'ai';
-          }
-        }, 50);
-      } else if (courseParam.includes('TECHLINGO') || courseParam === 'C006_TECHLINGO' || courseParam === 'C005_TECHLINGO' || courseParam === 'C003' || courseParam === 'C005') {
-        courseParam = 'C006_TECHLINGO';
-      } else if (courseParam.includes('SQL') || courseParam === 'C004_SQL' || courseParam === 'C003_SQL') {
-        courseParam = 'C004_SQL';
-      } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C005_AI_PROMPT' || courseParam === 'C004_AI_PROMPT' || courseParam === 'C004') {
-        courseParam = 'C005_AI_PROMPT';
+      } else if (courseParam.includes('DESKTOP') || trackParam === 'desktop' || courseParam === 'C004_PYTHON_DESKTOP') {
+        courseParam = 'C004_PYTHON_DESKTOP';
+      } else if (courseParam === 'C005_PYTHON_AI' || (courseParam.includes('PYTHON') && (courseParam.includes('AI') || trackParam === 'ai'))) {
+        courseParam = 'C005_PYTHON_AI';
+      } else if (courseParam.includes('PYTHON') || courseParam.includes('PY') || courseParam === 'C003_PYTHON_BASICS' || courseParam === 'C003_PYTHON' || courseParam === 'C002_PYTHON') {
+        courseParam = 'C003_PYTHON_BASICS';
+      } else if (courseParam.includes('TECHLINGO') || courseParam === 'C008_TECHLINGO' || courseParam === 'C006_TECHLINGO' || courseParam === 'C005_TECHLINGO' || courseParam === 'C003' || courseParam === 'C005') {
+        courseParam = 'C008_TECHLINGO';
+      } else if (courseParam.includes('SQL') || courseParam === 'C006_SQL' || courseParam === 'C004_SQL' || courseParam === 'C003_SQL') {
+        courseParam = 'C006_SQL';
+      } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C007_AI_PROMPT' || courseParam === 'C005_AI_PROMPT' || courseParam === 'C004_AI_PROMPT' || courseParam === 'C004') {
+        courseParam = 'C007_AI_PROMPT';
       }
 
       const select = document.getElementById('student-course-select');
       if (select) {
         select.value = courseParam;
-        togglePythonTrack(courseParam);
       }
     }
   }
