@@ -65,6 +65,8 @@ const RegisterPage = (() => {
         courseParam = 'C006_SQL';
       } else if (courseParam.includes('AI_PROMPT') || courseParam === 'C007_AI_PROMPT' || courseParam === 'C005_AI_PROMPT' || courseParam === 'C004_AI_PROMPT' || courseParam === 'C004') {
         courseParam = 'C007_AI_PROMPT';
+      } else if (courseParam.includes('ICDL') || courseParam === 'C009_ICDL' || courseParam === 'C009') {
+        courseParam = 'C009_ICDL';
       }
 
       const select = document.getElementById('student-course-select');

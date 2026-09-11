@@ -84,13 +84,19 @@ const HomePage = (() => {
     }
 
     if (course.pricing.type === 'flat') {
+      const hasOriginal = course.pricing.original && course.pricing.original > course.pricing.amount;
+      const pillBg = course.bgColor || '#FFFBEB';
+      const pillBorder = course.color ? `${course.color}35` : '#FDE68A';
+      const currColor = course.color || '#D97706';
+
       return `
         <div class="course-price-card">
           <div class="price-pills-row">
-            <div class="price-pill flat-pill">
-              <span class="price-pill-lbl">رسوم الدورة (حضوري أو Online)</span>
+            <div class="price-pill flat-pill" style="background: ${pillBg}; border-color: ${pillBorder};">
+              <span class="price-pill-lbl">${course.pricing.label || 'رسوم الدورة (حضوري أو Online)'}</span>
               <div class="price-pill-nums">
-                <span class="price-curr highlight-amber">${Helpers.formatCurrency(course.pricing.amount)} فقط</span>
+                <span class="price-curr" style="color: ${currColor}; font-weight: 800;">${Helpers.formatCurrency(course.pricing.amount)}</span>
+                ${hasOriginal ? `<del class="price-orig">${Helpers.formatCurrency(course.pricing.original)}</del>` : '<span style="font-size: 0.72rem; color: var(--clr-text-secondary);">فقط</span>'}
               </div>
             </div>
           </div>
@@ -117,6 +123,7 @@ const HomePage = (() => {
       : availableCourses.filter(c => {
           if (activeTrack === 'programming') return c.trackKey === 'programming';
           if (activeTrack === 'ai') return c.trackKey === 'ai' || (c.tracksOptions && c.tracksOptions.some(t => t.id === 'ai'));
+          if (activeTrack === 'languages') return c.trackKey === 'languages' || c.trackKey === 'skills';
           return c.trackKey === activeTrack;
         });
 

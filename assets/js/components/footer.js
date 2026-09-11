@@ -91,6 +91,7 @@ const Footer = (() => {
                 <li><a href="register.html?course=C006_SQL"><i data-lucide="chevron-left"></i><span>دورة تصميم وقواعد البيانات SQL</span></a></li>
                 <li><a href="register.html?course=C007_AI_PROMPT"><i data-lucide="chevron-left"></i><span>دورة تطبيقات الذكاء الاصطناعي</span></a></li>
                 <li><a href="register.html?course=C008_TECHLINGO"><i data-lucide="chevron-left"></i><span>دبلوم إنجليزية الحاسوب TechLingo</span></a></li>
+                <li><a href="register.html?course=C009_ICDL"><i data-lucide="chevron-left"></i><span>دبلوم رخصة قيادة الحاسوب ICDL</span></a></li>
               </ul>
             </div>
 
