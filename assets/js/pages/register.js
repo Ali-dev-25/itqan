@@ -73,13 +73,14 @@ const RegisterPage = (() => {
       if (select) {
         select.value = courseParam;
         updatePrerequisiteNotice(courseParam);
+        updateCourseCapacityNotice(courseParam);
         togglePythonTrack(courseParam);
       }
     }
   }
 
   /**
-   * إظهار أو إخفاء تنبيه المتطلب السابق للدورة
+   * إظهار أو إخفاء تنبيه المتطلب السابق للدورة أو شرط إحضار اللابتوب
    */
   function updatePrerequisiteNotice(courseId) {
     const prereqNotice = document.getElementById('course-prerequisite-notice');
@@ -95,6 +96,67 @@ const RegisterPage = (() => {
       }
     } else {
       prereqNotice.style.display = 'none';
+    }
+  }
+
+  /**
+   * إظهار أو إخفاء بطاقة سعة ومقاعد الدورة والمسجلين والحد الأدنى والأقصى
+   */
+  function updateCourseCapacityNotice(courseId) {
+    const capacityNotice = document.getElementById('course-capacity-notice');
+    if (!capacityNotice || typeof CoursesData === 'undefined') return;
+
+    if (!courseId) {
+      capacityNotice.style.display = 'none';
+      capacityNotice.innerHTML = '';
+      return;
+    }
+
+    const course = CoursesData.find(c => c.id === courseId);
+    if (!course) {
+      capacityNotice.style.display = 'none';
+      return;
+    }
+
+    const min = course.minStudents || 15;
+    const max = course.maxStudents || 30;
+    const enrolled = course.enrolledStudents || 17;
+    const percent = Math.min(100, Math.round((enrolled / max) * 100));
+    const isConfirmed = enrolled >= min;
+    const remainingToMin = min - enrolled;
+
+    const statusBadge = isConfirmed
+      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
+      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+
+    capacityNotice.innerHTML = `
+      <div class="course-capacity-card" style="margin-bottom: 0; margin-top: 10px; background: #F8FAFC; border: 1px solid #E2E8F0;">
+        <div class="capacity-header">
+          <div class="capacity-enrolled-wrap">
+            <i data-lucide="users"></i>
+            <span>المسجلون حالياً: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+          </div>
+          ${statusBadge}
+        </div>
+        <div class="capacity-progress-bar-wrap" title="نسبة التسجيل: ${percent}%">
+          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${percent}%;"></div>
+        </div>
+        <div class="capacity-footer-meta">
+          <div class="capacity-meta-item">
+            <i data-lucide="target" style="width: 12px; height: 12px; color: var(--clr-primary);"></i>
+            <span>الحد الأدنى للبدء: <strong>${min} طالب</strong></span>
+          </div>
+          <div class="capacity-meta-item">
+            <i data-lucide="user-check" style="width: 12px; height: 12px; color: var(--clr-text-muted);"></i>
+            <span>الحد الأعلى: <strong>${max} مقعد</strong></span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    capacityNotice.style.display = 'block';
+    if (window.lucide) {
+      lucide.createIcons({ root: capacityNotice });
     }
   }
 
@@ -206,6 +268,7 @@ const RegisterPage = (() => {
     if (courseSelect) {
       courseSelect.addEventListener('change', (e) => {
         updatePrerequisiteNotice(e.target.value);
+        updateCourseCapacityNotice(e.target.value);
         togglePythonTrack(e.target.value);
       });
     }

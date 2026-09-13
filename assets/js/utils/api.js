@@ -45,8 +45,24 @@ const Api = (() => {
     }
   }
 
+  /**
+   * جلب إحصائيات عدد المسجلين الفعليين لكل دورة من السيرفر
+   * @returns {Promise<Object>} - خريطة بمعرفات الدورات وأعداد المسجلين
+   */
+  async function fetchRegistrationStats() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/stats/`);
+      if (!response.ok) return {};
+      const data = await response.json();
+      return data.stats || {};
+    } catch (err) {
+      return {};
+    }
+  }
+
   return {
-    submitRegistration
+    submitRegistration,
+    fetchRegistrationStats
   };
 })();
 

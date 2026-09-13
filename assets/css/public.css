@@ -901,6 +901,133 @@
   height: 14px;
 }
 
+/* Course Capacity & Enrollment Widget */
+.course-capacity-card {
+  background: var(--clr-surface-alt, #F8FAFC);
+  border: 1px solid var(--clr-border, #E2E8F0);
+  border-radius: var(--r-xl);
+  padding: 10px 13px;
+  margin-bottom: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transition: border-color var(--tr-fast);
+}
+
+.capacity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.capacity-enrolled-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.77rem;
+  font-weight: 700;
+  color: var(--clr-text);
+}
+
+.capacity-enrolled-wrap svg {
+  width: 15px;
+  height: 15px;
+  color: var(--clr-primary);
+}
+
+.capacity-enrolled-wrap .enrolled-count {
+  color: var(--clr-primary);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.capacity-status-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--r-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.capacity-status-badge.confirmed {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.capacity-status-badge.enrolling {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+
+.capacity-progress-bar-wrap {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background: #E2E8F0;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  margin: 3px 0 2px 0;
+}
+
+.capacity-progress-fill {
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.capacity-progress-fill.is-confirmed {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.capacity-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.69rem;
+  color: var(--clr-text-secondary);
+  font-weight: 600;
+}
+
+.capacity-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.capacity-meta-item strong {
+  color: var(--clr-text);
+  font-weight: 700;
+}
+
+/* Laptop Requirement Alert Badge */
+.course-laptop-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1E40AF;
+  padding: 8px 11px;
+  border-radius: var(--r-lg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: var(--sp-3);
+}
+
+.course-laptop-badge svg {
+  width: 15px;
+  height: 15px;
+  color: #2563EB;
+  flex-shrink: 0;
+}
+
 .course-meta-row {
   display: flex;
   align-items: center;

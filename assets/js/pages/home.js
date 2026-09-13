@@ -1,11 +1,12 @@
 /**
  * ITQAN — Home Page Controller
- * إدارة تفاعلات وعرض الصفحة الرئيسية
+ * إدارة تفاعلات وعرض الصفحة الرئيسية مع إحصائيات سعة الدورات والتسجيل
  */
 const HomePage = (() => {
   let activeTrack = 'all';
+  let liveStats = {};
 
-  function init() {
+  async function init() {
     Navbar.render('navbar-container');
     Footer.render('footer-container');
     renderCourses();
@@ -17,6 +18,19 @@ const HomePage = (() => {
 
     if (window.lucide) {
       lucide.createIcons();
+    }
+
+    // جلب الإحصائيات الحية من السيرفر إذا كان متاحاً
+    if (window.Api && typeof window.Api.fetchRegistrationStats === 'function') {
+      try {
+        const stats = await window.Api.fetchRegistrationStats();
+        if (stats && typeof stats === 'object') {
+          liveStats = stats;
+          renderCourses();
+        }
+      } catch (e) {
+        // الاستمرار بالقيم الافتراضية
+      }
     }
   }
 
@@ -111,6 +125,49 @@ const HomePage = (() => {
     return '';
   }
 
+  /**
+   * عنصر عرض سعة الدورة والمقاعد المسجلة والحد الأدنى والأقصى
+   */
+  function getCourseCapacityHTML(course) {
+    const min = course.minStudents || 15;
+    const max = course.maxStudents || 30;
+    const baseEnrolled = course.enrolledStudents || 17;
+    const extraLive = liveStats[course.id] || 0;
+    const enrolled = Math.min(max, baseEnrolled + extraLive);
+    const percent = Math.min(100, Math.round((enrolled / max) * 100));
+    const isConfirmed = enrolled >= min;
+    const remainingToMin = min - enrolled;
+
+    const statusBadge = isConfirmed
+      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
+      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+
+    return `
+      <div class="course-capacity-card">
+        <div class="capacity-header">
+          <div class="capacity-enrolled-wrap">
+            <i data-lucide="users"></i>
+            <span>المسجلون حالياً: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+          </div>
+          ${statusBadge}
+        </div>
+        <div class="capacity-progress-bar-wrap" title="نسبة التسجيل: ${percent}%">
+          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${percent}%;"></div>
+        </div>
+        <div class="capacity-footer-meta">
+          <div class="capacity-meta-item">
+            <i data-lucide="target" style="width: 12px; height: 12px; color: var(--clr-primary);"></i>
+            <span>الحد الأدنى للبدء: <strong>${min} طالب</strong></span>
+          </div>
+          <div class="capacity-meta-item">
+            <i data-lucide="user-check" style="width: 12px; height: 12px; color: var(--clr-text-muted);"></i>
+            <span>الحد الأعلى: <strong>${max} مقعد</strong></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function renderCourses() {
     const container = document.getElementById('courses-grid-container');
     if (!container || typeof CoursesData === 'undefined') return;
@@ -201,7 +258,14 @@ const HomePage = (() => {
             </div>
           ` : ''}
 
-          ${course.prerequisite ? `
+          ${course.laptopRequired ? `
+            <div class="course-laptop-badge">
+              <i data-lucide="laptop"></i>
+              <span>ملاحظة هامة: يشترط إحضار لابتوب خاص بالطالب للتطبيق العملي.</span>
+            </div>
+          ` : ''}
+
+          ${course.prerequisite && !course.laptopRequired ? `
             <div class="course-prerequisite-box">
               <i data-lucide="alert-circle"></i>
               <span>${Helpers.escape(course.prerequisite)}</span>
@@ -210,6 +274,9 @@ const HomePage = (() => {
 
           <!-- Price & Certification Box -->
           ${getCoursePriceHTML(course)}
+
+          <!-- Capacity & Enrolled Students Box -->
+          ${getCourseCapacityHTML(course)}
 
           ${course.topics && course.topics.length ? `
             <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">
