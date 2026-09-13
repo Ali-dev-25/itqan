@@ -137,13 +137,14 @@ class RegistrationExportExcelAPIView(APIView):
 
 class RegistrationStatsAPIView(APIView):
     """
-    إرجاع عدد المسجلين الفعليين لكل دورة من قاعدة البيانات
+    إرجاع عدد المسجلين المقبولين فقط من قبل الإدارة لكل دورة من قاعدة البيانات
     GET /api/v1/registrations/stats/
     """
     def get(self, request, *args, **kwargs):
         from django.db.models import Count
         stats = {}
-        counts = Registration.objects.values('course_id').annotate(total=Count('id'))
+        # تصفية الطلبات المقبولة حصراً من قبل الأدمن
+        counts = Registration.objects.filter(status='approved').values('course_id').annotate(total=Count('id'))
         for item in counts:
             stats[item['course_id']] = item['total']
         return Response({

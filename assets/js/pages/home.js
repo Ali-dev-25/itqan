@@ -20,7 +20,7 @@ const HomePage = (() => {
       lucide.createIcons();
     }
 
-    // جلب الإحصائيات الحية من السيرفر إذا كان متاحاً
+    // جلب الإحصائيات الحية للطلاب المقبولين فقط من السيرفر
     if (window.Api && typeof window.Api.fetchRegistrationStats === 'function') {
       try {
         const stats = await window.Api.fetchRegistrationStats();
@@ -29,7 +29,7 @@ const HomePage = (() => {
           renderCourses();
         }
       } catch (e) {
-        // الاستمرار بالقيم الافتراضية
+        // الاستمرار بالصفر في حال عدم توفر السيرفر
       }
     }
   }
@@ -126,17 +126,16 @@ const HomePage = (() => {
   }
 
   /**
-   * عنصر عرض سعة الدورة والمقاعد المسجلة والحد الأدنى والأقصى
+   * عنصر عرض سعة الدورة والمقاعد المسجلة الفعّلية (المقبولة من الأدمن)
    */
   function getCourseCapacityHTML(course) {
     const min = course.minStudents || 15;
     const max = course.maxStudents || 30;
-    const baseEnrolled = course.enrolledStudents || 17;
-    const extraLive = liveStats[course.id] || 0;
-    const enrolled = Math.min(max, baseEnrolled + extraLive);
+    // يتم احتساب الطلاب المقبولين فقط من قبل الإدارة
+    const enrolled = (liveStats && typeof liveStats[course.id] === 'number') ? liveStats[course.id] : 0;
     const percent = Math.min(100, Math.round((enrolled / max) * 100));
     const isConfirmed = enrolled >= min;
-    const remainingToMin = min - enrolled;
+    const remainingToMin = Math.max(0, min - enrolled);
 
     const statusBadge = isConfirmed
       ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
@@ -147,7 +146,7 @@ const HomePage = (() => {
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
-            <span>المسجلون حالياً: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> طالب</span>
           </div>
           ${statusBadge}
         </div>
@@ -168,7 +167,21 @@ const HomePage = (() => {
     `;
   }
 
+  function updateTechLingoCapacity() {
+    const container = document.getElementById('techlingo-capacity-container');
+    if (!container || typeof CoursesData === 'undefined') return;
+    const techLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
+    if (techLingoCourse) {
+      container.innerHTML = getCourseCapacityHTML(techLingoCourse);
+      if (window.lucide) {
+        lucide.createIcons({ root: container });
+      }
+    }
+  }
+
   function renderCourses() {
+    updateTechLingoCapacity();
+
     const container = document.getElementById('courses-grid-container');
     if (!container || typeof CoursesData === 'undefined') return;
 

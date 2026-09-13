@@ -1,7 +1,7 @@
 /**
  * ITQAN — Courses Data Module
  * قاعدة بيانات البرامج والدبلومات والدورات التدريبية المعتمدة لمنصة إتقان
- * الهيكلية المعتمدة: دورات برمجية مستقلة لكل موضوع + تفاصيل الأسعار + سعة المقاعد والتسجيلات
+ * الهيكلية المعتمدة: دورات برمجية مستقلة لكل موضوع + تفاصيل الأسعار + معايير المقاعد (الحد الأدنى 15 والأعلى 30)
  */
 const CoursesData = [
   // ==========================================
@@ -23,7 +23,7 @@ const CoursesData = [
     badge: 'دورة أساسيات (شهر)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 19,
+    enrolledStudents: 0,
     pricing: {
       type: 'standard',
       inPerson: { original: 25000, current: 20000, label: 'حضوري بالمقر' },
@@ -59,7 +59,7 @@ const CoursesData = [
     badge: 'دورة تخصصية (شهر)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 16,
+    enrolledStudents: 0,
     prerequisite: 'شرط الالتحاق: يتطلب اجتياز أساسيات C++ أو امتلاك خلفية برمجية سابقة.',
     pricing: {
       type: 'standard',
@@ -96,7 +96,7 @@ const CoursesData = [
     badge: 'دورة أساسيات (شهر)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 23,
+    enrolledStudents: 0,
     pricing: {
       type: 'standard',
       inPerson: { original: 25000, current: 20000, label: 'حضوري بالمقر' },
@@ -132,7 +132,7 @@ const CoursesData = [
     badge: 'مسار تخصصي (شهر ونصف)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 18,
+    enrolledStudents: 0,
     prerequisite: 'تنبيه: لا يتم الانتقال لهذا المسار التخصصي إلا بعد تجاوز مرحلة الأساسيات بنجاح.',
     pricing: {
       type: 'standard',
@@ -169,7 +169,7 @@ const CoursesData = [
     badge: 'مسار تخصصي (شهر ونصف)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 22,
+    enrolledStudents: 0,
     prerequisite: 'تنبيه: لا يتم الانتقال لهذا المسار التخصصي إلا بعد تجاوز مرحلة الأساسيات بنجاح.',
     pricing: {
       type: 'standard',
@@ -206,7 +206,7 @@ const CoursesData = [
     badge: 'دورة تخصصية (شهر ونصف)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 20,
+    enrolledStudents: 0,
     pricing: {
       type: 'standard',
       inPerson: { original: 30000, current: 25000, label: 'حضوري بالمقر' },
@@ -241,7 +241,7 @@ const CoursesData = [
     badge: 'دورة تطبيقية (10,000 ر.ي)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 26,
+    enrolledStudents: 0,
     pricing: {
       type: 'flat',
       amount: 10000,
@@ -276,7 +276,7 @@ const CoursesData = [
     badge: '6 مستويات معتمدة',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 21,
+    enrolledStudents: 0,
     topics: [
       'المستوى 1A: أساسيات مصطلحات IT والعتاد والبرمجيات',
       'المستوى 1B: الشبكات والدعم الفني وأمن المعلومات',
@@ -305,7 +305,7 @@ const CoursesData = [
     badge: '🎓 دبلوم معتمد (عرض خاص)',
     minStudents: 15,
     maxStudents: 30,
-    enrolledStudents: 17,
+    enrolledStudents: 0,
     laptopRequired: true,
     prerequisite: '⚠️ تنبيه هام: يشترط إحضار جهاز كمبيوتر محمول (لابتوب) خاص بالمتدرب للتطبيق العملي أثناء المحاضرات.',
     pricing: {

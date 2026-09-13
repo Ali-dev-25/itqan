@@ -4,8 +4,9 @@
  */
 const RegisterPage = (() => {
   let selectedFile = null;
+  let liveStats = {};
 
-  function init() {
+  async function init() {
     Navbar.render('navbar-container');
     Footer.render('footer-container');
     populateCoursesDropdown();
@@ -14,6 +15,16 @@ const RegisterPage = (() => {
 
     if (window.lucide) {
       lucide.createIcons();
+    }
+
+    if (window.Api && typeof window.Api.fetchRegistrationStats === 'function') {
+      try {
+        liveStats = await window.Api.fetchRegistrationStats();
+        const select = document.getElementById('student-course-select');
+        if (select && select.value) {
+          updateCourseCapacityNotice(select.value);
+        }
+      } catch (e) {}
     }
   }
 
@@ -120,10 +131,10 @@ const RegisterPage = (() => {
 
     const min = course.minStudents || 15;
     const max = course.maxStudents || 30;
-    const enrolled = course.enrolledStudents || 17;
+    const enrolled = (liveStats && typeof liveStats[course.id] === 'number') ? liveStats[course.id] : 0;
     const percent = Math.min(100, Math.round((enrolled / max) * 100));
     const isConfirmed = enrolled >= min;
-    const remainingToMin = min - enrolled;
+    const remainingToMin = Math.max(0, min - enrolled);
 
     const statusBadge = isConfirmed
       ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
@@ -134,7 +145,7 @@ const RegisterPage = (() => {
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
-            <span>المسجلون حالياً: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> طالب</span>
           </div>
           ${statusBadge}
         </div>
