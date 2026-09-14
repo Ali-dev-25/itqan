@@ -178,6 +178,16 @@ REST_FRAMEWORK = {
 # ============================================================
 
 CORS_ALLOW_ALL_ORIGINS = True  # للتطوير والنشر
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 
 # ============================================================
