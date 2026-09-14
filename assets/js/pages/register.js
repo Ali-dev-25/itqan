@@ -5,6 +5,7 @@
 const RegisterPage = (() => {
   let selectedFile = null;
   let liveStats = {};
+  let pollingTimer = null;
 
   async function init() {
     Navbar.render('navbar-container');
@@ -17,15 +18,47 @@ const RegisterPage = (() => {
       lucide.createIcons();
     }
 
-    if (window.Api && typeof window.Api.fetchRegistrationStats === 'function') {
-      try {
-        liveStats = await window.Api.fetchRegistrationStats();
-        const select = document.getElementById('student-course-select');
-        if (select && select.value) {
-          updateCourseCapacityNotice(select.value);
+    await syncLiveStats();
+    startLivePolling();
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        syncLiveStats();
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      syncLiveStats();
+    });
+
+    if (window.Api && window.Api.broadcastChannel) {
+      window.Api.broadcastChannel.onmessage = (e) => {
+        if (e.data && e.data.type === 'STATS_UPDATED') {
+          syncLiveStats();
         }
-      } catch (e) {}
+      };
     }
+    window.addEventListener('itqan:stats_updated', () => {
+      syncLiveStats();
+    });
+  }
+
+  async function syncLiveStats() {
+    if (!window.Api || typeof window.Api.fetchRegistrationStats !== 'function') return;
+    try {
+      liveStats = await window.Api.fetchRegistrationStats();
+      const select = document.getElementById('student-course-select');
+      if (select && select.value) {
+        updateCourseCapacityNotice(select.value);
+      }
+    } catch (e) {}
+  }
+
+  function startLivePolling() {
+    if (pollingTimer) clearInterval(pollingTimer);
+    pollingTimer = setInterval(() => {
+      syncLiveStats();
+    }, 3000);
   }
 
   /**
@@ -529,6 +562,9 @@ const RegisterPage = (() => {
       if (response && response.success) {
         // 3. عرض شاشة النجاح وتحديث بياناتها
         showSuccessModal(response, selectedCourseTitle);
+        if (typeof Api.notifyStatsUpdated === 'function') {
+          Api.notifyStatsUpdated();
+        }
       } else {
         Toast.error(response?.message || 'تعذر إرسال الطلب، يرجى المحاولة مرة أخرى');
       }

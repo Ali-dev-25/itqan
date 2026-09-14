@@ -5,6 +5,7 @@
 const HomePage = (() => {
   let activeTrack = 'all';
   let liveStats = {};
+  let pollingTimer = null;
 
   async function init() {
     Navbar.render('navbar-container');
@@ -20,18 +21,109 @@ const HomePage = (() => {
       lucide.createIcons();
     }
 
-    // جلب الإحصائيات الحية للطلاب المقبولين فقط من السيرفر
-    if (window.Api && typeof window.Api.fetchRegistrationStats === 'function') {
-      try {
-        const stats = await window.Api.fetchRegistrationStats();
-        if (stats && typeof stats === 'object') {
-          liveStats = stats;
-          renderCourses();
-        }
-      } catch (e) {
-        // الاستمرار بالصفر في حال عدم توفر السيرفر
+    // جلب فوري للإحصائيات عند بدء التحميل
+    await syncLiveStats();
+
+    // تشغيل المزامنة الدورية الحية (Live Auto-Polling) كل 3 ثوانٍ
+    startLivePolling();
+
+    // المزامنة الفورية بمجرد عودة المستخدم لتبويب المتصفح
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        syncLiveStats();
       }
+    });
+
+    window.addEventListener('focus', () => {
+      syncLiveStats();
+    });
+
+    // الاستماع لقنوات البث والتحديثات الفورية بين التبويبات
+    if (window.Api && window.Api.broadcastChannel) {
+      window.Api.broadcastChannel.onmessage = (e) => {
+        if (e.data && e.data.type === 'STATS_UPDATED') {
+          syncLiveStats();
+        }
+      };
     }
+    window.addEventListener('itqan:stats_updated', () => {
+      syncLiveStats();
+    });
+  }
+
+  async function syncLiveStats() {
+    if (!window.Api || typeof window.Api.fetchRegistrationStats !== 'function') return;
+    try {
+      const newStats = await window.Api.fetchRegistrationStats();
+      if (newStats && typeof newStats === 'object') {
+        updateDynamicCapacityDOM(newStats);
+      }
+    } catch (e) {
+      // الاستمرار بهدوء في حال تعذر الاتصال المؤقت
+    }
+  }
+
+  function startLivePolling() {
+    if (pollingTimer) clearInterval(pollingTimer);
+    pollingTimer = setInterval(() => {
+      syncLiveStats();
+    }, 3000);
+  }
+
+  function updateDynamicCapacityDOM(newStats) {
+    if (typeof CoursesData === 'undefined') return;
+
+    CoursesData.forEach(course => {
+      const newCount = (newStats && typeof newStats[course.id] === 'number') ? newStats[course.id] : 0;
+      const card = document.getElementById(`capacity-card-${course.id}`);
+      
+      if (card) {
+        const min = course.minStudents || 15;
+        const max = course.maxStudents || 30;
+        const percent = Math.min(100, Math.round((newCount / max) * 100));
+        const isConfirmed = newCount >= min;
+        const remainingToMin = Math.max(0, min - newCount);
+
+        const countEl = card.querySelector('.enrolled-count');
+        if (countEl) {
+          if (countEl.textContent !== String(newCount)) {
+            countEl.textContent = newCount;
+            countEl.classList.remove('is-updated');
+            void countEl.offsetWidth; // trigger reflow for smooth pulse animation
+            countEl.classList.add('is-updated');
+          }
+        }
+
+        const fillEl = card.querySelector('.capacity-progress-fill');
+        if (fillEl) {
+          fillEl.style.width = `${percent}%`;
+          if (isConfirmed) {
+            fillEl.classList.add('is-confirmed');
+          } else {
+            fillEl.classList.remove('is-confirmed');
+          }
+        }
+
+        const badgeWrap = card.querySelector('.capacity-badge-wrap');
+        if (badgeWrap) {
+          const newBadgeHTML = isConfirmed
+            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
+            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+          
+          if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
+            badgeWrap.innerHTML = newBadgeHTML;
+            if (window.lucide) {
+              lucide.createIcons({ root: badgeWrap });
+            }
+          }
+        }
+      }
+    });
+
+    liveStats = { ...newStats };
+
+    // تحديث بطاقة TechLingo المنفصلة
+    updateTechLingoCapacity();
   }
 
   function getCoursePriceHTML(course) {
@@ -142,13 +234,15 @@ const HomePage = (() => {
       : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
 
     return `
-      <div class="course-capacity-card">
+      <div class="course-capacity-card" id="capacity-card-${course.id}" data-course-id="${course.id}">
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
             <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> طالب</span>
           </div>
-          ${statusBadge}
+          <div class="capacity-badge-wrap">
+            ${statusBadge}
+          </div>
         </div>
         <div class="capacity-progress-bar-wrap" title="نسبة التسجيل: ${percent}%">
           <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${percent}%;"></div>

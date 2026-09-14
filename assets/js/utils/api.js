@@ -46,23 +46,51 @@ const Api = (() => {
   }
 
   /**
-   * جلب إحصائيات عدد المسجلين الفعليين لكل دورة من السيرفر
+   * جلب إحصائيات عدد المسجلين الفعليين (المقبولين فقط) لكل دورة من السيرفر
+   * يتضمن كسر التخزين المؤقت timestamp وحماية ضد الـ Cache لضمان التحديث الفوري
    * @returns {Promise<Object>} - خريطة بمعرفات الدورات وأعداد المسجلين
    */
   async function fetchRegistrationStats() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/stats/`);
+      const timestamp = Date.now();
+      const response = await fetch(`${API_BASE_URL}/api/v1/registrations/stats/?_t=${timestamp}`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!response.ok) return {};
       const data = await response.json();
       return data.stats || {};
     } catch (err) {
+      console.warn('Live stats fetch warning:', err);
       return {};
+    }
+  }
+
+  /**
+   * قناة تواصل فورية بين كافة التبويبات المفتوحة للموقع
+   */
+  const broadcastChannel = (typeof window !== 'undefined' && window.BroadcastChannel)
+    ? new BroadcastChannel('itqan_live_channel')
+    : null;
+
+  function notifyStatsUpdated() {
+    if (broadcastChannel) {
+      broadcastChannel.postMessage({ type: 'STATS_UPDATED', timestamp: Date.now() });
+    }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('itqan:stats_updated', { detail: { timestamp: Date.now() } }));
     }
   }
 
   return {
     submitRegistration,
-    fetchRegistrationStats
+    fetchRegistrationStats,
+    broadcastChannel,
+    notifyStatsUpdated
   };
 })();
 

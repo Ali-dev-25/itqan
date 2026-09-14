@@ -138,17 +138,69 @@ class RegistrationExportExcelAPIView(APIView):
 class RegistrationStatsAPIView(APIView):
     """
     إرجاع عدد المسجلين المقبولين فقط من قبل الإدارة لكل دورة من قاعدة البيانات
+    مع معالجة متقدمة لضمان التوافق ومنع أي تخزين مؤقت نهائياً
     GET /api/v1/registrations/stats/
     """
     def get(self, request, *args, **kwargs):
-        from django.db.models import Count
-        stats = {}
-        # تصفية الطلبات المقبولة حصراً من قبل الأدمن
-        counts = Registration.objects.filter(status='approved').values('course_id').annotate(total=Count('id'))
-        for item in counts:
-            stats[item['course_id']] = item['total']
-        return Response({
+        from django.utils import timezone
+        
+        # القاموس المبدئي لجميع معرفات الدورات المعتمدة
+        stats = {
+            'C001_CPP_BASICS': 0,
+            'C002_CPP_OOP': 0,
+            'C003_PYTHON_BASICS': 0,
+            'C004_PYTHON_DESKTOP': 0,
+            'C005_PYTHON_AI': 0,
+            'C006_SQL': 0,
+            'C007_AI_PROMPT': 0,
+            'C008_TECHLINGO': 0,
+            'C009_ICDL': 0,
+        }
+        
+        # استعلام الطلبات المقبولة فقط (status='approved')
+        approved_registrations = Registration.objects.filter(status='approved')
+        
+        for reg in approved_registrations:
+            cid = (reg.course_id or '').strip()
+            title = (reg.course_title or '').strip().lower()
+            
+            # مطابقة ذكية للمعرفات أو العناوين لضمان عدم ضياع أي طالب مقبول
+            target_key = None
+            if cid in stats:
+                target_key = cid
+            elif 'c001' in cid.lower() or ('c++' in title and 'oop' not in title and 'كائن' not in title and 'متقدم' not in title) or 'أساسيات' in title:
+                target_key = 'C001_CPP_BASICS'
+            elif 'c002' in cid.lower() or 'oop' in title or 'كائن' in title:
+                target_key = 'C002_CPP_OOP'
+            elif 'c003' in cid.lower() or ('بايثون' in title and 'مبتدئ' in title) or ('python' in title and 'basics' in title):
+                target_key = 'C003_PYTHON_BASICS'
+            elif 'c004' in cid.lower() or 'desktop' in title or 'واجهات' in title or 'مكتب' in title:
+                target_key = 'C004_PYTHON_DESKTOP'
+            elif 'c005' in cid.lower() or 'ai' in title or ('ذكاء' in title and 'بايثون' in title):
+                target_key = 'C005_PYTHON_AI'
+            elif 'c006' in cid.lower() or 'sql' in title or 'بيانات' in title:
+                target_key = 'C006_SQL'
+            elif 'c007' in cid.lower() or 'prompt' in title or 'هندسة الأوامر' in title:
+                target_key = 'C007_AI_PROMPT'
+            elif 'c008' in cid.lower() or 'techlingo' in title or 'مصطلحات' in title or 'إنجليزي' in title:
+                target_key = 'C008_TECHLINGO'
+            elif 'c009' in cid.lower() or 'icdl' in title or 'قيادة الحاسوب' in title or 'رخصة' in title:
+                target_key = 'C009_ICDL'
+            elif cid:
+                target_key = cid
+            
+            if target_key:
+                stats[target_key] = stats.get(target_key, 0) + 1
+
+        response = Response({
             "success": True,
+            "timestamp": timezone.now().isoformat(),
             "stats": stats
         }, status=status.HTTP_200_OK)
+        
+        # ترويسات صارمة لمنع التخزين المؤقت في المتصفح أو أي بروكسي
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
 
