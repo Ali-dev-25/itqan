@@ -31,8 +31,9 @@ const RegisterPage = (() => {
       syncLiveStats();
     });
 
-    if (window.Api && window.Api.broadcastChannel) {
-      window.Api.broadcastChannel.onmessage = (e) => {
+    const api = getApi();
+    if (api && api.broadcastChannel) {
+      api.broadcastChannel.onmessage = (e) => {
         if (e.data && e.data.type === 'STATS_UPDATED') {
           syncLiveStats();
         }
@@ -43,10 +44,17 @@ const RegisterPage = (() => {
     });
   }
 
+  function getApi() {
+    if (typeof window !== 'undefined' && window.Api) return window.Api;
+    if (typeof Api !== 'undefined') return Api;
+    return null;
+  }
+
   async function syncLiveStats() {
-    if (!window.Api || typeof window.Api.fetchRegistrationStats !== 'function') return;
+    const api = getApi();
+    if (!api || typeof api.fetchRegistrationStats !== 'function') return;
     try {
-      liveStats = await window.Api.fetchRegistrationStats();
+      liveStats = await api.fetchRegistrationStats();
       const select = document.getElementById('student-course-select');
       if (select && select.value) {
         updateCourseCapacityNotice(select.value);

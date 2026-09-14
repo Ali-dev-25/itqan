@@ -39,8 +39,9 @@ const HomePage = (() => {
     });
 
     // الاستماع لقنوات البث والتحديثات الفورية بين التبويبات
-    if (window.Api && window.Api.broadcastChannel) {
-      window.Api.broadcastChannel.onmessage = (e) => {
+    const api = getApi();
+    if (api && api.broadcastChannel) {
+      api.broadcastChannel.onmessage = (e) => {
         if (e.data && e.data.type === 'STATS_UPDATED') {
           syncLiveStats();
         }
@@ -51,10 +52,17 @@ const HomePage = (() => {
     });
   }
 
+  function getApi() {
+    if (typeof window !== 'undefined' && window.Api) return window.Api;
+    if (typeof Api !== 'undefined') return Api;
+    return null;
+  }
+
   async function syncLiveStats() {
-    if (!window.Api || typeof window.Api.fetchRegistrationStats !== 'function') return;
+    const api = getApi();
+    if (!api || typeof api.fetchRegistrationStats !== 'function') return;
     try {
-      const newStats = await window.Api.fetchRegistrationStats();
+      const newStats = await api.fetchRegistrationStats();
       if (newStats && typeof newStats === 'object') {
         updateDynamicCapacityDOM(newStats);
       }
@@ -81,6 +89,7 @@ const HomePage = (() => {
         const min = course.minStudents || 15;
         const max = course.maxStudents || 30;
         const percent = Math.min(100, Math.round((newCount / max) * 100));
+        const displayPercent = newCount > 0 ? Math.max(8, percent) : 0;
         const isConfirmed = newCount >= min;
         const remainingToMin = Math.max(0, min - newCount);
 
@@ -96,7 +105,7 @@ const HomePage = (() => {
 
         const fillEl = card.querySelector('.capacity-progress-fill');
         if (fillEl) {
-          fillEl.style.width = `${percent}%`;
+          fillEl.style.width = `${displayPercent}%`;
           if (isConfirmed) {
             fillEl.classList.add('is-confirmed');
           } else {
