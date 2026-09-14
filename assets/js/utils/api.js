@@ -3,10 +3,14 @@
  * طبقة التجريد للاتصال بالـ Django Backend API
  */
 const Api = (() => {
-  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django محلياً/على Render أو عبر خادم تجربة مستقل)
-  const API_BASE_URL = (window.location.protocol === 'file:' || window.location.port === '5500' || window.location.port === '3000' || window.location.port === '8080')
-    ? 'http://127.0.0.1:8000'
-    : '';
+  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django مباشرة على 8000/Render أو عبر خادم مستقل مثل Live Server أو كملف محلي)
+  const API_BASE_URL = (() => {
+    if (typeof window === 'undefined') return '';
+    if (window.location.port === '8000' || window.location.hostname.includes('onrender.com') || window.location.hostname.includes('pythonanywhere.com')) {
+      return '';
+    }
+    return 'http://127.0.0.1:8000';
+  })();
 
   /**
    * إرسال طلب تسجيل طالب جديد مع المرفقات إلى سيرفر Django
