@@ -1028,6 +1028,111 @@
   flex-shrink: 0;
 }
 
+/* Course Topics Accordion (المنسدل التفاعلي لمحاور الدورة) */
+.course-topics-accordion {
+  margin-bottom: var(--sp-4);
+  border: 1px solid var(--clr-border, #E2E8F0);
+  border-radius: var(--r-xl);
+  background: var(--clr-surface-alt, #F8FAFC);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.course-topics-accordion.is-expanded {
+  border-color: #BFDBFE;
+  background: #FFFFFF;
+  box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.08);
+}
+
+.btn-toggle-topics {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 13px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--clr-text);
+  transition: all var(--tr-fast);
+  text-align: right;
+}
+
+.btn-toggle-topics:hover {
+  background: rgba(37, 99, 235, 0.05);
+  color: var(--clr-primary);
+}
+
+.btn-toggle-topics-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.btn-toggle-topics-title svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.btn-toggle-topics .toggle-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--clr-text-muted);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color var(--tr-fast);
+  flex-shrink: 0;
+}
+
+.course-topics-accordion.is-expanded .btn-toggle-topics .toggle-icon {
+  transform: rotate(180deg);
+  color: var(--clr-primary);
+}
+
+.course-topics-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.3s ease;
+  padding: 0 13px;
+}
+
+.course-topics-accordion.is-expanded .course-topics-content {
+  max-height: 600px;
+  opacity: 1;
+  padding: 0 13px 12px 13px;
+}
+
+.course-topics-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-top: 1px dashed var(--clr-border, #E2E8F0);
+  padding-top: 10px;
+}
+
+.course-topics-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--clr-text-secondary);
+  line-height: 1.5;
+}
+
+.course-topics-list li svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 .course-meta-row {
   display: flex;
   align-items: center;

@@ -292,14 +292,25 @@ const HomePage = (() => {
           ${getCourseCapacityHTML(course)}
 
           ${course.topics && course.topics.length ? `
-            <ul class="course-topics-list" style="margin-bottom: var(--sp-5); padding-right: 0; list-style: none; display: flex; flex-direction: column; gap: 6px;">
-              ${course.topics.map(topic => `
-                <li style="display: flex; align-items: flex-start; gap: 8px; font-size: var(--fs-xs); color: var(--clr-text-secondary); line-height: 1.5;">
-                  <i data-lucide="check-circle-2" style="width: 14px; height: 14px; color: ${course.color}; flex-shrink: 0; margin-top: 2px;"></i>
-                  <span>${Helpers.escape(topic)}</span>
-                </li>
-              `).join('')}
-            </ul>
+            <div class="course-topics-accordion">
+              <button type="button" class="btn-toggle-topics" aria-expanded="false" onclick="HomePage.toggleTopics(this)">
+                <span class="btn-toggle-topics-title">
+                  <i data-lucide="book-open" style="color: ${course.color};"></i>
+                  <span>محاور ومفردات الدورة (${course.topics.length} محاور)</span>
+                </span>
+                <i data-lucide="chevron-down" class="toggle-icon"></i>
+              </button>
+              <div class="course-topics-content">
+                <ul class="course-topics-list">
+                  ${course.topics.map(topic => `
+                    <li>
+                      <i data-lucide="check-circle-2" style="color: ${course.color};"></i>
+                      <span>${Helpers.escape(topic)}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              </div>
+            </div>
           ` : ''}
         </div>
 
@@ -332,6 +343,16 @@ const HomePage = (() => {
     }
   }
 
+  function toggleTopics(btn) {
+    const accordion = btn.closest('.course-topics-accordion');
+    if (!accordion) return;
+    const isExpanded = accordion.classList.toggle('is-expanded');
+    btn.setAttribute('aria-expanded', isExpanded);
+    if (window.lucide) {
+      lucide.createIcons({ root: accordion });
+    }
+  }
+
   function attachFilterEvents() {
     const chips = document.querySelectorAll('.filter-chip');
     chips.forEach(chip => {
@@ -350,7 +371,8 @@ const HomePage = (() => {
   }
 
   return {
-    init
+    init,
+    toggleTopics
   };
 })();
 
