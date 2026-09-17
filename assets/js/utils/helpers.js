@@ -20,7 +20,7 @@ const Helpers = (() => {
     const subtextColor = variant === 'footer' ? '#94A3B8' : '#64748B';
 
     // اختيار النسخة المناسبة للون الخلفية (نافبار فاتح أو فوتر داكن)
-    const logoSrc = variant === 'footer' ? 'assets/images/logo-footer.png?v=13' : 'assets/images/logo.png?v=13';
+    const logoSrc = variant === 'footer' ? 'assets/images/logo-footer.png?v=20' : 'assets/images/logo.png?v=20';
 
     const iconHtml = `
       <img src="${logoSrc}" alt="شعار منصة إتقان — ITQAN Platform" width="${size}" height="${size}" style="width: ${size}px; height: ${size}px; object-fit: contain; flex-shrink: 0;" />
