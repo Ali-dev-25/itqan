@@ -86,12 +86,13 @@ const RegisterPage = (() => {
   }
 
   /**
-   * قراءة معرف الدورة والمسار من الرابط إن وجد
+   * قراءة معرف الدورة والمسار والمستوى من الرابط إن وجد
    */
   function checkUrlCourseParam() {
     const urlParams = new URLSearchParams(window.location.search);
     let courseParam = urlParams.get('course');
     const trackParam = urlParams.get('track');
+    let levelParam = urlParams.get('level');
 
     if (courseParam) {
       // تطابق وتوافق خلفي لكافة الروابط القديمة والجديدة
@@ -112,6 +113,17 @@ const RegisterPage = (() => {
       } else if (courseParam.includes('PYTHON') || courseParam.includes('PY') || courseParam === 'C003_PYTHON_BASICS' || courseParam === 'C003_PYTHON' || courseParam === 'C002_PYTHON') {
         courseParam = 'C003_PYTHON_BASICS';
       } else if (courseParam.includes('TECHLINGO') || courseParam === 'C008_TECHLINGO' || courseParam === 'C006_TECHLINGO' || courseParam === 'C005_TECHLINGO' || courseParam === 'C003' || courseParam === 'C005') {
+        // فحص إذا كان الرابط يحتوي على المستوى مباشرة
+        if (courseParam.includes('_1A') || courseParam.endsWith('1A')) levelParam = levelParam || '1A';
+        else if (courseParam.includes('_1B') || courseParam.endsWith('1B')) levelParam = levelParam || '1B';
+        else if (courseParam.includes('_2A') || courseParam.endsWith('2A')) levelParam = levelParam || '2A';
+        else if (courseParam.includes('_2B') || courseParam.endsWith('2B')) levelParam = levelParam || '2B';
+        else if (courseParam.includes('_3A') || courseParam.endsWith('3A')) levelParam = levelParam || '3A';
+        else if (courseParam.includes('_3B') || courseParam.endsWith('3B')) levelParam = levelParam || '3B';
+        else if (courseParam.includes('_ALL')) levelParam = levelParam || 'ALL';
+        courseParam = 'C008_TECHLINGO';
+      } else if (['1A', '1B', '2A', '2B', '3A', '3B', 'ALL'].includes(courseParam.toUpperCase())) {
+        levelParam = courseParam.toUpperCase();
         courseParam = 'C008_TECHLINGO';
       } else if (courseParam.includes('SQL') || courseParam === 'C006_SQL' || courseParam === 'C004_SQL' || courseParam === 'C003_SQL') {
         courseParam = 'C006_SQL';
@@ -127,6 +139,15 @@ const RegisterPage = (() => {
         updatePrerequisiteNotice(courseParam);
         updateCourseCapacityNotice(courseParam);
         togglePythonTrack(courseParam);
+        toggleTechLingoLevels(courseParam, levelParam ? levelParam.toUpperCase() : null);
+      }
+    } else if (levelParam) {
+      const select = document.getElementById('student-course-select');
+      if (select) {
+        select.value = 'C008_TECHLINGO';
+        updatePrerequisiteNotice('C008_TECHLINGO');
+        updateCourseCapacityNotice('C008_TECHLINGO');
+        toggleTechLingoLevels('C008_TECHLINGO', levelParam.toUpperCase());
       }
     }
   }
@@ -235,6 +256,31 @@ const RegisterPage = (() => {
   }
 
   /**
+   * إظهار أو إخفاء محدد المستوى المطلوب لدبلوم اللغة الإنجليزية TechLingo
+   */
+  function toggleTechLingoLevels(courseId, initialLevel = null) {
+    const levelGroup = document.getElementById('techlingo-level-group');
+    const levelSelect = document.getElementById('techlingo-level-select');
+    if (!levelGroup) return;
+
+    if (courseId === 'C008_TECHLINGO' || (courseId && courseId.includes('TECHLINGO'))) {
+      levelGroup.style.display = 'block';
+      if (initialLevel && levelSelect) {
+        levelSelect.value = initialLevel;
+      }
+      if (window.lucide) lucide.createIcons({ root: levelGroup });
+    } else {
+      levelGroup.style.display = 'none';
+      if (levelSelect) {
+        levelSelect.value = '';
+        levelSelect.classList.remove('is-invalid');
+        const err = document.getElementById('techlingo-level-select-error');
+        if (err) err.classList.remove('visible');
+      }
+    }
+  }
+
+  /**
    * ربط كافة أحداث الصفحة والنماذج
    */
   function attachEvents() {
@@ -315,13 +361,14 @@ const RegisterPage = (() => {
       });
     }
 
-    // ربط تغيير الدورة لإظهار تنبيه المتطلب السابق وتحديث المسارات إن وجدت
+    // ربط تغيير الدورة لإظهار تنبيه المتطلب السابق وتحديث المسارات والمستويات إن وجدت
     const courseSelect = document.getElementById('student-course-select');
     if (courseSelect) {
       courseSelect.addEventListener('change', (e) => {
         updatePrerequisiteNotice(e.target.value);
         updateCourseCapacityNotice(e.target.value);
         togglePythonTrack(e.target.value);
+        toggleTechLingoLevels(e.target.value);
       });
     }
 
@@ -331,6 +378,17 @@ const RegisterPage = (() => {
         if (pythonTrackSelect.value) {
           pythonTrackSelect.classList.remove('is-invalid');
           const err = document.getElementById('python-track-select-error');
+          if (err) err.classList.remove('visible');
+        }
+      });
+    }
+
+    const techLingoLevelSelect = document.getElementById('techlingo-level-select');
+    if (techLingoLevelSelect) {
+      techLingoLevelSelect.addEventListener('change', () => {
+        if (techLingoLevelSelect.value) {
+          techLingoLevelSelect.classList.remove('is-invalid');
+          const err = document.getElementById('techlingo-level-select-error');
           if (err) err.classList.remove('visible');
         }
       });
@@ -493,6 +551,12 @@ const RegisterPage = (() => {
         showFieldError('python-track-select', 'يرجى تحديد أحد المسارين التخصصيين لدبلوم بايثون');
         isValid = false;
       }
+    } else if (course.value === 'C008_TECHLINGO' || course.value.includes('TECHLINGO')) {
+      const levelSelect = document.getElementById('techlingo-level-select');
+      if (!levelSelect || !levelSelect.value) {
+        showFieldError('techlingo-level-select', 'يرجى تحديد المستوى المطلوب للتسجيل في دبلوم اللغة الإنجليزية');
+        isValid = false;
+      }
     }
 
     // 4. سند الدفع
@@ -551,6 +615,25 @@ const RegisterPage = (() => {
       } else if (trackVal === 'ai') {
         selectedCourseId = 'C003_PYTHON_AI';
         selectedCourseTitle = 'دبلوم لغة بايثون التخصصي (مسار الذكاء الاصطناعي والبيانات AI)';
+      }
+    } else if (selectedCourseId === 'C008_TECHLINGO' || selectedCourseId.includes('TECHLINGO')) {
+      const levelSelect = document.getElementById('techlingo-level-select');
+      const levelVal = levelSelect ? levelSelect.value : '';
+      const levelNames = {
+        '1A': 'المستوى 1A (أساسيات مصطلحات وتواصل IT)',
+        '1B': 'المستوى 1B (الشبكات والدعم الفني وأمن المعلومات)',
+        '2A': 'المستوى 2A (الأنظمة والبرمجيات والبنية التقنية)',
+        '2B': 'المستوى 2B (تطوير الأنظمة وإدارة مشاريع IT)',
+        '3A': 'المستوى 3A (الحاسوب والشبكات والويب المتقدم)',
+        '3B': 'المستوى 3B (التقنيات الحديثة والمقابلات والمهارات المهنية)',
+        'ALL': 'الدبلوم الشامل بالكامل (كافة المستويات الـ 6)'
+      };
+      if (levelVal === 'ALL') {
+        selectedCourseId = 'C008_TECHLINGO';
+        selectedCourseTitle = 'دبلوم اللغة الإنجليزية التخصصية للحاسوب (TechLingo) — ' + (levelNames[levelVal] || 'الدبلوم الشامل');
+      } else if (levelVal) {
+        selectedCourseId = 'C008_TECHLINGO_' + levelVal;
+        selectedCourseTitle = 'دبلوم إنجليزية الحاسوب TechLingo — ' + (levelNames[levelVal] || ('المستوى ' + levelVal));
       }
     }
 

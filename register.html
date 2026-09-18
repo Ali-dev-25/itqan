@@ -217,6 +217,31 @@
             </div>
           </div>
 
+          <!-- TechLingo English Level Selector (Conditional) -->
+          <div class="form-group" id="techlingo-level-group" style="display: none; margin-top: -4px; margin-bottom: var(--sp-4); background: #F5F3FF; border: 1.5px dashed #8B5CF6; padding: 14px 18px; border-radius: var(--r-xl); transition: all 0.3s ease;">
+            <label class="form-label" for="techlingo-level-select" style="color: #6D28D9; font-weight: 700; margin-bottom: 8px;">
+              <span class="req">*</span> حدد المستوى المطلوب للتسجيل في دبلوم اللغة الإنجليزية (TechLingo):
+            </label>
+            <div class="input-wrap">
+              <select id="techlingo-level-select" class="form-select" style="background: white; border-color: #8B5CF6;">
+                <option value="">-- اختر المستوى المطلوب للتسجيل * --</option>
+                <option value="1A">📘 المستوى 1A — أساسيات مصطلحات وتواصل IT (للمبتدئين ومن الصفر)</option>
+                <option value="1B">🌐 المستوى 1B — الشبكات والدعم الفني وأمن المعلومات (لمن أتم 1A)</option>
+                <option value="2A">💻 المستوى 2A — الأنظمة والبرمجيات والبنية التقنية (لمن أتم 1B)</option>
+                <option value="2B">📊 المستوى 2B — تطوير الأنظمة وإدارة مشاريع IT (لمن أتم 2A)</option>
+                <option value="3A">🚀 المستوى 3A — الحاسوب والشبكات والويب المتقدم (لمن أتم 2B)</option>
+                <option value="3B">🎯 المستوى 3B — التقنيات الحديثة والمقابلات والمهارات المهنية (لمن أتم 3A)</option>
+                <option value="ALL">🎓 الدبلوم الشامل بالكامل (كافة المستويات الـ 6 من 1A حتى 3B)</option>
+              </select>
+              <span class="input-icon" style="color: #8B5CF6;"><i data-lucide="layers"></i></span>
+            </div>
+            <div class="form-error" id="techlingo-level-select-error"></div>
+            <div style="font-size: 0.78rem; color: #5B21B6; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
+              <i data-lucide="info" style="width: 14px; height: 14px; flex-shrink: 0;"></i>
+              <span>يمكنك التسجيل في أي مستوى بشكل مستقل إذا كنت قد اجتزت المستوى السابق (مثال: أتممت 1A وترغب بـ 1B)، أو التسجيل في الدبلوم كاملاً.</span>
+            </div>
+          </div>
+
           <!-- Row 3: Birth Date & Birth Place -->
           <div class="form-grid-2">
             <div class="form-group">

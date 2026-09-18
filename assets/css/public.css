@@ -1569,7 +1569,43 @@
   font-size: var(--fs-xs);
   color: var(--clr-text-secondary);
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 var(--sp-2) 0;
+}
+
+.techlingo-level-enroll-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: auto;
+  padding: 0.4rem 0.65rem;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: #7C3AED;
+  background: #EDE9FE;
+  border: 1px solid #DDD6FE;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: all var(--tr-fast);
+  cursor: pointer;
+}
+
+.techlingo-level-enroll-link:hover {
+  background: #7C3AED;
+  color: #FFFFFF;
+  border-color: #7C3AED;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.techlingo-level-enroll-link svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--tr-fast);
+}
+
+.techlingo-level-enroll-link:hover svg {
+  transform: translateX(-3px);
 }
 
 .techlingo-card-footer {
