@@ -131,8 +131,98 @@ const HomePage = (() => {
 
     liveStats = { ...newStats };
 
-    // تحديث بطاقة TechLingo المنفصلة
-    updateTechLingoCapacity();
+    // تحديث أشرطة السعة لمستويات TechLingo الـ 6 مباشرة مع دعم تأثيرات النبض
+    TECHLINGO_LEVELS.forEach(lvl => {
+      const levelId = `C008_TECHLINGO_${lvl}`;
+      const newCount = (newStats && typeof newStats[levelId] === 'number') ? newStats[levelId] : 0;
+      const card = document.getElementById(`capacity-card-${levelId}`);
+      if (card) {
+        const min = 15;
+        const max = 30;
+        const percent = Math.min(100, Math.round((newCount / max) * 100));
+        const displayPercent = newCount > 0 ? Math.max(8, percent) : 0;
+        const isConfirmed = newCount >= min;
+        const remainingToMin = Math.max(0, min - newCount);
+
+        const countEl = card.querySelector('.enrolled-count');
+        if (countEl && countEl.textContent !== String(newCount)) {
+          countEl.textContent = newCount;
+          countEl.classList.remove('is-updated');
+          void countEl.offsetWidth;
+          countEl.classList.add('is-updated');
+        }
+
+        const fillEl = card.querySelector('.capacity-progress-fill');
+        if (fillEl) {
+          fillEl.style.width = `${displayPercent}%`;
+          if (isConfirmed) {
+            fillEl.classList.add('is-confirmed');
+          } else {
+            fillEl.classList.remove('is-confirmed');
+          }
+        }
+
+        const badgeWrap = card.querySelector('.capacity-badge-wrap');
+        if (badgeWrap) {
+          const newBadgeHTML = isConfirmed
+            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة</span>`
+            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
+          if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
+            badgeWrap.innerHTML = newBadgeHTML;
+            if (window.lucide) {
+              lucide.createIcons({ root: badgeWrap });
+            }
+          }
+        }
+      } else {
+        const lvlContainer = document.getElementById(`level-capacity-container-${lvl}`);
+        if (lvlContainer) {
+          lvlContainer.innerHTML = getLevelCapacityHTML(lvl);
+          if (window.lucide) lucide.createIcons({ root: lvlContainer });
+        }
+      }
+    });
+
+    // تحديث بطاقة TechLingo الشاملة
+    const totalTechLingoCard = document.getElementById('capacity-card-C008_TECHLINGO');
+    if (totalTechLingoCard) {
+      const totalTechLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
+      const newTotal = (newStats && typeof newStats['C008_TECHLINGO'] === 'number') ? newStats['C008_TECHLINGO'] : 0;
+      const min = totalTechLingoCourse?.minStudents || 15;
+      const max = totalTechLingoCourse?.maxStudents || 30;
+      const percent = Math.min(100, Math.round((newTotal / max) * 100));
+      const displayPercent = newTotal > 0 ? Math.max(8, percent) : 0;
+      const isConfirmed = newTotal >= min;
+      const remainingToMin = Math.max(0, min - newTotal);
+
+      const countEl = totalTechLingoCard.querySelector('.enrolled-count');
+      if (countEl && countEl.textContent !== String(newTotal)) {
+        countEl.textContent = newTotal;
+        countEl.classList.remove('is-updated');
+        void countEl.offsetWidth;
+        countEl.classList.add('is-updated');
+      }
+
+      const fillEl = totalTechLingoCard.querySelector('.capacity-progress-fill');
+      if (fillEl) {
+        fillEl.style.width = `${displayPercent}%`;
+        if (isConfirmed) fillEl.classList.add('is-confirmed');
+        else fillEl.classList.remove('is-confirmed');
+      }
+
+      const badgeWrap = totalTechLingoCard.querySelector('.capacity-badge-wrap');
+      if (badgeWrap) {
+        const newBadgeHTML = isConfirmed
+          ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
+          : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+        if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
+          badgeWrap.innerHTML = newBadgeHTML;
+          if (window.lucide) lucide.createIcons({ root: badgeWrap });
+        }
+      }
+    } else {
+      updateTechLingoCapacity();
+    }
   }
 
   function getCoursePriceHTML(course) {
@@ -270,16 +360,74 @@ const HomePage = (() => {
     `;
   }
 
+  const TECHLINGO_LEVELS = ['1A', '1B', '2A', '2B', '3A', '3B'];
+
+  /**
+   * عنصر عرض سعة مقاعد مستوى محدد من دبلوم اللغة الإنجليزية TechLingo
+   */
+  function getLevelCapacityHTML(levelCode) {
+    const levelId = `C008_TECHLINGO_${levelCode}`;
+    const min = 15;
+    const max = 30;
+    const enrolled = (liveStats && typeof liveStats[levelId] === 'number') ? liveStats[levelId] : 0;
+    const percent = Math.min(100, Math.round((enrolled / max) * 100));
+    const displayPercent = enrolled > 0 ? Math.max(8, percent) : 0;
+    const isConfirmed = enrolled >= min;
+    const remainingToMin = Math.max(0, min - enrolled);
+
+    const statusBadge = isConfirmed
+      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة</span>`
+      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
+
+    return `
+      <div class="course-capacity-card techlingo-level-capacity-card" id="capacity-card-${levelId}" data-course-id="${levelId}">
+        <div class="capacity-header">
+          <div class="capacity-enrolled-wrap">
+            <i data-lucide="users" style="width: 13px; height: 13px;"></i>
+            <span>المقبولون: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+          </div>
+          <div class="capacity-badge-wrap">
+            ${statusBadge}
+          </div>
+        </div>
+        <div class="capacity-progress-bar-wrap" title="نسبة المقبولين في المستوى ${levelCode}: ${percent}%">
+          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${displayPercent}%;"></div>
+        </div>
+        <div class="capacity-footer-meta">
+          <div class="capacity-meta-item">
+            <span>الحد الأدنى: <strong>${min}</strong></span>
+          </div>
+          <div class="capacity-meta-item">
+            <span>السعة: <strong>${max}</strong></span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function updateTechLingoCapacity() {
+    // 1. شريط السعة الشامل لدبلوم TechLingo
     const container = document.getElementById('techlingo-capacity-container');
-    if (!container || typeof CoursesData === 'undefined') return;
-    const techLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
-    if (techLingoCourse) {
-      container.innerHTML = getCourseCapacityHTML(techLingoCourse);
-      if (window.lucide) {
-        lucide.createIcons({ root: container });
+    if (container && typeof CoursesData !== 'undefined') {
+      const techLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
+      if (techLingoCourse) {
+        container.innerHTML = getCourseCapacityHTML(techLingoCourse);
+        if (window.lucide) {
+          lucide.createIcons({ root: container });
+        }
       }
     }
+
+    // 2. أشرطة السعة المستقلة أسفل كل مستوى من مستويات دبلوم اللغة الإنجليزية الـ 6
+    TECHLINGO_LEVELS.forEach(lvl => {
+      const lvlContainer = document.getElementById(`level-capacity-container-${lvl}`);
+      if (lvlContainer) {
+        lvlContainer.innerHTML = getLevelCapacityHTML(lvl);
+        if (window.lucide) {
+          lucide.createIcons({ root: lvlContainer });
+        }
+      }
+    });
   }
 
   function renderCourses() {

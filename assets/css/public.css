@@ -1524,9 +1524,9 @@
 
 .techlingo-levels-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(150px, 1fr));
+  grid-template-columns: repeat(6, minmax(180px, 1fr));
   gap: var(--sp-4);
-  min-width: 920px;
+  min-width: 1100px;
 }
 
 .techlingo-level-col {
@@ -1540,6 +1540,74 @@
 .techlingo-level-col:last-child {
   border-inline-end: none;
   padding-inline-end: 0;
+}
+
+/* TechLingo Individual Level Capacity Card */
+.techlingo-level-capacity-container {
+  margin-top: auto;
+  margin-bottom: var(--sp-2);
+}
+
+.techlingo-level-capacity-card {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--r-lg);
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  gap: 5px;
+  transition: all var(--tr-fast);
+}
+
+.techlingo-level-col:hover .techlingo-level-capacity-card {
+  border-color: #DDD6FE;
+  background: #FAF5FF;
+}
+
+.techlingo-level-capacity-card .capacity-header {
+  gap: 4px;
+}
+
+.techlingo-level-capacity-card .capacity-enrolled-wrap {
+  font-size: 0.72rem;
+  color: var(--clr-text);
+  gap: 4px;
+}
+
+.techlingo-level-capacity-card .capacity-enrolled-wrap svg {
+  width: 13px;
+  height: 13px;
+  color: #7C3AED;
+}
+
+.techlingo-level-capacity-card .capacity-enrolled-wrap .enrolled-count {
+  font-size: 0.85rem;
+  color: #7C3AED;
+  font-weight: 800;
+}
+
+.techlingo-level-capacity-card .capacity-progress-bar-wrap {
+  height: 6px;
+  background: #E2E8F0;
+  margin: 2px 0;
+}
+
+.techlingo-level-capacity-card .capacity-progress-fill {
+  background: linear-gradient(90deg, #A855F7 0%, #7C3AED 100%);
+}
+
+.techlingo-level-capacity-card .capacity-progress-fill.is-confirmed {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.techlingo-level-capacity-card .capacity-footer-meta {
+  font-size: 0.65rem;
+  color: var(--clr-text-secondary);
+}
+
+.techlingo-level-capacity-card .capacity-status-badge {
+  font-size: 0.62rem;
+  padding: 1px 6px;
+  gap: 3px;
 }
 
 .techlingo-level-badge {

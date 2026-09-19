@@ -144,7 +144,7 @@ class RegistrationStatsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         from django.utils import timezone
         
-        # القاموس المبدئي لجميع معرفات الدورات المعتمدة
+        # القاموس المبدئي لجميع معرفات الدورات والمستويات المعتمدة
         stats = {
             'C001_CPP_BASICS': 0,
             'C002_CPP_OOP': 0,
@@ -154,6 +154,12 @@ class RegistrationStatsAPIView(APIView):
             'C006_SQL': 0,
             'C007_AI_PROMPT': 0,
             'C008_TECHLINGO': 0,
+            'C008_TECHLINGO_1A': 0,
+            'C008_TECHLINGO_1B': 0,
+            'C008_TECHLINGO_2A': 0,
+            'C008_TECHLINGO_2B': 0,
+            'C008_TECHLINGO_3A': 0,
+            'C008_TECHLINGO_3B': 0,
             'C009_ICDL': 0,
         }
         
@@ -162,35 +168,124 @@ class RegistrationStatsAPIView(APIView):
         
         for reg in approved_registrations:
             cid = (reg.course_id or '').strip()
+            cid_upper = cid.upper()
             title = (reg.course_title or '').strip().lower()
             
-            # مطابقة ذكية للمعرفات أو العناوين لضمان عدم ضياع أي طالب مقبول
-            target_key = None
+            # 1. دبلوم ومستويات اللغة الإنجليزية TechLingo (فحص ذكي ومستقل أولاً لمنع أي تداخل)
+            is_techlingo = (
+                'TECHLINGO' in cid_upper or
+                'c008' in cid.lower() or
+                'techlingo' in title or
+                'إنجليزية' in title or
+                'انجليزية' in title or
+                'انجليزي' in title or
+                'إنجليزي' in title
+            )
+            if is_techlingo:
+                stats['C008_TECHLINGO'] = stats.get('C008_TECHLINGO', 0) + 1
+                matched_level = None
+                for lvl in ['1A', '1B', '2A', '2B', '3A', '3B']:
+                    if (
+                        lvl in cid_upper or
+                        f'المستوى {lvl.lower()}' in title or
+                        f'level {lvl.lower()}' in title or
+                        f' {lvl.lower()}' in title or
+                        f'({lvl.lower()}' in title
+                    ):
+                        matched_level = f'C008_TECHLINGO_{lvl}'
+                        break
+                if matched_level:
+                    stats[matched_level] = stats.get(matched_level, 0) + 1
+                continue
+
+            # 2. دورة C++ OOP
+            is_cpp_oop = (
+                'C002' in cid_upper or
+                'CPP_OOP' in cid_upper or
+                ('c++' in title and ('oop' in title or 'كائن' in title or 'كائنية' in title))
+            )
+            if is_cpp_oop:
+                stats['C002_CPP_OOP'] = stats.get('C002_CPP_OOP', 0) + 1
+                continue
+
+            # 3. دورة أساسيات C++ (حصرية لـ C++ لمنع احتساب أي دورة أخرى تحتوي كلمة أساسيات)
+            is_cpp_basics = (
+                'C001' in cid_upper or
+                'CPP_BASICS' in cid_upper or
+                ('c++' in title and not ('oop' in title or 'كائن' in title or 'كائنية' in title))
+            )
+            if is_cpp_basics:
+                stats['C001_CPP_BASICS'] = stats.get('C001_CPP_BASICS', 0) + 1
+                continue
+
+            # 4. بايثون - تطبيقات سطح المكتب والواجهات PyQt
+            is_py_desktop = (
+                'C004' in cid_upper or
+                'DESKTOP' in cid_upper or
+                ('بايثون' in title and ('مكتب' in title or 'واجهات' in title or 'pyqt' in title or 'gui' in title))
+            )
+            if is_py_desktop:
+                stats['C004_PYTHON_DESKTOP'] = stats.get('C004_PYTHON_DESKTOP', 0) + 1
+                continue
+
+            # 5. بايثون - ذكاء اصطناعي وتحليل بيانات
+            is_py_ai = (
+                'C005' in cid_upper or
+                ('PYTHON' in cid_upper and 'AI' in cid_upper) or
+                ('بايثون' in title and ('ذكاء' in title or 'بيانات' in title or 'تعلم الآلة' in title or 'machine' in title))
+            )
+            if is_py_ai:
+                stats['C005_PYTHON_AI'] = stats.get('C005_PYTHON_AI', 0) + 1
+                continue
+
+            # 6. أساسيات بايثون
+            is_py_basics = (
+                'C003' in cid_upper or
+                'PYTHON_BASICS' in cid_upper or
+                ('بايثون' in title and not ('مكتب' in title or 'واجهات' in title or 'ذكاء' in title or 'بيانات' in title))
+            )
+            if is_py_basics:
+                stats['C003_PYTHON_BASICS'] = stats.get('C003_PYTHON_BASICS', 0) + 1
+                continue
+
+            # 7. قواعد البيانات SQL
+            is_sql = (
+                'C006' in cid_upper or
+                'SQL' in cid_upper or
+                'sql' in title or
+                'قواعد البيانات' in title
+            )
+            if is_sql:
+                stats['C006_SQL'] = stats.get('C006_SQL', 0) + 1
+                continue
+
+            # 8. هندسة الأوامر والذكاء الاصطناعي
+            is_ai_prompt = (
+                'C007' in cid_upper or
+                'PROMPT' in cid_upper or
+                'هندسة الأوامر' in title or
+                ('ذكاء' in title and 'بايثون' not in title)
+            )
+            if is_ai_prompt:
+                stats['C007_AI_PROMPT'] = stats.get('C007_AI_PROMPT', 0) + 1
+                continue
+
+            # 9. دبلوم رخصة قيادة الحاسوب ICDL
+            is_icdl = (
+                'C009' in cid_upper or
+                'ICDL' in cid_upper or
+                'icdl' in title or
+                'قيادة الحاسوب' in title
+            )
+            if is_icdl:
+                stats['C009_ICDL'] = stats.get('C009_ICDL', 0) + 1
+                continue
+
+            # احتياطي: إذا كان المعرف موجوداً مباشرة
             if cid in stats:
-                target_key = cid
-            elif 'c001' in cid.lower() or ('c++' in title and 'oop' not in title and 'كائن' not in title and 'متقدم' not in title) or 'أساسيات' in title:
-                target_key = 'C001_CPP_BASICS'
-            elif 'c002' in cid.lower() or 'oop' in title or 'كائن' in title:
-                target_key = 'C002_CPP_OOP'
-            elif 'c003' in cid.lower() or ('بايثون' in title and 'مبتدئ' in title) or ('python' in title and 'basics' in title):
-                target_key = 'C003_PYTHON_BASICS'
-            elif 'c004' in cid.lower() or 'desktop' in title or 'واجهات' in title or 'مكتب' in title:
-                target_key = 'C004_PYTHON_DESKTOP'
-            elif 'c005' in cid.lower() or 'ai' in title or ('ذكاء' in title and 'بايثون' in title):
-                target_key = 'C005_PYTHON_AI'
-            elif 'c006' in cid.lower() or 'sql' in title or 'بيانات' in title:
-                target_key = 'C006_SQL'
-            elif 'c007' in cid.lower() or 'prompt' in title or 'هندسة الأوامر' in title:
-                target_key = 'C007_AI_PROMPT'
-            elif 'c008' in cid.lower() or 'techlingo' in title or 'مصطلحات' in title or 'إنجليزي' in title:
-                target_key = 'C008_TECHLINGO'
-            elif 'c009' in cid.lower() or 'icdl' in title or 'قيادة الحاسوب' in title or 'رخصة' in title:
-                target_key = 'C009_ICDL'
+                stats[cid] = stats.get(cid, 0) + 1
             elif cid:
-                target_key = cid
-            
-            if target_key:
-                stats[target_key] = stats.get(target_key, 0) + 1
+                stats[cid] = stats.get(cid, 0) + 1
 
         response = Response({
             "success": True,
