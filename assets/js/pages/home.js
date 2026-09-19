@@ -182,47 +182,6 @@ const HomePage = (() => {
         }
       }
     });
-
-    // تحديث بطاقة TechLingo الشاملة
-    const totalTechLingoCard = document.getElementById('capacity-card-C008_TECHLINGO');
-    if (totalTechLingoCard) {
-      const totalTechLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
-      const newTotal = (newStats && typeof newStats['C008_TECHLINGO'] === 'number') ? newStats['C008_TECHLINGO'] : 0;
-      const min = totalTechLingoCourse?.minStudents || 15;
-      const max = totalTechLingoCourse?.maxStudents || 30;
-      const percent = Math.min(100, Math.round((newTotal / max) * 100));
-      const displayPercent = newTotal > 0 ? Math.max(8, percent) : 0;
-      const isConfirmed = newTotal >= min;
-      const remainingToMin = Math.max(0, min - newTotal);
-
-      const countEl = totalTechLingoCard.querySelector('.enrolled-count');
-      if (countEl && countEl.textContent !== String(newTotal)) {
-        countEl.textContent = newTotal;
-        countEl.classList.remove('is-updated');
-        void countEl.offsetWidth;
-        countEl.classList.add('is-updated');
-      }
-
-      const fillEl = totalTechLingoCard.querySelector('.capacity-progress-fill');
-      if (fillEl) {
-        fillEl.style.width = `${displayPercent}%`;
-        if (isConfirmed) fillEl.classList.add('is-confirmed');
-        else fillEl.classList.remove('is-confirmed');
-      }
-
-      const badgeWrap = totalTechLingoCard.querySelector('.capacity-badge-wrap');
-      if (badgeWrap) {
-        const newBadgeHTML = isConfirmed
-          ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
-          : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
-        if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
-          badgeWrap.innerHTML = newBadgeHTML;
-          if (window.lucide) lucide.createIcons({ root: badgeWrap });
-        }
-      }
-    } else {
-      updateTechLingoCapacity();
-    }
   }
 
   function getCoursePriceHTML(course) {
@@ -406,19 +365,7 @@ const HomePage = (() => {
   }
 
   function updateTechLingoCapacity() {
-    // 1. شريط السعة الشامل لدبلوم TechLingo
-    const container = document.getElementById('techlingo-capacity-container');
-    if (container && typeof CoursesData !== 'undefined') {
-      const techLingoCourse = CoursesData.find(c => c.id === 'C008_TECHLINGO');
-      if (techLingoCourse) {
-        container.innerHTML = getCourseCapacityHTML(techLingoCourse);
-        if (window.lucide) {
-          lucide.createIcons({ root: container });
-        }
-      }
-    }
-
-    // 2. أشرطة السعة المستقلة أسفل كل مستوى من مستويات دبلوم اللغة الإنجليزية الـ 6
+    // أشرطة السعة المستقلة أسفل كل مستوى من مستويات دبلوم اللغة الإنجليزية الـ 6
     TECHLINGO_LEVELS.forEach(lvl => {
       const lvlContainer = document.getElementById(`level-capacity-container-${lvl}`);
       if (lvlContainer) {
