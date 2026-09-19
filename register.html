@@ -449,7 +449,7 @@
 
       <h2 class="success-title">تم استلام طلب التسجيل بنجاح!</h2>
       <p class="success-subtitle">
-        شكراً لك. تم استلام بياناتك وسند السداد بنجاح، وسيتم مراجعة الطلب والتواصل معك هاتفياً أو عبر الواتساب لتأكيد القبول وموعد انطلاق الدورة.
+        شكراً لك. تم استلام بياناتك وسند السداد بنجاح. <strong>يرجى الاحتفاظ بهذا السند وطباعته أو حفظه</strong>، حيث يمثل وثيقتك المعتمدة لتأكيد القبول ومتابعة الطلب.
       </p>
 
       <!-- Reference ID Box -->
@@ -461,6 +461,19 @@
             <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
             <span>نسخ</span>
           </button>
+        </div>
+      </div>
+
+      <!-- Prominent Student Retention & Print Alert Box -->
+      <div class="receipt-retention-alert">
+        <div class="alert-icon-wrap">
+          <i data-lucide="printer"></i>
+        </div>
+        <div class="alert-content">
+          <strong class="alert-title">تنبيه هام ومطلوب للمتدرب:</strong>
+          <p class="alert-desc">
+            يرجى <strong>الاحتفاظ بهذا السند وطباعته فوراً</strong> (أو حفظه كملف PDF / لقطة شاشة)، حيث يُعد وثيقتك المرجعية الرسمية لإتمام إجراءات القبول ومطابقة الحساب عند بدء التدريب.
+          </p>
         </div>
       </div>
 
@@ -491,16 +504,22 @@
         </div>
       </div>
 
+      <!-- Official Institutional Footer Note -->
+      <div class="receipt-footer-note">
+        <i data-lucide="shield-check"></i>
+        <span>سند إلكتروني رسمي معتمد صادر عن منصة إتقان للتعليم والتدريب التقني (itqans.men)</span>
+      </div>
+
       <!-- Actions -->
       <div class="success-actions-row">
+        <button type="button" class="btn-success-print" id="btn-print-receipt">
+          <i data-lucide="printer"></i>
+          <span>طباعة وحفظ السند (مستحسن)</span>
+        </button>
         <a href="index.html" class="btn-success-home">
           <i data-lucide="home"></i>
           <span>العودة للصفحة الرئيسية</span>
         </a>
-        <button type="button" class="btn-success-print" id="btn-print-receipt">
-          <i data-lucide="printer"></i>
-          <span>طباعة إشعار الاستلام</span>
-        </button>
       </div>
 
     </div>

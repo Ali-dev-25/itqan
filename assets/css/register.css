@@ -904,72 +904,230 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   color: var(--clr-text);
 }
 
+/* Retention Alert Box in Success Card */
+.receipt-retention-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  background: #FEF3C7;
+  border: 1.5px solid #FCD34D;
+  border-right: 5px solid #D97706;
+  border-radius: var(--r-xl);
+  padding: var(--sp-4) var(--sp-4);
+  margin-bottom: var(--sp-5);
+  text-align: right;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
+  position: relative;
+  z-index: 1;
+}
+
+.receipt-retention-alert .alert-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-full);
+  background: #D97706;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
+}
+
+.receipt-retention-alert .alert-icon-wrap svg {
+  width: 20px;
+  height: 20px;
+}
+
+.receipt-retention-alert .alert-content {
+  flex: 1;
+}
+
+.receipt-retention-alert .alert-title {
+  display: block;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-black);
+  color: #92400E;
+  margin-bottom: 3px;
+}
+
+.receipt-retention-alert .alert-desc {
+  font-size: var(--fs-xs);
+  color: #78350F;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.receipt-retention-alert .alert-desc strong {
+  color: #9A3412;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: var(--fw-black);
+}
+
+/* Institutional Footer Note */
+.receipt-footer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  font-size: 0.73rem;
+  color: var(--clr-text-tertiary);
+  margin-bottom: var(--sp-6);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--clr-bg-alt);
+  border-radius: var(--r-lg);
+  border: 1px dashed var(--clr-border);
+}
+
+.receipt-footer-note svg {
+  width: 14px;
+  height: 14px;
+  color: var(--clr-primary);
+  flex-shrink: 0;
+}
+
 .success-actions-row {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-3);
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 
-.btn-success-home {
+/* Primary Highlighted Print Button */
+.btn-success-print {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   background: var(--clr-primary);
   color: #FFFFFF;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--r-lg);
+  border: none;
+  padding: 0.85rem 1.85rem;
+  border-radius: var(--r-xl);
   font-weight: var(--fw-bold);
   font-size: var(--fs-sm);
+  cursor: pointer;
+  box-shadow: 0 10px 22px -3px rgba(37, 99, 235, 0.45);
+  transition: all var(--tr-fast);
 }
 
-.btn-success-home:hover {
+.btn-success-print:hover {
   background: var(--clr-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -3px rgba(37, 99, 235, 0.55);
+  color: #FFFFFF;
 }
 
-.btn-success-print {
+.btn-success-print svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Secondary Home Link */
+.btn-success-home {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
   background: var(--clr-surface);
-  color: var(--clr-text);
+  color: var(--clr-text-secondary);
   border: 1px solid var(--clr-border);
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--r-lg);
-  font-weight: var(--fw-bold);
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--r-xl);
+  font-weight: var(--fw-semibold);
   font-size: var(--fs-sm);
+  transition: all var(--tr-fast);
 }
 
-.btn-success-print:hover {
+.btn-success-home:hover {
   background: var(--clr-bg-alt);
-  color: var(--clr-primary);
+  color: var(--clr-text);
+  border-color: var(--clr-border-dark);
+}
+
+.btn-success-home svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* --------------------------------------------------------------------------
    7. PRINT STYLES FOR RECEIPT (@media print)
    -------------------------------------------------------------------------- */
 @media print {
+  @page {
+    margin: 1cm;
+    size: A4 portrait;
+  }
+
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
   }
-  .success-modal-backdrop, .success-modal-card, .success-modal-card * {
-    visibility: visible;
+
+  .success-modal-backdrop,
+  .success-modal-card,
+  .success-modal-card * {
+    visibility: visible !important;
   }
+
   .success-modal-backdrop {
-    position: absolute;
-    inset: 0;
-    background: #FFFFFF;
-    display: block;
+    position: static !important;
+    inset: auto !important;
+    background: transparent !important;
+    display: block !important;
+    padding: 0 !important;
+    opacity: 1 !important;
   }
+
   .success-modal-card {
-    box-shadow: none;
-    border: none;
-    max-width: 100%;
-    transform: none;
+    box-shadow: none !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 12px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    transform: none !important;
+    padding: 24px !important;
+    margin: 0 auto !important;
+    page-break-inside: avoid !important;
   }
-  .success-actions-row {
-    display: none;
+
+  .success-modal-brand {
+    margin-bottom: 12px !important;
+  }
+
+  .success-brand-logo-mono {
+    height: 60px !important;
+  }
+
+  .success-card-watermark {
+    opacity: 0.05 !important;
+  }
+
+  .receipt-retention-alert {
+    background: #F8FAFC !important;
+    border: 1.5px solid #94A3B8 !important;
+    border-right: 5px solid #2563EB !important;
+    box-shadow: none !important;
+    color: #0F172A !important;
+  }
+
+  .receipt-retention-alert .alert-icon-wrap {
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+  }
+
+  .receipt-retention-alert .alert-title {
+    color: #0F172A !important;
+  }
+
+  .receipt-retention-alert .alert-desc {
+    color: #334155 !important;
+  }
+
+  .success-actions-row,
+  .btn-copy-ref {
+    display: none !important;
   }
 }
 
