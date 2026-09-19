@@ -19,7 +19,7 @@ import os
 User = get_user_model()
 
 username = os.environ.get("DJANGO_SUPERUSER_USERNAME") or "itqan_admin"
-email = os.environ.get("DJANGO_SUPERUSER_EMAIL") or "admin@itqan-platform.com"
+email = os.environ.get("DJANGO_SUPERUSER_EMAIL") or "admin@itqans.men"
 password = os.environ.get("DJANGO_SUPERUSER_PASSWORD") or "Itqan#Admin2026!Secure"
 
 u, created = User.objects.get_or_create(username=username, defaults={'email': email})

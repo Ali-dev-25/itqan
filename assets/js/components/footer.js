@@ -106,9 +106,9 @@ const Footer = (() => {
                 <span>سجل في الدورات الآن</span>
               </a>
               <div class="footer-contact-mini">
-                <a href="mailto:info@itqan-platform.com" class="footer-contact-item">
+                <a href="mailto:info@itqans.men" class="footer-contact-item">
                   <i data-lucide="mail"></i>
-                  <span>info@itqan-platform.com</span>
+                  <span>info@itqans.men</span>
                 </a>
                 <a href="https://wa.me/967771807595" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
                   <i data-lucide="phone"></i>

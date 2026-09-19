@@ -3,40 +3,49 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   
-  <!-- 1. Main Landing Page (ITQAN Platform) -->
+  <!-- 1. Main Landing Page (منصة إتقان - الصفحة الرئيسية) -->
   <url>
-    <loc>https://itqancs.site/</loc>
-    <lastmod>2026-09-07</lastmod>
+    <loc>https://itqans.men/</loc>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://itqans.men/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itqans.men/" />
     <image:image>
-      <image:loc>https://itqancs.site/assets/images/logo.png</image:loc>
-      <image:title>منصة إتقان للتعليم والتدريب التقني - ITQAN Platform</image:title>
+      <image:loc>https://itqans.men/assets/images/logo-full.png</image:loc>
+      <image:title>شعار منصة إتقان الرسمي للتعليم والتدريب التقني - ITQAN Platform</image:title>
+      <image:caption>منصة إتقان (itqans.men) الصرح التدريبي والتقني الرائد في اليمن</image:caption>
     </image:image>
   </url>
 
-  <!-- 2. Main Page alias -->
+  <!-- 2. Electronic Registration Page (صفحة التسجيل الإلكتروني في الدورات والدبلومات) -->
   <url>
-    <loc>https://itqancs.site/index.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <loc>https://itqans.men/register.html</loc>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://itqans.men/register.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itqans.men/register.html" />
+    <image:image>
+      <image:loc>https://itqans.men/assets/images/logo-full.png</image:loc>
+      <image:title>التسجيل في دورات ودبلومات منصة إتقان</image:title>
+      <image:caption>طلب الالتحاق بالبرامج والدبلومات التدريبية في منصة إتقان</image:caption>
+    </image:image>
   </url>
 
-  <!-- 3. Electronic Registration Page -->
+  <!-- 3. Interactive Assistant Fatin (المساعد التفاعلي فَطِن) -->
   <url>
-    <loc>https://itqancs.site/register.html</loc>
-    <lastmod>2026-09-07</lastmod>
+    <loc>https://itqans.men/fatin.html</loc>
+    <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-  <!-- 4. Interactive Assistant Fatin -->
-  <url>
-    <loc>https://itqancs.site/fatin.html</loc>
-    <lastmod>2026-09-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.80</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://itqans.men/fatin.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://itqans.men/fatin.html" />
+    <image:image>
+      <image:loc>https://itqans.men/assets/images/fatin/reading-professional.webp</image:loc>
+      <image:title>فَطِن - المساعد التفاعلي لمنصة إتقان</image:title>
+      <image:caption>شخصية فَطِن التفاعلية لإرشاد وتوجيه المتدربين</image:caption>
+    </image:image>
   </url>
 
 </urlset>

@@ -1,8 +1,9 @@
 {
   "name": "منصة إتقان — ITQAN Platform",
-  "short_name": "إتقان | ITQAN",
+  "short_name": "إتقان | itqans.men",
   "description": "منصة تدريبية وتعليمية رائدة لتأهيل الكوادر التقنية والمهنية عبر برامج ودورات عملية تواكب سوق العمل المعاصر.",
-  "start_url": "/index.html",
+  "start_url": "https://itqans.men/",
+  "scope": "https://itqans.men/",
   "display": "standalone",
   "background_color": "#0F172A",
   "theme_color": "#2563EB",

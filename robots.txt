@@ -1,5 +1,5 @@
 # Robots.txt for ITQAN Platform (منصة إتقان)
-# https://itqancs.site
+# Official Domain: https://itqans.men
 
 User-agent: *
 Allow: /
@@ -7,5 +7,18 @@ Disallow: /backend/
 Disallow: /admin/
 Disallow: /api/
 
+# Crawler Optimizations for Top Ranking
+User-agent: Googlebot
+Allow: /
+Allow: /assets/css/
+Allow: /assets/js/
+Allow: /assets/images/
+
+User-agent: Googlebot-Image
+Allow: /assets/images/
+
+User-agent: Bingbot
+Allow: /
+
 # Sitemap Location
-Sitemap: https://itqancs.site/sitemap.xml
+Sitemap: https://itqans.men/sitemap.xml
