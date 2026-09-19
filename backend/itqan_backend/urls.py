@@ -16,12 +16,18 @@ urlpatterns = [
     # 2. نقاط النهاية للـ API
     path('api/v1/', include('registrations.urls')),
 
-    # 3. توجيه صفحات الـ Frontend المباشرة (شاشة فَطِن هي الصفحة الافتتاحية الأولى عند الفتح)
-    re_path(r'^$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin.html'}),
-    re_path(r'^fatin\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin.html'}),
+    # 3. توجيه صفحات الـ Frontend المباشرة وملفات محركات البحث (SEO)
+    re_path(r'^$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'index.html'}),
     re_path(r'^index\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'index.html'}),
     re_path(r'^register\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'register.html'}),
+    re_path(r'^fatin\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin.html'}),
     re_path(r'^fatin_voice_test\.html$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'fatin_voice_test.html'}),
+
+    # 4. ملفات محركات البحث والهوية الرقمية (SEO & PWA)
+    re_path(r'^robots\.txt$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'robots.txt'}),
+    re_path(r'^sitemap\.xml$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'sitemap.xml'}),
+    re_path(r'^manifest\.json$', serve, {'document_root': settings.FRONTEND_DIR, 'path': 'manifest.json'}),
+    re_path(r'^favicon\.ico$', serve, {'document_root': settings.FRONTEND_DIR / 'assets', 'path': 'favicon.png'}),
 ]
 
 # تقديم ملفات الـ Media (سندات الدفع) أثناء التطوير

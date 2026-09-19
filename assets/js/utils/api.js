@@ -3,10 +3,17 @@
  * طبقة التجريد للاتصال بالـ Django Backend API
  */
 const Api = (() => {
-  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django مباشرة على 8000/Render أو عبر خادم مستقل مثل Live Server أو كملف محلي)
+  // تحديد الـ API Base URL تلقائياً (يعمل سواء تم تشغيل الـ Frontend عبر Django مباشرة على 8000/Render أو itqans.men أو عبر خادم مستقل مثل Live Server)
   const API_BASE_URL = (() => {
     if (typeof window === 'undefined') return '';
-    if (window.location.port === '8000' || window.location.hostname.includes('onrender.com') || window.location.hostname.includes('pythonanywhere.com')) {
+    const host = window.location.hostname;
+    if (
+      host === 'itqans.men' ||
+      host.endsWith('.itqans.men') ||
+      host.includes('onrender.com') ||
+      host.includes('pythonanywhere.com') ||
+      window.location.port === '8000'
+    ) {
       return '';
     }
     return 'http://127.0.0.1:8000';

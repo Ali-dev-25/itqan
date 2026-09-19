@@ -21,6 +21,8 @@ DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1')
 ALLOWED_HOSTS = ['*']
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://itqans.men',
+    'https://*.itqans.men',
     'https://*.onrender.com',
     'https://*.pythonanywhere.com',
     'http://localhost:8000',
