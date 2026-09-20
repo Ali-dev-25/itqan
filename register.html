@@ -162,16 +162,17 @@
 
             <div class="form-group">
               <label class="form-label" for="student-name-en">
-                الاسم الكامل بالإنجليزي (كما في الجواز / الشهادة):
+                <span class="req">*</span> الاسم الكامل بالإنجليزي (كما في الجواز / الشهادة):
               </label>
               <div class="input-wrap">
-                <input type="text" id="student-name-en" class="form-input" placeholder="e.g. Ahmed Mohammed Ali" dir="ltr" style="text-align: right;" autocomplete="name">
+                <input type="text" id="student-name-en" class="form-input" placeholder="e.g. Ahmed Mohammed Ali" dir="ltr" style="text-align: right;" required autocomplete="name">
                 <span class="input-icon"><i data-lucide="globe"></i></span>
               </div>
+              <div class="form-error" id="student-name-en-error"></div>
             </div>
           </div>
 
-          <!-- Row 2: Phone & Course Selection -->
+          <!-- Row 2: Phone & Residence Location -->
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label" for="student-phone">
@@ -184,6 +185,24 @@
               <div class="form-error" id="student-phone-error"></div>
             </div>
 
+            <div class="form-group">
+              <label class="form-label" for="student-residence">
+                <span class="req">*</span> موقع الإقامة الحالي (داخل الوطن أم من بلد آخر):
+              </label>
+              <div class="input-wrap">
+                <select id="student-residence" class="form-select" required>
+                  <option value="">-- حدد موقع إقامتك الحالي * --</option>
+                  <option value="inside_yemen">🇾🇪 من داخل الوطن (اليمن)</option>
+                  <option value="outside_yemen">🌍 من خارج الوطن (من بلد آخر)</option>
+                </select>
+                <span class="input-icon"><i data-lucide="map"></i></span>
+              </div>
+              <div class="form-error" id="student-residence-error"></div>
+            </div>
+          </div>
+
+          <!-- Row 3: Course Selection & Attendance Mode -->
+          <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label" for="student-course-select">
                 <span class="req">*</span> الدورة / الدبلوم التدريبي المطلوب:
@@ -201,6 +220,25 @@
                 <span id="course-prerequisite-text"></span>
               </div>
               <div id="course-capacity-notice" style="display: none; margin-top: 8px;"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="student-attendance-mode">
+                <span class="req">*</span> طريقة / نمط الحضور للدورة:
+              </label>
+              <div class="input-wrap">
+                <select id="student-attendance-mode" class="form-select" required>
+                  <option value="">-- اختر طريقة الحضور (حضوري / عن بعد) * --</option>
+                  <option value="in_person">🏫 حضورياً (في مقر وقاعات المنصة بمأرب)</option>
+                  <option value="online">🌐 عن بعد (أونلاين عبر الإنترنت)</option>
+                </select>
+                <span class="input-icon"><i data-lucide="monitor"></i></span>
+              </div>
+              <div class="form-error" id="student-attendance-mode-error"></div>
+              <div id="attendance-hint" style="font-size: 0.76rem; color: var(--clr-text-secondary); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                <i data-lucide="info" style="width: 13px; height: 13px; flex-shrink: 0;"></i>
+                <span>متاح لكافة البرامج الاختيار بين الحضور المباشر في القاعات أو عن بعد تفاعلياً.</span>
+              </div>
             </div>
           </div>
 
@@ -249,25 +287,42 @@
             </div>
           </div>
 
-          <!-- Row 3: Birth Date & Birth Place -->
+          <!-- Row 4: Birth Date & Birth Place (Required) -->
           <div class="form-grid-2">
             <div class="form-group">
               <label class="form-label" for="student-birth-date">
-                تاريخ الميلاد:
+                <span class="req">*</span> تاريخ الميلاد:
               </label>
               <div class="input-wrap">
-                <input type="date" id="student-birth-date" class="form-input">
+                <input type="date" id="student-birth-date" class="form-input" required>
                 <span class="input-icon"><i data-lucide="calendar"></i></span>
               </div>
+              <div class="form-error" id="student-birth-date-error"></div>
             </div>
 
             <div class="form-group">
               <label class="form-label" for="student-birth-place">
-                مكان الميلاد / المدينة:
+                <span class="req">*</span> مكان الميلاد / المدينة والدولة:
               </label>
               <div class="input-wrap">
-                <input type="text" id="student-birth-place" class="form-input" placeholder="مثال: صنعاء">
+                <input type="text" id="student-birth-place" class="form-input" placeholder="مثال: صنعاء / الرياض / القاهرة" required>
                 <span class="input-icon"><i data-lucide="map-pin"></i></span>
+              </div>
+              <div class="form-error" id="student-birth-place-error"></div>
+            </div>
+          </div>
+
+          <!-- International Student Guide Box (Shown conditionally when outside_yemen is selected) -->
+          <div id="international-student-notice" style="display: none; background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: var(--r-xl); padding: 18px 20px; margin-bottom: var(--sp-6); text-align: right; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);">
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+              <div style="width: 40px; height: 40px; border-radius: var(--r-full); background: #10B981; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i data-lucide="globe" style="width: 22px; height: 22px;"></i>
+              </div>
+              <div>
+                <h4 style="font-size: var(--fs-base); font-weight: 800; color: #065F46; margin-bottom: 4px;">مرحباً بطلابنا الأعزاء من خارج الوطن 🌍</h4>
+                <p style="font-size: var(--fs-xs); color: #047857; line-height: 1.7; margin: 0;">
+                  <strong>لا يتطلب منك رفع ملف السداد الآن:</strong> نظراً لاختلاف وسائل التحويل الدولية، يمكنك إرسال بياناتك مباشرة بالضغط على زر التسجيل بالأسفل، وسيظهر لك فوراً <strong>رقما التواصل المعتمدان عبر الواتساب</strong> لتزويدك بحساب التحويل المناسب لبلدك وإرسال سند السداد لتأكيد حجز مقعدك واعتمادك.
+                </p>
               </div>
             </div>
           </div>
@@ -447,8 +502,8 @@
         <i data-lucide="check"></i>
       </div>
 
-      <h2 class="success-title">تم استلام طلب التسجيل بنجاح!</h2>
-      <p class="success-subtitle">
+      <h2 class="success-title" id="success-title">تم استلام طلب التسجيل بنجاح!</h2>
+      <p class="success-subtitle" id="success-subtitle">
         شكراً لك. تم استلام بياناتك وسند السداد بنجاح. <strong>يرجى الاحتفاظ بهذا السند وطباعته أو حفظه</strong>، حيث يمثل وثيقتك المعتمدة لتأكيد القبول ومتابعة الطلب.
       </p>
 
@@ -464,14 +519,65 @@
         </div>
       </div>
 
-      <!-- Prominent Student Retention & Print Alert Box -->
-      <div class="receipt-retention-alert">
+      <!-- Prominent International Student WhatsApp Payment Contact Card (For students from outside Yemen) -->
+      <div class="whatsapp-international-card" id="whatsapp-international-box" style="display: none;">
+        <div class="wa-card-header">
+          <div class="wa-icon-glow">
+            <i data-lucide="message-circle"></i>
+          </div>
+          <div>
+            <h4 class="wa-title">إرسال سند التسديد وتأكيد التسجيل عبر واتساب</h4>
+            <p class="wa-desc">
+              عزيزي المتدرب من خارج الوطن، يرجى التواصل مباشرة عبر واتساب مع إدارة المنصة على <strong>أي من الرقمين التاليين</strong> وإرسال صورة إشعار أو سند التسديد مع رقمك المرجعي ليتم اعتماد تسجيلك وتزويدك بروابط التدريب:
+            </p>
+          </div>
+        </div>
+
+        <div class="wa-numbers-grid">
+          <!-- WhatsApp Number 1 -->
+          <div class="wa-number-item">
+            <div class="wa-number-top">
+              <span class="wa-badge">الرقم الأول</span>
+              <span class="wa-phone-text" dir="ltr">+967 771 807 595</span>
+            </div>
+            <div class="wa-actions-wrap">
+              <a href="https://wa.me/967771807595" id="btn-wa-link-1" target="_blank" rel="noopener noreferrer" class="btn-wa-direct">
+                <i data-lucide="send"></i>
+                <span>مراسلة واتساب (1) ↗</span>
+              </a>
+              <button type="button" class="btn-wa-copy" data-copy="967771807595" title="نسخ الرقم">
+                <i data-lucide="copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- WhatsApp Number 2 (Added as requested) -->
+          <div class="wa-number-item">
+            <div class="wa-number-top">
+              <span class="wa-badge" style="background: #E0E7FF; color: #4338CA;">الرقم الثاني</span>
+              <span class="wa-phone-text" dir="ltr">+967 778 37 5155</span>
+            </div>
+            <div class="wa-actions-wrap">
+              <a href="https://wa.me/967778375155" id="btn-wa-link-2" target="_blank" rel="noopener noreferrer" class="btn-wa-direct" style="background: #15803D;">
+                <i data-lucide="send"></i>
+                <span>مراسلة واتساب (2) ↗</span>
+              </a>
+              <button type="button" class="btn-wa-copy" data-copy="96778375155" title="نسخ الرقم">
+                <i data-lucide="copy"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prominent Student Retention & Print Alert Box (For inside Yemen or general retention) -->
+      <div class="receipt-retention-alert" id="success-retention-alert">
         <div class="alert-icon-wrap">
           <i data-lucide="printer"></i>
         </div>
         <div class="alert-content">
           <strong class="alert-title">تنبيه هام ومطلوب للمتدرب:</strong>
-          <p class="alert-desc">
+          <p class="alert-desc" id="retention-desc">
             يرجى <strong>الاحتفاظ بهذا السند وطباعته فوراً</strong> (أو حفظه كملف PDF / لقطة شاشة)، حيث يُعد وثيقتك المرجعية الرسمية لإتمام إجراءات القبول ومطابقة الحساب عند بدء التدريب.
           </p>
         </div>
@@ -488,12 +594,20 @@
           <span class="summary-val" id="summary-course-title" style="color: var(--clr-primary);">—</span>
         </div>
         <div class="summary-row">
+          <span class="summary-label">طريقة / نمط الحضور:</span>
+          <span class="summary-val" id="summary-attendance-mode" style="color: #2563EB;">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">موقع الإقامة:</span>
+          <span class="summary-val" id="summary-residence-location">—</span>
+        </div>
+        <div class="summary-row">
           <span class="summary-label">رقم الجوال:</span>
           <span class="summary-val" id="summary-phone" dir="ltr">—</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">سند السداد:</span>
-          <span class="summary-val" style="color: var(--clr-success); display: flex; align-items: center; gap: 4px;">
+          <span class="summary-val" id="summary-receipt-status" style="color: var(--clr-success); display: flex; align-items: center; gap: 4px;">
             <i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i>
             <span>تم الإرفاق بنجاح</span>
           </span>

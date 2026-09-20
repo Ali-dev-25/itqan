@@ -904,6 +904,162 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   color: var(--clr-text);
 }
 
+/* International WhatsApp Direct Card */
+.whatsapp-international-card {
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  border: 1.5px solid #86EFAC;
+  border-right: 5px solid #16A34A;
+  border-radius: var(--r-xl);
+  padding: var(--sp-5);
+  margin-bottom: var(--sp-5);
+  text-align: right;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.12);
+  position: relative;
+  z-index: 1;
+}
+
+.wa-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.wa-icon-glow {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-full);
+  background: #16A34A;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
+.wa-icon-glow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.wa-title {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-black);
+  color: #14532D;
+  margin-bottom: 4px;
+}
+
+.wa-desc {
+  font-size: var(--fs-xs);
+  color: #166534;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.wa-numbers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+@media (max-width: 600px) {
+  .wa-numbers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wa-number-item {
+  background: #FFFFFF;
+  border: 1px solid #BBF7D0;
+  border-radius: var(--r-lg);
+  padding: var(--sp-3) var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.wa-number-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wa-badge {
+  font-size: 0.72rem;
+  font-weight: var(--fw-bold);
+  background: #DCFCE7;
+  color: #15803D;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.wa-phone-text {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-black);
+  color: #1E293B;
+  font-family: monospace;
+}
+
+.wa-actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-wa-direct {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #16A34A;
+  color: #FFFFFF !important;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  padding: 0.48rem 0.75rem;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: all var(--tr-fast);
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
+
+.btn-wa-direct:hover {
+  background: #15803D;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.35);
+}
+
+.btn-wa-direct svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-wa-copy {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #64748B;
+  padding: 0.48rem 0.6rem;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--tr-fast);
+}
+
+.btn-wa-copy:hover {
+  color: #16A34A;
+  border-color: #16A34A;
+  background: #F0FDF4;
+}
+
+.btn-wa-copy svg {
+  width: 14px;
+  height: 14px;
+}
+
 /* Retention Alert Box in Success Card */
 .receipt-retention-alert {
   display: flex;

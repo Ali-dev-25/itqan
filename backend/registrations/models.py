@@ -18,6 +18,16 @@ class Registration(models.Model):
         ('rejected', 'مرفوض'),
     ]
 
+    ATTENDANCE_CHOICES = [
+        ('in_person', 'حضوري'),
+        ('online', 'عن بعد'),
+    ]
+
+    RESIDENCE_CHOICES = [
+        ('inside_yemen', 'داخل الوطن (اليمن)'),
+        ('outside_yemen', 'خارج الوطن (بلد آخر)'),
+    ]
+
     # الرقم المرجعي الفريد (يتم توليده تلقائياً عند الحفظ)
     reference_number = models.CharField(
         max_length=30,
@@ -33,13 +43,23 @@ class Registration(models.Model):
     )
     full_name_en = models.CharField(
         max_length=255,
-        blank=True,
-        default='',
         verbose_name='الاسم بالإنجليزي'
     )
     phone = models.CharField(
         max_length=30,
         verbose_name='رقم الجوال'
+    )
+    residence_location = models.CharField(
+        max_length=30,
+        choices=RESIDENCE_CHOICES,
+        default='inside_yemen',
+        verbose_name='موقع الإقامة'
+    )
+    attendance_mode = models.CharField(
+        max_length=30,
+        choices=ATTENDANCE_CHOICES,
+        default='in_person',
+        verbose_name='نمط الحضور'
     )
     birth_date = models.DateField(
         null=True,
@@ -48,8 +68,6 @@ class Registration(models.Model):
     )
     birth_place = models.CharField(
         max_length=150,
-        blank=True,
-        default='',
         verbose_name='مكان الميلاد'
     )
 
@@ -63,9 +81,11 @@ class Registration(models.Model):
         verbose_name='اسم الدورة'
     )
 
-    # ملف سند الدفع
+    # ملف سند الدفع (اختياري للطلاب من خارج الوطن)
     receipt_file = models.FileField(
         upload_to='receipts/%Y/%m/',
+        null=True,
+        blank=True,
         verbose_name='سند الدفع',
         validators=[
             FileExtensionValidator(

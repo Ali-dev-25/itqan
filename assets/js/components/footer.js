@@ -114,6 +114,10 @@ const Footer = (() => {
                   <i data-lucide="phone"></i>
                   <span dir="ltr">+967 771 807 595</span>
                 </a>
+                <a href="https://wa.me/967778375155" target="_blank" rel="noopener noreferrer" class="footer-contact-item">
+                  <i data-lucide="phone"></i>
+                  <span dir="ltr">+967 778 37 5155</span>
+                </a>
                 <a href="https://whatsapp.com/channel/0029VbDLQh07T8bQmHMkqt2H" target="_blank" rel="noopener noreferrer" class="footer-contact-item" style="color: #4ADE80;">
                   <i data-lucide="message-circle"></i>
                   <span>قناة واتساب الرسمية</span>

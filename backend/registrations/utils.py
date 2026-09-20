@@ -112,6 +112,8 @@ def build_excel_workbook_from_queryset(queryset):
         'اسم الطالب (عربي)',
         'اسم الطالب (إنجليزي)',
         'رقم الجوال / الواتساب',
+        'موقع الإقامة',
+        'نمط الحضور',
         'معرف الدورة',
         'اسم البرنامج / الدورة التدريبية',
         'تاريخ الميلاد',
@@ -147,6 +149,16 @@ def build_excel_workbook_from_queryset(queryset):
         'rejected': 'مرفوض ❌',
     }
 
+    residence_map = {
+        'inside_yemen': '🇾🇪 داخل الوطن',
+        'outside_yemen': '🌍 خارج الوطن',
+    }
+
+    attendance_map = {
+        'in_person': '🏫 حضوري',
+        'online': '🌐 عن بعد',
+    }
+
     # ألوان الشارات والحالات
     status_fills = {
         'approved': PatternFill(start_color='DCFCE7', end_color='DCFCE7', fill_type='solid'),
@@ -166,7 +178,7 @@ def build_excel_workbook_from_queryset(queryset):
     for idx, reg in enumerate(queryset, 1):
         birth_str = reg.birth_date.strftime('%Y-%m-%d') if reg.birth_date else '—'
         created_str = reg.created_at.strftime('%Y-%m-%d %H:%M') if reg.created_at else '—'
-        file_name = reg.receipt_file.name if reg.receipt_file else 'لا يوجد ملف'
+        file_name = reg.receipt_file.name if reg.receipt_file else 'لا يوجد ملف (خارج الوطن)'
 
         row_data = [
             idx,
@@ -174,6 +186,8 @@ def build_excel_workbook_from_queryset(queryset):
             reg.full_name_ar,
             reg.full_name_en or '—',
             reg.phone,
+            residence_map.get(getattr(reg, 'residence_location', 'inside_yemen'), getattr(reg, 'residence_location', '—')),
+            attendance_map.get(getattr(reg, 'attendance_mode', 'in_person'), getattr(reg, 'attendance_mode', '—')),
             reg.course_id,
             reg.course_title,
             birth_str,

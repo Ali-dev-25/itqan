@@ -25,11 +25,13 @@ class RegistrationAdmin(admin.ModelAdmin):
         'full_name_ar',
         'phone',
         'course_title',
+        'attendance_badge',
+        'residence_badge',
         'status_badge',
         'receipt_preview',
         'created_at'
     )
-    list_filter = ('status', 'course_id', 'created_at')
+    list_filter = ('status', 'attendance_mode', 'residence_location', 'course_id', 'created_at')
     search_fields = ('reference_number', 'full_name_ar', 'full_name_en', 'phone', 'course_title')
     readonly_fields = ('reference_number', 'created_at', 'updated_at', 'receipt_preview_large')
     list_per_page = 25
@@ -40,7 +42,7 @@ class RegistrationAdmin(admin.ModelAdmin):
             'fields': ('reference_number', 'status', 'created_at', 'updated_at')
         }),
         ('بيانات الطالب الشخصية', {
-            'fields': ('full_name_ar', 'full_name_en', 'phone', 'birth_date', 'birth_place')
+            'fields': ('full_name_ar', 'full_name_en', 'phone', 'residence_location', 'attendance_mode', 'birth_date', 'birth_place')
         }),
         ('الدورة التدريبية', {
             'fields': ('course_id', 'course_title')
@@ -76,6 +78,28 @@ class RegistrationAdmin(admin.ModelAdmin):
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+    @admin.display(description='نمط الحضور')
+    def attendance_badge(self, obj):
+        is_in_person = (obj.attendance_mode == 'in_person')
+        bg = '#3B82F6' if is_in_person else '#8B5CF6'
+        title = '🏫 حضوري' if is_in_person else '🌐 عن بعد'
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">{}</span>',
+            bg,
+            title
+        )
+
+    @admin.display(description='موقع الإقامة')
+    def residence_badge(self, obj):
+        is_inside = (obj.residence_location == 'inside_yemen')
+        bg = '#059669' if is_inside else '#D97706'
+        title = '🇾🇪 داخل الوطن' if is_inside else '🌍 خارج الوطن'
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">{}</span>',
+            bg,
+            title
+        )
 
     @admin.display(description='حالة الطلب')
     def status_badge(self, obj):

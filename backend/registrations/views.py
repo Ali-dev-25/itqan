@@ -46,13 +46,15 @@ class RegistrationCreateAPIView(APIView):
             registration = Registration.objects.create(
                 reference_number=ref_number,
                 full_name_ar=validated_data['fullNameAr'],
-                full_name_en=validated_data.get('fullNameEn', ''),
+                full_name_en=validated_data['fullNameEn'],
                 phone=validated_data['phone'],
+                residence_location=validated_data['residenceLocation'],
+                attendance_mode=validated_data['attendanceMode'],
                 course_id=validated_data['courseId'],
                 course_title=validated_data['courseTitle'],
                 birth_date=validated_data.get('birthDate'),
                 birth_place=validated_data.get('birthPlace', ''),
-                receipt_file=validated_data['receiptFile'],
+                receipt_file=validated_data.get('receiptFile'),
                 status='pending'
             )
 
@@ -69,10 +71,14 @@ class RegistrationCreateAPIView(APIView):
             formatted_time = format_arabic_timestamp(registration.created_at)
 
             # 6. إرجاع استجابة JSON موحدة للـ Frontend
+            residence_text = 'داخل الوطن (اليمن)' if registration.residence_location == 'inside_yemen' else 'خارج الوطن'
+            attendance_text = 'حضوري' if registration.attendance_mode == 'in_person' else 'عن بعد (أونلاين)'
+            success_msg = "تم استلام طلب التسجيل وسند السداد بنجاح" if registration.receipt_file else "تم استلام بيانات التسجيل بنجاح، بانتظار إرسال سند السداد عبر الواتساب"
+
             return Response({
                 "success": True,
                 "reference": ref_number,
-                "message": "تم استلام طلب التسجيل وسند السداد بنجاح",
+                "message": success_msg,
                 "timestamp": formatted_time,
                 "data": {
                     "referenceNumber": ref_number,
@@ -80,6 +86,11 @@ class RegistrationCreateAPIView(APIView):
                     "phone": registration.phone,
                     "courseId": registration.course_id,
                     "courseTitle": registration.course_title,
+                    "residenceLocation": registration.residence_location,
+                    "residenceText": residence_text,
+                    "attendanceMode": registration.attendance_mode,
+                    "attendanceText": attendance_text,
+                    "hasReceipt": bool(registration.receipt_file),
                     "submittedAt": formatted_time
                 }
             }, status=status.HTTP_201_CREATED)

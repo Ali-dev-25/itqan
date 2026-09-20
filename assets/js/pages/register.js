@@ -406,10 +406,27 @@ const RegisterPage = (() => {
         }
       });
 
+      form.addEventListener('change', (e) => {
+        const input = e.target;
+        if (input.classList.contains('is-invalid')) {
+          input.classList.remove('is-invalid');
+          const errorEl = document.getElementById(`${input.id}-error`);
+          if (errorEl) errorEl.classList.remove('visible');
+        }
+      });
+
       form.addEventListener('submit', handleFormSubmit);
     }
 
-    // 4. أحداث شاشة النجاح والطباعة
+    // 4. ربط تغيير موقع الإقامة (داخل الوطن / من بلد آخر)
+    const residenceSelect = document.getElementById('student-residence');
+    if (residenceSelect) {
+      residenceSelect.addEventListener('change', (e) => {
+        handleResidenceChange(e.target.value);
+      });
+    }
+
+    // 5. أحداث شاشة النجاح والطباعة ونسخ أرقام الواتساب
     const printBtn = document.getElementById('btn-print-receipt');
     if (printBtn) {
       printBtn.addEventListener('click', () => {
@@ -427,6 +444,48 @@ const RegisterPage = (() => {
           });
         }
       });
+    }
+
+    // نسخ أرقام الواتساب المباشرة
+    const waCopyBtns = document.querySelectorAll('.btn-wa-copy');
+    waCopyBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const num = btn.getAttribute('data-copy') || '';
+        if (num) {
+          navigator.clipboard.writeText('+' + num).then(() => {
+            Toast.success(`تم نسخ رقم الواتساب: +${num}`);
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * التبديل الشرطي لأقسام السداد بناءً على موقع الإقامة
+   */
+  function handleResidenceChange(residenceVal) {
+    const receiptSection = document.querySelector('.receipt-upload-section');
+    const bankSection = document.querySelector('.bank-details-card');
+    const intNotice = document.getElementById('international-student-notice');
+
+    if (residenceVal === 'outside_yemen') {
+      // الطالب من خارج الوطن: إخفاء رفع السند وقسم البنوك المحلية وإظهار التنبيه التوجيهي
+      if (receiptSection) receiptSection.style.display = 'none';
+      if (bankSection) bankSection.style.display = 'none';
+      if (intNotice) {
+        intNotice.style.display = 'block';
+        if (window.lucide) lucide.createIcons({ root: intNotice });
+      }
+      clearSelectedFile();
+      const receiptErr = document.getElementById('receipt-file-error');
+      if (receiptErr) receiptErr.classList.remove('visible');
+    } else {
+      // الطالب من داخل الوطن: إظهار الحسابات البنكية المحلية ورفع السند
+      if (receiptSection) receiptSection.style.display = 'block';
+      if (bankSection) bankSection.style.display = 'block';
+      if (intNotice) intNotice.style.display = 'none';
     }
   }
 
@@ -520,19 +579,26 @@ const RegisterPage = (() => {
   }
 
   /**
-   * التحقق من الحقول قبل الإرسال
+   * التحقق الشامل من كافة الحقول قبل الإرسال (جميع المدخلات مطلوبة)
    */
   function validateForm() {
     let isValid = true;
 
-    // 1. الاسم بالعربي
+    // 1. الاسم بالعربي (إلزامي)
     const nameAr = document.getElementById('student-name-ar');
     if (!nameAr.value.trim() || nameAr.value.trim().length < 3) {
-      showFieldError('student-name-ar', 'يرجى إدخال الاسم الكامل باللغة العربية');
+      showFieldError('student-name-ar', 'يرجى إدخال الاسم الكامل باللغة العربية (3 أحرف على الأقل)');
       isValid = false;
     }
 
-    // 2. رقم الجوال
+    // 2. الاسم بالإنجليزي (إلزامي)
+    const nameEn = document.getElementById('student-name-en');
+    if (!nameEn.value.trim() || nameEn.value.trim().length < 3) {
+      showFieldError('student-name-en', 'يرجى إدخال الاسم الكامل باللغة الإنجليزية كما في الوثائق الرسمية');
+      isValid = false;
+    }
+
+    // 3. رقم الجوال / الواتساب (إلزامي)
     const phone = document.getElementById('student-phone');
     const phoneVal = phone.value.trim();
     if (!phoneVal || phoneVal.length < 9) {
@@ -540,9 +606,16 @@ const RegisterPage = (() => {
       isValid = false;
     }
 
-    // 3. اختيار الدورة
+    // 4. موقع الإقامة (إلزامي: داخل الوطن أم من بلد آخر)
+    const residence = document.getElementById('student-residence');
+    if (!residence || !residence.value) {
+      showFieldError('student-residence', 'يرجى تحديد موقع الإقامة (داخل الوطن أم من بلد آخر)');
+      isValid = false;
+    }
+
+    // 5. اختيار الدورة التدريبية (إلزامي)
     const course = document.getElementById('student-course-select');
-    if (!course.value) {
+    if (!course || !course.value) {
       showFieldError('student-course-select', 'يرجى اختيار الدورة أو البرنامج التدريبي المطلوب');
       isValid = false;
     } else if (course.value === 'C003_PYTHON' || course.value === 'C002_PYTHON') {
@@ -559,8 +632,30 @@ const RegisterPage = (() => {
       }
     }
 
-    // 4. سند الدفع
-    if (!selectedFile) {
+    // 6. طريقة / نمط الحضور (إلزامي: حضوري أم عن بعد)
+    const attendanceMode = document.getElementById('student-attendance-mode');
+    if (!attendanceMode || !attendanceMode.value) {
+      showFieldError('student-attendance-mode', 'يرجى تحديد نمط الحضور المطلوب (حضوري أم عن بعد)');
+      isValid = false;
+    }
+
+    // 7. تاريخ الميلاد (إلزامي)
+    const birthDate = document.getElementById('student-birth-date');
+    if (!birthDate || !birthDate.value) {
+      showFieldError('student-birth-date', 'يرجى إدخال تاريخ الميلاد كاملاً');
+      isValid = false;
+    }
+
+    // 8. مكان الميلاد / المدينة (إلزامي)
+    const birthPlace = document.getElementById('student-birth-place');
+    if (!birthPlace || !birthPlace.value.trim()) {
+      showFieldError('student-birth-place', 'يرجى إدخال مكان الميلاد / المدينة والدولة');
+      isValid = false;
+    }
+
+    // 9. سند الدفع (إلزامي فقط للطلاب من داخل الوطن، ومستثنى للطلاب من بلد آخر)
+    const isOutside = (residence && residence.value === 'outside_yemen');
+    if (!isOutside && !selectedFile) {
       showFileError('يرجى إرفاق صورة أو مستند سند الحوالة / الإيداع لإتمام التسجيل');
       isValid = false;
     }
@@ -586,7 +681,7 @@ const RegisterPage = (() => {
     e.preventDefault();
 
     if (!validateForm()) {
-      Toast.error('يرجى التأكد من استكمال كافة الحقول المطلوبة وإرفاق سند الدفع');
+      Toast.error('يرجى التأكد من استكمال كافة الحقول المطلوبة');
       return;
     }
 
@@ -637,14 +732,22 @@ const RegisterPage = (() => {
       }
     }
 
+    const residenceVal = document.getElementById('student-residence').value;
+    const attendanceVal = document.getElementById('student-attendance-mode').value;
+
     formData.append('fullNameAr', document.getElementById('student-name-ar').value.trim());
     formData.append('fullNameEn', document.getElementById('student-name-en').value.trim());
     formData.append('phone', document.getElementById('student-phone').value.trim());
+    formData.append('residenceLocation', residenceVal);
+    formData.append('attendanceMode', attendanceVal);
     formData.append('courseId', selectedCourseId);
     formData.append('courseTitle', selectedCourseTitle);
     formData.append('birthDate', document.getElementById('student-birth-date').value);
     formData.append('birthPlace', document.getElementById('student-birth-place').value.trim());
-    formData.append('receiptFile', selectedFile);
+
+    if (selectedFile) {
+      formData.append('receiptFile', selectedFile);
+    }
 
     try {
       // 2. استدعاء طبقة الـ API المعتمدة
@@ -652,7 +755,7 @@ const RegisterPage = (() => {
 
       if (response && response.success) {
         // 3. عرض شاشة النجاح وتحديث بياناتها
-        showSuccessModal(response, selectedCourseTitle);
+        showSuccessModal(response, selectedCourseTitle, residenceVal, attendanceVal);
         if (typeof Api.notifyStatsUpdated === 'function') {
           Api.notifyStatsUpdated();
         }
@@ -661,7 +764,8 @@ const RegisterPage = (() => {
       }
     } catch (err) {
       console.error('Error submitting registration:', err);
-      Toast.error('حدث خطأ أثناء إرسال الطلب، يرجى التحقق من اتصال الإنترنت والمحاولة ثانية');
+      const errMsg = (err && err.message) ? err.message : 'حدث خطأ أثناء إرسال الطلب، يرجى مراجعة البيانات والمحاولة ثانية';
+      Toast.error(errMsg);
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalBtnHtml;
@@ -669,9 +773,9 @@ const RegisterPage = (() => {
   }
 
   /**
-   * عرض شاشة تأكيد النجاح
+   * عرض شاشة تأكيد النجاح وتحديث بياناتها وفقاً لنوع وموقع الطالب
    */
-  function showSuccessModal(response, customCourseTitle = null) {
+  function showSuccessModal(response, customCourseTitle = null, residenceVal = 'inside_yemen', attendanceVal = 'in_person') {
     const modal = document.getElementById('registration-success-modal');
     if (!modal) return;
 
@@ -680,10 +784,11 @@ const RegisterPage = (() => {
     const courseTitle = customCourseTitle || courseSelect.options[courseSelect.selectedIndex]?.getAttribute('data-title') || courseSelect.value;
     const phone = document.getElementById('student-phone').value.trim();
 
-    // تحديث بيانات الإيصال
+    // تحديث الرقم المرجعي
     const refEl = document.getElementById('success-reference-code');
     if (refEl) refEl.textContent = response.reference;
 
+    // تحديث بيانات المتدرب
     const nameEl = document.getElementById('summary-student-name');
     if (nameEl) nameEl.textContent = studentName;
 
@@ -695,6 +800,90 @@ const RegisterPage = (() => {
 
     const timeEl = document.getElementById('summary-timestamp');
     if (timeEl) timeEl.textContent = response.timestamp;
+
+    // تحديث نمط الحضور
+    const attendanceEl = document.getElementById('summary-attendance-mode');
+    if (attendanceEl) {
+      attendanceEl.textContent = (attendanceVal === 'online') ? '🌐 عن بعد (أونلاين عبر الإنترنت)' : '🏫 تدريب حضوري (مقر المنصة - مأرب)';
+    }
+
+    // تحديث موقع الإقامة
+    const residenceEl = document.getElementById('summary-residence-location');
+    if (residenceEl) {
+      residenceEl.textContent = (residenceVal === 'outside_yemen') ? '🌍 من خارج الوطن (بلد آخر)' : '🇾🇪 من داخل الوطن (اليمن)';
+    }
+
+    const titleEl = document.getElementById('success-title');
+    const subEl = document.getElementById('success-subtitle');
+    const waInternationalBox = document.getElementById('whatsapp-international-box');
+    const retentionAlert = document.getElementById('success-retention-alert');
+    const receiptStatusEl = document.getElementById('summary-receipt-status');
+
+    if (residenceVal === 'outside_yemen') {
+      // 1. حالة الطالب من خارج الوطن
+      if (titleEl) titleEl.textContent = 'تم استلام بيانات التسجيل بنجاح! 🌍';
+      if (subEl) {
+        subEl.innerHTML = `شكراً لك يا <strong>${Helpers.escape(studentName)}</strong>. تم حفظ بيانات تسجيلك بنجاح. نظراً لتسجيلك من خارج الوطن، <strong>يرجى التواصل عبر الواتساب أدناه لإرسال سند التسديد وتأكيد انطلاق تدريبك</strong>.`;
+      }
+
+      // إظهار بطاقة الواتساب المباشرة للرقمين
+      if (waInternationalBox) {
+        waInternationalBox.style.display = 'block';
+
+        // تجهيز نص رسالة الواتساب المسبقة
+        const waMsg = `مرحباً إدارة منصة إتقان، أنا المتدرب: ${studentName}، قمت بالتسجيل من خارج الوطن في دورة: ${courseTitle}. رقمي المرجعي لطلب التسجيل هو: ${response.reference}. أود إرسال سند السداد وتأكيد تسجيلي معكم.`;
+        const encodedMsg = encodeURIComponent(waMsg);
+
+        const waLink1 = document.getElementById('btn-wa-link-1');
+        if (waLink1) waLink1.href = `https://wa.me/967771807595?text=${encodedMsg}`;
+
+        const waLink2 = document.getElementById('btn-wa-link-2');
+        if (waLink2) waLink2.href = `https://wa.me/967778375155?text=${encodedMsg}`;
+      }
+
+      // تحديث حالة السند في الجدول
+      if (receiptStatusEl) {
+        receiptStatusEl.style.color = '#D97706';
+        receiptStatusEl.innerHTML = `
+          <i data-lucide="clock" style="width: 14px; height: 14px; color: #D97706;"></i>
+          <span>بانتظار الإرسال عبر الواتساب (يرجى المتابعة أعلاه)</span>
+        `;
+      }
+
+      // ضبط صندوق التنبيه
+      if (retentionAlert) {
+        const desc = document.getElementById('retention-desc');
+        if (desc) {
+          desc.innerHTML = `يرجى <strong>الاحتفاظ بهذا السند وتصويره أو طباعته</strong> برقمك المرجعي (<strong>${response.reference}</strong>) ومشاركته مع إدارة المنصة عبر الواتساب لتأكيد قيدك واعتمادك فوراً.`;
+        }
+      }
+
+    } else {
+      // 2. حالة الطالب من داخل الوطن (مع سند مرفوع)
+      if (titleEl) titleEl.textContent = 'تم استلام طلب التسجيل بنجاح!';
+      if (subEl) {
+        subEl.innerHTML = 'شكراً لك. تم استلام بياناتك وسند السداد بنجاح. <strong>يرجى الاحتفاظ بهذا السند وطباعته أو حفظه</strong>، حيث يمثل وثيقتك المعتمدة لتأكيد القبول ومتابعة الطلب.';
+      }
+
+      if (waInternationalBox) {
+        waInternationalBox.style.display = 'none';
+      }
+
+      if (receiptStatusEl) {
+        receiptStatusEl.style.color = 'var(--clr-success)';
+        receiptStatusEl.innerHTML = `
+          <i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i>
+          <span>تم الإرفاق بنجاح</span>
+        `;
+      }
+
+      if (retentionAlert) {
+        const desc = document.getElementById('retention-desc');
+        if (desc) {
+          desc.innerHTML = 'يرجى <strong>الاحتفاظ بهذا السند وطباعته فوراً</strong> (أو حفظه كملف PDF / لقطة شاشة)، حيث يُعد وثيقتك المرجعية الرسمية لإتمام إجراءات القبول ومطابقة الحساب عند بدء التدريب.';
+        }
+      }
+    }
 
     // فتح النافذة المنبثقة
     modal.classList.add('open');
