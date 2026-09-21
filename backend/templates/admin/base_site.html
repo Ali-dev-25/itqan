@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:"منصة إتقان" }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/admin_theme.css?v=2.0">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" class="itqan-admin-brand">
+    <img src="/assets/favicon.png" alt="ITQAN Logo" class="itqan-admin-logo" />
+    <div class="itqan-admin-text-wrap">
+      <div class="itqan-admin-title">منصة «إتقان» التعليمية</div>
+      <div class="itqan-admin-sub">لوحة الإدارة والتحكم الذكية</div>
+    </div>
+  </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<div class="itqan-admin-quick-links">
+  <a href="/" target="_blank" class="itqan-btn-nav" title="فتح الموقع الرئيسي في نافذة جديدة">
+    <span>🌐 الموقع الرئيسي</span>
+  </a>
+  <a href="/register.html" target="_blank" class="itqan-btn-nav" title="فتح بوابة التسجيل">
+    <span>📝 بوابة التسجيل</span>
+  </a>
+</div>
+{% endblock %}

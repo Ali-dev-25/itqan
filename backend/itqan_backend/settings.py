@@ -66,7 +66,7 @@ ROOT_URLCONF = 'itqan_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [FRONTEND_DIR],  # لتقديم صفحات الـ Frontend
+        'DIRS': [BASE_DIR / 'templates', FRONTEND_DIR],  # قوالب لوحة الإدارة وصفحات الـ Frontend
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
