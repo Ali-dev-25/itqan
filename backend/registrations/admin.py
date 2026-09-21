@@ -239,30 +239,42 @@ class CourseAdmin(admin.ModelAdmin):
     def status_badge(self, obj):
         if obj.status == 'active':
             return format_html(
-                '<span style="background-color: #10B981; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">🟢 نشطة ومتاحة</span>'
+                '<span style="background-color: {}; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">{}</span>',
+                '#10B981',
+                '🟢 نشطة ومتاحة'
             )
         return format_html(
-            '<span style="background-color: #EF4444; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">⏸️ موقوفة حالياً</span>'
+            '<span style="background-color: {}; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">{}</span>',
+            '#EF4444',
+            '⏸️ موقوفة حالياً'
         )
 
     @admin.display(description='حضوري بالمقر')
     def in_person_badge(self, obj):
         if obj.allow_in_person:
             return format_html(
-                '<span style="background-color: #2563EB; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">✓ متاح</span>'
+                '<span style="background-color: {}; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">{}</span>',
+                '#2563EB',
+                '✓ متاح'
             )
         return format_html(
-            '<span style="background-color: #94A3B8; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">✗ معطل</span>'
+            '<span style="background-color: {}; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">{}</span>',
+            '#94A3B8',
+            '✗ معطل'
         )
 
     @admin.display(description='عن بعد Online')
     def online_badge(self, obj):
         if obj.allow_online:
             return format_html(
-                '<span style="background-color: #7C3AED; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">✓ متاح</span>'
+                '<span style="background-color: {}; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">{}</span>',
+                '#7C3AED',
+                '✓ متاح'
             )
         return format_html(
-            '<span style="background-color: #94A3B8; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">✗ معطل</span>'
+            '<span style="background-color: {}; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">{}</span>',
+            '#94A3B8',
+            '✗ معطل'
         )
 
     @admin.display(description='المقبولون (حضوري / عن بعد)')
