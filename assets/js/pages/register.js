@@ -174,6 +174,7 @@ const RegisterPage = (() => {
 
   /**
    * إظهار أو إخفاء بطاقة سعة ومقاعد الدورة والمسجلين والحد الأدنى والأقصى
+   * تشمل خطين منفصلين: شريط للحضوري وشريط للأونلاين (عن بعد) بتصميم أنيق ومصغر
    */
   function updateCourseCapacityNotice(courseId) {
     const capacityNotice = document.getElementById('course-capacity-notice');
@@ -193,34 +194,82 @@ const RegisterPage = (() => {
 
     const min = course.minStudents || 15;
     const max = course.maxStudents || 30;
-    const enrolled = (liveStats && typeof liveStats[course.id] === 'number') ? liveStats[course.id] : 0;
-    const percent = Math.min(100, Math.round((enrolled / max) * 100));
-    const isConfirmed = enrolled >= min;
-    const remainingToMin = Math.max(0, min - enrolled);
+
+    // استخراج أعداد المسجلين للحضوري وعن بعد
+    const inPersonCount = (liveStats && typeof liveStats[`${course.id}_in_person`] === 'number')
+      ? liveStats[`${course.id}_in_person`]
+      : (liveStats?.breakdown?.[course.id]?.in_person || 0);
+
+    const onlineCount = (liveStats && typeof liveStats[`${course.id}_online`] === 'number')
+      ? liveStats[`${course.id}_online`]
+      : (liveStats?.breakdown?.[course.id]?.online || 0);
+
+    const enrolledTotal = (liveStats && typeof liveStats[course.id] === 'number')
+      ? liveStats[course.id]
+      : (inPersonCount + onlineCount);
+
+    const percentInPerson = Math.min(100, Math.round((inPersonCount / max) * 100));
+    const percentOnline = Math.min(100, Math.round((onlineCount / max) * 100));
+    const displayInPersonPercent = inPersonCount > 0 ? Math.max(5, percentInPerson) : 0;
+    const displayOnlinePercent = onlineCount > 0 ? Math.max(5, percentOnline) : 0;
+
+    const isConfirmed = enrolledTotal >= min;
+    const remainingToMin = Math.max(0, min - enrolledTotal);
 
     const statusBadge = isConfirmed
-      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
-      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق</span>`
+      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
 
     capacityNotice.innerHTML = `
       <div class="course-capacity-card" style="margin-bottom: 0; margin-top: 10px; background: #F8FAFC; border: 1px solid #E2E8F0;">
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
-            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolledTotal}</strong> طالب</span>
           </div>
-          ${statusBadge}
+          <div class="capacity-badge-wrap">
+            ${statusBadge}
+          </div>
         </div>
-        <div class="capacity-progress-bar-wrap" title="نسبة التسجيل: ${percent}%">
-          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${percent}%;"></div>
+
+        <!-- شريطان منفصلان: خط للحضوري وخط للأونلاين (عن بعد) -->
+        <div class="capacity-dual-bars">
+          <!-- 1. شريط التدريب الحضوري -->
+          <div class="capacity-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="map-pin" class="icon-inperson"></i>
+                <span>تدريب حضوري:</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-inperson">${inPersonCount}</strong> طالب <span class="mode-percent">(${percentInPerson}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar inperson" title="المسجلون حضورياً: ${inPersonCount} طالب">
+              <div class="capacity-progress-fill fill-inperson" style="width: ${displayInPersonPercent}%;"></div>
+            </div>
+          </div>
+
+          <!-- 2. شريط التدريب عن بعد (Online) -->
+          <div class="capacity-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="globe" class="icon-online"></i>
+                <span>عن بعد (Online):</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-online">${onlineCount}</strong> طالب <span class="mode-percent">(${percentOnline}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar online" title="المسجلون عن بعد أونلاين: ${onlineCount} طالب">
+              <div class="capacity-progress-fill fill-online" style="width: ${displayOnlinePercent}%;"></div>
+            </div>
+          </div>
         </div>
+
         <div class="capacity-footer-meta">
           <div class="capacity-meta-item">
-            <i data-lucide="target" style="width: 12px; height: 12px; color: var(--clr-primary);"></i>
+            <i data-lucide="target" style="color: var(--clr-primary);"></i>
             <span>الحد الأدنى للبدء: <strong>${min} طالب</strong></span>
           </div>
           <div class="capacity-meta-item">
-            <i data-lucide="user-check" style="width: 12px; height: 12px; color: var(--clr-text-muted);"></i>
+            <i data-lucide="user-check" style="color: var(--clr-text-muted);"></i>
             <span>الحد الأعلى: <strong>${max} مقعد</strong></span>
           </div>
         </div>

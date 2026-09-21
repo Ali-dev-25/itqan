@@ -82,16 +82,30 @@ const HomePage = (() => {
     if (typeof CoursesData === 'undefined') return;
 
     CoursesData.forEach(course => {
-      const newCount = (newStats && typeof newStats[course.id] === 'number') ? newStats[course.id] : 0;
+      const inPerson = (newStats && typeof newStats[`${course.id}_in_person`] === 'number')
+        ? newStats[`${course.id}_in_person`]
+        : (newStats?.breakdown?.[course.id]?.in_person || 0);
+
+      const online = (newStats && typeof newStats[`${course.id}_online`] === 'number')
+        ? newStats[`${course.id}_online`]
+        : (newStats?.breakdown?.[course.id]?.online || 0);
+
+      const newCount = (newStats && typeof newStats[course.id] === 'number')
+        ? newStats[course.id]
+        : (inPerson + online);
+
       const card = document.getElementById(`capacity-card-${course.id}`);
       
       if (card) {
         const min = course.minStudents || 15;
         const max = course.maxStudents || 30;
-        const percent = Math.min(100, Math.round((newCount / max) * 100));
-        const displayPercent = newCount > 0 ? Math.max(8, percent) : 0;
         const isConfirmed = newCount >= min;
         const remainingToMin = Math.max(0, min - newCount);
+
+        const percentInPerson = Math.min(100, Math.round((inPerson / max) * 100));
+        const percentOnline = Math.min(100, Math.round((online / max) * 100));
+        const displayInPerson = inPerson > 0 ? Math.max(5, percentInPerson) : 0;
+        const displayOnline = online > 0 ? Math.max(5, percentOnline) : 0;
 
         const countEl = card.querySelector('.enrolled-count');
         if (countEl) {
@@ -103,21 +117,27 @@ const HomePage = (() => {
           }
         }
 
-        const fillEl = card.querySelector('.capacity-progress-fill');
-        if (fillEl) {
-          fillEl.style.width = `${displayPercent}%`;
-          if (isConfirmed) {
-            fillEl.classList.add('is-confirmed');
-          } else {
-            fillEl.classList.remove('is-confirmed');
-          }
-        }
+        // تحديث أعداد ونسب الحضوري
+        const inPersonCountEl = card.querySelector('.count-val-inperson');
+        if (inPersonCountEl) inPersonCountEl.textContent = inPerson;
+        const inPersonPercentEl = card.querySelector('.percent-val-inperson');
+        if (inPersonPercentEl) inPersonPercentEl.textContent = `(${percentInPerson}%)`;
+        const fillInPersonEl = card.querySelector('.fill-inperson');
+        if (fillInPersonEl) fillInPersonEl.style.width = `${displayInPerson}%`;
+
+        // تحديث أعداد ونسب الأونلاين (عن بعد)
+        const onlineCountEl = card.querySelector('.count-val-online');
+        if (onlineCountEl) onlineCountEl.textContent = online;
+        const onlinePercentEl = card.querySelector('.percent-val-online');
+        if (onlinePercentEl) onlinePercentEl.textContent = `(${percentOnline}%)`;
+        const fillOnlineEl = card.querySelector('.fill-online');
+        if (fillOnlineEl) fillOnlineEl.style.width = `${displayOnline}%`;
 
         const badgeWrap = card.querySelector('.capacity-badge-wrap');
         if (badgeWrap) {
           const newBadgeHTML = isConfirmed
-            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
-            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة</span>`
+            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
           
           if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
             badgeWrap.innerHTML = newBadgeHTML;
@@ -281,15 +301,30 @@ const HomePage = (() => {
   function getCourseCapacityHTML(course) {
     const min = course.minStudents || 15;
     const max = course.maxStudents || 30;
-    // يتم احتساب الطلاب المقبولين فقط من قبل الإدارة
-    const enrolled = (liveStats && typeof liveStats[course.id] === 'number') ? liveStats[course.id] : 0;
-    const percent = Math.min(100, Math.round((enrolled / max) * 100));
+
+    const inPerson = (liveStats && typeof liveStats[`${course.id}_in_person`] === 'number')
+      ? liveStats[`${course.id}_in_person`]
+      : (liveStats?.breakdown?.[course.id]?.in_person || 0);
+
+    const online = (liveStats && typeof liveStats[`${course.id}_online`] === 'number')
+      ? liveStats[`${course.id}_online`]
+      : (liveStats?.breakdown?.[course.id]?.online || 0);
+
+    const enrolled = (liveStats && typeof liveStats[course.id] === 'number')
+      ? liveStats[course.id]
+      : (inPerson + online);
+
+    const percentInPerson = Math.min(100, Math.round((inPerson / max) * 100));
+    const percentOnline = Math.min(100, Math.round((online / max) * 100));
+    const displayInPerson = inPerson > 0 ? Math.max(5, percentInPerson) : 0;
+    const displayOnline = online > 0 ? Math.max(5, percentOnline) : 0;
+
     const isConfirmed = enrolled >= min;
     const remainingToMin = Math.max(0, min - enrolled);
 
     const statusBadge = isConfirmed
-      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> مؤكدة الانطلاق</span>`
-      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة</span>`
+      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
 
     return `
       <div class="course-capacity-card" id="capacity-card-${course.id}" data-course-id="${course.id}">
@@ -302,17 +337,43 @@ const HomePage = (() => {
             ${statusBadge}
           </div>
         </div>
-        <div class="capacity-progress-bar-wrap" title="نسبة التسجيل: ${percent}%">
-          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${percent}%;"></div>
+
+        <div class="capacity-dual-bars">
+          <div class="capacity-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="map-pin" class="icon-inperson"></i>
+                <span>حضوري:</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-val-inperson count-inperson">${inPerson}</strong> طالب <span class="percent-val-inperson mode-percent">(${percentInPerson}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar inperson" title="المسجلون حضورياً: ${inPerson} طالب">
+              <div class="capacity-progress-fill fill-inperson" style="width: ${displayInPerson}%;"></div>
+            </div>
+          </div>
+
+          <div class="capacity-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="globe" class="icon-online"></i>
+                <span>أونلاين:</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-val-online count-online">${online}</strong> طالب <span class="percent-val-online mode-percent">(${percentOnline}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar online" title="المسجلون أونلاين: ${online} طالب">
+              <div class="capacity-progress-fill fill-online" style="width: ${displayOnline}%;"></div>
+            </div>
+          </div>
         </div>
+
         <div class="capacity-footer-meta">
           <div class="capacity-meta-item">
-            <i data-lucide="target" style="width: 12px; height: 12px; color: var(--clr-primary);"></i>
-            <span>الحد الأدنى للبدء: <strong>${min} طالب</strong></span>
+            <i data-lucide="target" style="width: 11px; height: 11px; color: var(--clr-primary);"></i>
+            <span>الحد الأدنى: <strong>${min} طالب</strong></span>
           </div>
           <div class="capacity-meta-item">
-            <i data-lucide="user-check" style="width: 12px; height: 12px; color: var(--clr-text-muted);"></i>
-            <span>الحد الأعلى: <strong>${max} مقعد</strong></span>
+            <i data-lucide="user-check" style="width: 11px; height: 11px; color: var(--clr-text-muted);"></i>
+            <span>السعة: <strong>${max} مقعد</strong></span>
           </div>
         </div>
       </div>

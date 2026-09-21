@@ -176,11 +176,25 @@ class RegistrationStatsAPIView(APIView):
         
         # استعلام الطلبات المقبولة فقط (status='approved')
         approved_registrations = Registration.objects.filter(status='approved')
+
+        # قاموس تفصيلي لتقسيم الحضور (حضوري وعن بعد)
+        breakdown = {}
+        for k in stats.keys():
+            breakdown[k] = {'in_person': 0, 'online': 0, 'total': 0}
+
+        def record_reg(course_key, attendance_mode):
+            m = attendance_mode if attendance_mode in ['in_person', 'online'] else 'in_person'
+            stats[course_key] = stats.get(course_key, 0) + 1
+            if course_key not in breakdown:
+                breakdown[course_key] = {'in_person': 0, 'online': 0, 'total': 0}
+            breakdown[course_key][m] += 1
+            breakdown[course_key]['total'] += 1
         
         for reg in approved_registrations:
             cid = (reg.course_id or '').strip()
             cid_upper = cid.upper()
             title = (reg.course_title or '').strip().lower()
+            att_mode = getattr(reg, 'attendance_mode', 'in_person') or 'in_person'
             
             # 1. دبلوم ومستويات اللغة الإنجليزية TechLingo (فحص ذكي ومستقل أولاً لمنع أي تداخل)
             is_techlingo = (
@@ -193,7 +207,7 @@ class RegistrationStatsAPIView(APIView):
                 'إنجليزي' in title
             )
             if is_techlingo:
-                stats['C008_TECHLINGO'] = stats.get('C008_TECHLINGO', 0) + 1
+                record_reg('C008_TECHLINGO', att_mode)
                 matched_level = None
                 for lvl in ['1A', '1B', '2A', '2B', '3A', '3B']:
                     if (
@@ -206,7 +220,7 @@ class RegistrationStatsAPIView(APIView):
                         matched_level = f'C008_TECHLINGO_{lvl}'
                         break
                 if matched_level:
-                    stats[matched_level] = stats.get(matched_level, 0) + 1
+                    record_reg(matched_level, att_mode)
                 continue
 
             # 2. دورة C++ OOP
@@ -216,7 +230,7 @@ class RegistrationStatsAPIView(APIView):
                 ('c++' in title and ('oop' in title or 'كائن' in title or 'كائنية' in title))
             )
             if is_cpp_oop:
-                stats['C002_CPP_OOP'] = stats.get('C002_CPP_OOP', 0) + 1
+                record_reg('C002_CPP_OOP', att_mode)
                 continue
 
             # 3. دورة أساسيات C++ (حصرية لـ C++ لمنع احتساب أي دورة أخرى تحتوي كلمة أساسيات)
@@ -226,7 +240,7 @@ class RegistrationStatsAPIView(APIView):
                 ('c++' in title and not ('oop' in title or 'كائن' in title or 'كائنية' in title))
             )
             if is_cpp_basics:
-                stats['C001_CPP_BASICS'] = stats.get('C001_CPP_BASICS', 0) + 1
+                record_reg('C001_CPP_BASICS', att_mode)
                 continue
 
             # 4. بايثون - تطبيقات سطح المكتب والواجهات PyQt
@@ -236,7 +250,7 @@ class RegistrationStatsAPIView(APIView):
                 ('بايثون' in title and ('مكتب' in title or 'واجهات' in title or 'pyqt' in title or 'gui' in title))
             )
             if is_py_desktop:
-                stats['C004_PYTHON_DESKTOP'] = stats.get('C004_PYTHON_DESKTOP', 0) + 1
+                record_reg('C004_PYTHON_DESKTOP', att_mode)
                 continue
 
             # 5. بايثون - ذكاء اصطناعي وتحليل بيانات
@@ -246,7 +260,7 @@ class RegistrationStatsAPIView(APIView):
                 ('بايثون' in title and ('ذكاء' in title or 'بيانات' in title or 'تعلم الآلة' in title or 'machine' in title))
             )
             if is_py_ai:
-                stats['C005_PYTHON_AI'] = stats.get('C005_PYTHON_AI', 0) + 1
+                record_reg('C005_PYTHON_AI', att_mode)
                 continue
 
             # 6. أساسيات بايثون
@@ -256,7 +270,7 @@ class RegistrationStatsAPIView(APIView):
                 ('بايثون' in title and not ('مكتب' in title or 'واجهات' in title or 'ذكاء' in title or 'بيانات' in title))
             )
             if is_py_basics:
-                stats['C003_PYTHON_BASICS'] = stats.get('C003_PYTHON_BASICS', 0) + 1
+                record_reg('C003_PYTHON_BASICS', att_mode)
                 continue
 
             # 7. قواعد البيانات SQL
@@ -267,7 +281,7 @@ class RegistrationStatsAPIView(APIView):
                 'قواعد البيانات' in title
             )
             if is_sql:
-                stats['C006_SQL'] = stats.get('C006_SQL', 0) + 1
+                record_reg('C006_SQL', att_mode)
                 continue
 
             # 8. هندسة الأوامر والذكاء الاصطناعي
@@ -278,7 +292,7 @@ class RegistrationStatsAPIView(APIView):
                 ('ذكاء' in title and 'بايثون' not in title)
             )
             if is_ai_prompt:
-                stats['C007_AI_PROMPT'] = stats.get('C007_AI_PROMPT', 0) + 1
+                record_reg('C007_AI_PROMPT', att_mode)
                 continue
 
             # 9. دبلوم رخصة قيادة الحاسوب ICDL
@@ -289,19 +303,24 @@ class RegistrationStatsAPIView(APIView):
                 'قيادة الحاسوب' in title
             )
             if is_icdl:
-                stats['C009_ICDL'] = stats.get('C009_ICDL', 0) + 1
+                record_reg('C009_ICDL', att_mode)
                 continue
 
             # احتياطي: إذا كان المعرف موجوداً مباشرة
-            if cid in stats:
-                stats[cid] = stats.get(cid, 0) + 1
-            elif cid:
-                stats[cid] = stats.get(cid, 0) + 1
+            if cid:
+                record_reg(cid, att_mode)
+
+        # دمج بيانات التقسيم لكل دورة لسهولة الوصول المباشر
+        for k, v in breakdown.items():
+            stats[f"{k}_in_person"] = v['in_person']
+            stats[f"{k}_online"] = v['online']
+            stats[f"{k}_total"] = v['total']
 
         response = Response({
             "success": True,
             "timestamp": timezone.now().isoformat(),
-            "stats": stats
+            "stats": stats,
+            "breakdown": breakdown
         }, status=status.HTTP_200_OK)
         
         # ترويسات صارمة لمنع التخزين المؤقت في المتصفح أو أي بروكسي
