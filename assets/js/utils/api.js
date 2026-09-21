@@ -74,7 +74,10 @@ const Api = (() => {
       });
       if (!response.ok) return {};
       const data = await response.json();
-      return data.stats || {};
+      const statsObj = data.stats || {};
+      if (data.config) statsObj.config = data.config;
+      if (data.breakdown) statsObj.breakdown = data.breakdown;
+      return statsObj;
     } catch (err) {
       console.warn('Live stats fetch warning:', err);
       return {};
@@ -97,9 +100,34 @@ const Api = (() => {
     }
   }
 
+  /**
+   * جلب كافة البرامج والدورات التدريبية المعتمدة وحالتها ونمط الحضور من قاعدة البيانات
+   * @returns {Promise<Array|null>}
+   */
+  async function fetchCourses() {
+    try {
+      const timestamp = Date.now();
+      const response = await fetch(`${API_BASE_URL}/api/v1/courses/?_t=${timestamp}`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
+      if (!response.ok) return null;
+      const data = await response.json();
+      return Array.isArray(data.courses) ? data.courses : null;
+    } catch (err) {
+      console.warn('Courses fetch warning:', err);
+      return null;
+    }
+  }
+
   return {
     submitRegistration,
     fetchRegistrationStats,
+    fetchCourses,
     broadcastChannel,
     notifyStatsUpdated
   };

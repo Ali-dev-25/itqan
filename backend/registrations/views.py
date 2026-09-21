@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import Registration
-from .serializers import RegistrationSerializer
+from .models import Registration, Course
+from .serializers import RegistrationSerializer, CourseSerializer
 from .utils import (
     generate_reference_number,
     format_arabic_timestamp,
@@ -306,9 +306,23 @@ class RegistrationStatsAPIView(APIView):
                 record_reg('C009_ICDL', att_mode)
                 continue
 
-            # احتياطي: إذا كان المعرف موجوداً مباشرة
+            # احتياطي: إذا كان المعرف موجوداً مباشرة أو لأي دورة مضافة جديدة
             if cid:
                 record_reg(cid, att_mode)
+
+        # استعلام كافة الدورات المسجلة في قاعدة البيانات وإعداداتها
+        db_courses = Course.objects.all()
+        course_config = {}
+        for c in db_courses:
+            if c.course_id not in stats:
+                stats[c.course_id] = 0
+            course_config[c.course_id] = {
+                'status': c.status,
+                'allow_in_person': c.allow_in_person,
+                'allow_online': c.allow_online,
+                'min_students': c.min_students,
+                'max_students': c.max_students
+            }
 
         # دمج بيانات التقسيم لكل دورة لسهولة الوصول المباشر
         for k, v in breakdown.items():
@@ -320,7 +334,8 @@ class RegistrationStatsAPIView(APIView):
             "success": True,
             "timestamp": timezone.now().isoformat(),
             "stats": stats,
-            "breakdown": breakdown
+            "breakdown": breakdown,
+            "config": course_config
         }, status=status.HTTP_200_OK)
         
         # ترويسات صارمة لمنع التخزين المؤقت في المتصفح أو أي بروكسي
@@ -328,4 +343,23 @@ class RegistrationStatsAPIView(APIView):
         response['Pragma'] = 'no-cache'
         response['Expires'] = '0'
         return response
+
+
+class CourseListAPIView(APIView):
+    """
+    نقطة النهاية لجلب كافة البرامج والدورات التدريبية المعتمدة
+    GET /api/v1/courses/
+    """
+    def get(self, request, *args, **kwargs):
+        courses = Course.objects.all().order_by('sort_order', 'id')
+        serializer = CourseSerializer(courses, many=True)
+        response = Response({
+            "success": True,
+            "courses": serializer.data
+        }, status=status.HTTP_200_OK)
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
+
 

@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.urls import path
 from django.shortcuts import redirect
 from django.utils import timezone
-from .models import Registration
+from .models import Registration, Course
 from .utils import build_excel_workbook_from_queryset, export_registration_to_excel
 from pathlib import Path
 from django.conf import settings
@@ -177,3 +177,127 @@ class RegistrationAdmin(admin.ModelAdmin):
     def mark_as_rejected(self, request, queryset):
         count = queryset.update(status='rejected')
         self.message_user(request, f'تم تحويل {count} طلب إلى مرفوض.')
+
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = (
+        'course_id',
+        'title',
+        'track_key',
+        'status_badge',
+        'in_person_badge',
+        'online_badge',
+        'enrolled_count_display',
+        'sort_order'
+    )
+    list_editable = ('sort_order',)
+    list_filter = ('status', 'allow_in_person', 'allow_online', 'track_key')
+    search_fields = ('course_id', 'title', 'description', 'track')
+    ordering = ('sort_order', 'id')
+    list_per_page = 20
+
+    fieldsets = (
+        ('المعلومات الأساسية للدورة', {
+            'fields': ('course_id', 'title', 'track', 'track_key', 'description')
+        }),
+        ('حالة التفعيل ونمطي الحضور (حضوري / Online)', {
+            'description': 'يمكنك إيقاف الدورة مؤقتاً لتظهر مبهتة في الموقع، أو حصر التدريب على الحضوري فقط أو الأونلاين فقط.',
+            'fields': ('status', 'allow_in_person', 'allow_online')
+        }),
+        ('التوقيت والمستوى والشارة', {
+            'fields': ('duration', 'level', 'badge', 'prerequisite', 'laptop_required')
+        }),
+        ('الهوية البصرية والألوان (Lucide Icons)', {
+            'fields': ('icon', 'color', 'bg_color', 'featured', 'sort_order')
+        }),
+        ('الطاقة الاستيعابية للمقاعد', {
+            'fields': ('min_students', 'max_students')
+        }),
+        ('الرسوم والتسعيرة', {
+            'fields': (
+                ('price_in_person_current', 'price_in_person_original'),
+                ('price_online_current', 'price_online_original'),
+                'price_certificate'
+            )
+        }),
+        ('محاور ومفردات الدورة', {
+            'fields': ('topics',),
+            'description': 'أدخل كل محور تدريبي في سطر منفصل ليظهر كقائمة منسدلة أنيقة في بطاقة الدورة.'
+        }),
+    )
+
+    actions = [
+        'make_suspended',
+        'make_active',
+        'set_in_person_only',
+        'set_online_only',
+        'set_both_modes'
+    ]
+
+    @admin.display(description='حالة الدورة')
+    def status_badge(self, obj):
+        if obj.status == 'active':
+            return format_html(
+                '<span style="background-color: #10B981; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">🟢 نشطة ومتاحة</span>'
+            )
+        return format_html(
+            '<span style="background-color: #EF4444; color: white; padding: 3px 9px; border-radius: 6px; font-weight: bold; font-size: 11px;">⏸️ موقوفة حالياً</span>'
+        )
+
+    @admin.display(description='حضوري بالمقر')
+    def in_person_badge(self, obj):
+        if obj.allow_in_person:
+            return format_html(
+                '<span style="background-color: #2563EB; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">✓ متاح</span>'
+            )
+        return format_html(
+            '<span style="background-color: #94A3B8; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">✗ معطل</span>'
+        )
+
+    @admin.display(description='عن بعد Online')
+    def online_badge(self, obj):
+        if obj.allow_online:
+            return format_html(
+                '<span style="background-color: #7C3AED; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px; font-weight: 600;">✓ متاح</span>'
+            )
+        return format_html(
+            '<span style="background-color: #94A3B8; color: white; padding: 2px 7px; border-radius: 5px; font-size: 11px;">✗ معطل</span>'
+        )
+
+    @admin.display(description='المقبولون (حضوري / عن بعد)')
+    def enrolled_count_display(self, obj):
+        regs = Registration.objects.filter(course_id=obj.course_id, status='approved')
+        in_p = regs.filter(attendance_mode='in_person').count()
+        on_l = regs.filter(attendance_mode='online').count()
+        total = in_p + on_l
+        return format_html(
+            '<span title="المجموع: {} (حضوري: {} | عن بعد: {})"><strong>{}</strong> طالب <small style="color: #64748B;">({}ح / {}ع)</small></span>',
+            total, in_p, on_l, total, in_p, on_l
+        )
+
+    @admin.action(description='⏸️ إيقاف / تعطيل الدورات المحددة مؤقتاً')
+    def make_suspended(self, request, queryset):
+        count = queryset.update(status='suspended')
+        self.message_user(request, f'تم إيقاف {count} دورة تدريبية بنجاح، وستظهر مبهتة في الموقع.')
+
+    @admin.action(description='🟢 تفعيل واستئناف التسجيل للدورات المحددة')
+    def make_active(self, request, queryset):
+        count = queryset.update(status='active')
+        self.message_user(request, f'تم تفعيل {count} دورة تدريبية بنجاح.')
+
+    @admin.action(description='🏫 قصر التدريب على "الحضوري بالمقر فقط" (تعطيل Online)')
+    def set_in_person_only(self, request, queryset):
+        count = queryset.update(allow_in_person=True, allow_online=False)
+        self.message_user(request, f'تم حصر التدريب على الحضوري فقط لـ {count} دورة.')
+
+    @admin.action(description='🌐 قصر التدريب على "عن بعد Online فقط" (تعطيل الحضوري)')
+    def set_online_only(self, request, queryset):
+        count = queryset.update(allow_in_person=False, allow_online=True)
+        self.message_user(request, f'تم حصر التدريب على عن بعد Online فقط لـ {count} دورة.')
+
+    @admin.action(description='🔄 إتاحة كلا النمطين (حضوري + Online)')
+    def set_both_modes(self, request, queryset):
+        count = queryset.update(allow_in_person=True, allow_online=True)
+        self.message_user(request, f'تم تفعيل الحضور الحضوري والأونلاين معاً لـ {count} دورة.')
+

@@ -3,7 +3,70 @@ ITQAN — Registration Serializer
 التحقق من صحة بيانات التسجيل وتحويلها من camelCase إلى snake_case
 """
 from rest_framework import serializers
-from .models import Registration
+from .models import Registration, Course
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    """
+    Serializer لعرض بيانات الدورات التدريبية المعتمدة للـ Frontend
+    """
+    id = serializers.CharField(source='course_id')
+    topicsList = serializers.SerializerMethodField()
+    pricing = serializers.SerializerMethodField()
+    allowInPerson = serializers.BooleanField(source='allow_in_person')
+    allowOnline = serializers.BooleanField(source='allow_online')
+    minStudents = serializers.IntegerField(source='min_students')
+    maxStudents = serializers.IntegerField(source='max_students')
+    trackKey = serializers.CharField(source='track_key')
+    bgColor = serializers.CharField(source='bg_color')
+    laptopRequired = serializers.BooleanField(source='laptop_required')
+
+    class Meta:
+        model = Course
+        fields = [
+            'id',
+            'course_id',
+            'title',
+            'track',
+            'trackKey',
+            'description',
+            'duration',
+            'level',
+            'badge',
+            'icon',
+            'color',
+            'bgColor',
+            'status',
+            'allowInPerson',
+            'allowOnline',
+            'minStudents',
+            'maxStudents',
+            'prerequisite',
+            'laptopRequired',
+            'featured',
+            'sort_order',
+            'topicsList',
+            'pricing',
+        ]
+
+    def get_topicsList(self, obj):
+        return obj.get_topics_list()
+
+    def get_pricing(self, obj):
+        return {
+            'type': 'standard',
+            'inPerson': {
+                'current': obj.price_in_person_current,
+                'original': obj.price_in_person_original or obj.price_in_person_current,
+                'label': 'حضوري بالمقر'
+            },
+            'online': {
+                'current': obj.price_online_current,
+                'original': obj.price_online_original or obj.price_online_current,
+                'label': 'أونلاين (Online)'
+            },
+            'certificate': obj.price_certificate
+        }
 
 
 class RegistrationSerializer(serializers.Serializer):
@@ -151,6 +214,24 @@ class RegistrationSerializer(serializers.Serializer):
 
         phone = data.get('phone', '').strip()
         course_id = data.get('courseId', '')
+        attendance_mode = data.get('attendanceMode', 'in_person')
+
+        # 3. التحقق من حالة الدورة ونمط الحضور من قاعدة البيانات
+        if course_id:
+            course = Course.objects.filter(course_id=course_id).first()
+            if course:
+                if course.status == 'suspended':
+                    raise serializers.ValidationError({
+                        'courseId': ['نعتذر، التسجيل في هذه الدورة موقف حالياً بناءً على توجيهات الإدارة.']
+                    })
+                if attendance_mode == 'online' and not course.allow_online:
+                    raise serializers.ValidationError({
+                        'attendanceMode': ['التدريب عن بعد (Online) غير متاح لهذه الدورة، يرجى اختيار التدريب الحضوري.']
+                    })
+                if attendance_mode == 'in_person' and not course.allow_in_person:
+                    raise serializers.ValidationError({
+                        'attendanceMode': ['التدريب الحضوري بالمقر غير متاح لهذه الدورة، يرجى اختيار التدريب عن بعد.']
+                    })
 
         if phone and course_id:
             exists = Registration.objects.filter(

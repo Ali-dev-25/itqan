@@ -693,6 +693,62 @@
   border-color: var(--clr-primary-subtle);
 }
 
+/* بطاقة الدورة الموقوفة مؤقتاً */
+.course-card.is-suspended {
+  opacity: 0.72;
+  filter: grayscale(45%);
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  position: relative;
+  transition: all var(--tr-normal);
+}
+
+.course-card.is-suspended:hover {
+  opacity: 0.92;
+  filter: grayscale(15%);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.course-suspended-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  border-radius: var(--r-md);
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-bottom: var(--sp-3);
+  animation: fadeIn 0.3s ease;
+}
+
+.course-suspended-banner svg {
+  width: 14px;
+  height: 14px;
+  color: #DC2626;
+  flex-shrink: 0;
+}
+
+.course-badge.is-suspended-badge {
+  background: #FEF2F2 !important;
+  color: #DC2626 !important;
+  border: 1px solid #FECACA !important;
+}
+
+.btn-course-register.is-suspended {
+  background: #E2E8F0 !important;
+  color: #64748B !important;
+  border: 1px solid #CBD5E1 !important;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none !important;
+}
+
+
 .course-card-top {
   display: flex;
   align-items: flex-start;

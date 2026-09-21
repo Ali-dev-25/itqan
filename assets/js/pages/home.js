@@ -10,6 +10,11 @@ const HomePage = (() => {
   async function init() {
     Navbar.render('navbar-container');
     Footer.render('footer-container');
+
+    // 1. تحميل وتحديث الدورات التدريبية المعتمدة من السيرفر (الحالة ونمطي الحضور والدورات الجديدة)
+    await loadDynamicCourses();
+
+    // 2. بناء وعرض بطاقات الدورات بالهوية المعتمدة
     renderCourses();
     attachFilterEvents();
 
@@ -58,13 +63,113 @@ const HomePage = (() => {
     return null;
   }
 
+  /**
+   * جلب بيانات الدورات المحدثة من السيرفر ومزامنتها محلياً
+   */
+  async function loadDynamicCourses() {
+    const api = getApi();
+    if (!api || typeof api.fetchCourses !== 'function') return;
+    try {
+      const dbCourses = await api.fetchCourses();
+      if (Array.isArray(dbCourses) && dbCourses.length > 0) {
+        mergeCoursesWithDB(dbCourses);
+      }
+    } catch (e) {
+      console.warn('Could not load dynamic courses:', e);
+    }
+  }
+
+  /**
+   * دمج الدورات القادمة من قاعدة البيانات مع مصفوفة الدورات
+   */
+  function mergeCoursesWithDB(dbCourses) {
+    if (typeof CoursesData === 'undefined') return;
+
+    dbCourses.forEach(dbCourse => {
+      const cid = dbCourse.id || dbCourse.course_id;
+      const existing = CoursesData.find(c => c.id === cid);
+      if (existing) {
+        existing.status = dbCourse.status || 'active';
+        existing.allowInPerson = dbCourse.allowInPerson !== false;
+        existing.allowOnline = dbCourse.allowOnline !== false;
+        if (dbCourse.title) existing.title = dbCourse.title;
+        if (dbCourse.description) existing.description = dbCourse.description;
+        if (dbCourse.badge) existing.badge = dbCourse.badge;
+        if (dbCourse.minStudents) existing.minStudents = dbCourse.minStudents;
+        if (dbCourse.maxStudents) existing.maxStudents = dbCourse.maxStudents;
+        if (dbCourse.topicsList && dbCourse.topicsList.length) existing.topics = dbCourse.topicsList;
+        if (dbCourse.pricing && existing.pricing) {
+          if (existing.pricing.inPerson && dbCourse.pricing.inPerson) {
+            existing.pricing.inPerson.current = dbCourse.pricing.inPerson.current;
+            existing.pricing.inPerson.original = dbCourse.pricing.inPerson.original;
+          }
+          if (existing.pricing.online && dbCourse.pricing.online) {
+            existing.pricing.online.current = dbCourse.pricing.online.current;
+            existing.pricing.online.original = dbCourse.pricing.online.original;
+          }
+        }
+      } else {
+        // دورة تدريبية جديدة تمت إضافتها عبر لوحة التحكم!
+        CoursesData.push({
+          id: cid,
+          title: dbCourse.title,
+          track: dbCourse.track || 'برامج تدريبية تخصصية',
+          trackKey: dbCourse.trackKey || 'programming',
+          description: dbCourse.description || '',
+          duration: dbCourse.duration || 'شهر تدريبي (40 ساعة تدريبية)',
+          level: dbCourse.level || 'من الصفر والمبتدئين',
+          badge: dbCourse.badge || 'دورة جديدة',
+          icon: dbCourse.icon || 'book-open',
+          color: dbCourse.color || '#2563EB',
+          bgColor: dbCourse.bgColor || '#EFF6FF',
+          status: dbCourse.status || 'active',
+          allowInPerson: dbCourse.allowInPerson !== false,
+          allowOnline: dbCourse.allowOnline !== false,
+          minStudents: dbCourse.minStudents || 15,
+          maxStudents: dbCourse.maxStudents || 30,
+          featured: dbCourse.featured !== false,
+          prerequisite: dbCourse.prerequisite || '',
+          laptopRequired: !!dbCourse.laptopRequired,
+          topics: dbCourse.topicsList || [],
+          pricing: dbCourse.pricing || {
+            type: 'standard',
+            inPerson: { current: 20000, original: 25000, label: 'حضوري بالمقر' },
+            online: { current: 15000, original: 20000, label: 'أونلاين (Online)' },
+            certificate: 'شاملة الشهادة المعتمدة'
+          }
+        });
+      }
+    });
+  }
+
   async function syncLiveStats() {
     const api = getApi();
     if (!api || typeof api.fetchRegistrationStats !== 'function') return;
     try {
-      const newStats = await api.fetchRegistrationStats();
-      if (newStats && typeof newStats === 'object') {
-        updateDynamicCapacityDOM(newStats);
+      const responseData = await api.fetchRegistrationStats();
+      if (responseData && typeof responseData === 'object') {
+        // فحص التحديثات اللحظية لحالة الدورات وخيارات الحضور المنقولة مع الـ stats
+        if (responseData.config && typeof responseData.config === 'object' && typeof CoursesData !== 'undefined') {
+          let hasConfigChange = false;
+          Object.entries(responseData.config).forEach(([cid, cfg]) => {
+            const course = CoursesData.find(c => c.id === cid);
+            if (course) {
+              const prevStatus = course.status;
+              const prevInPerson = course.allowInPerson;
+              const prevOnline = course.allowOnline;
+              if (prevStatus !== cfg.status || prevInPerson !== cfg.allow_in_person || prevOnline !== cfg.allow_online) {
+                course.status = cfg.status;
+                course.allowInPerson = cfg.allow_in_person;
+                course.allowOnline = cfg.allow_online;
+                hasConfigChange = true;
+              }
+            }
+          });
+          if (hasConfigChange) {
+            renderCourses();
+          }
+        }
+        updateDynamicCapacityDOM(responseData);
       }
     } catch (e) {
       // الاستمرار بهدوء في حال تعذر الاتصال المؤقت
@@ -207,12 +312,16 @@ const HomePage = (() => {
   function getCoursePriceHTML(course) {
     if (!course.pricing) return '';
 
+    const allowInPerson = course.allowInPerson !== false;
+    const allowOnline = course.allowOnline !== false;
+
     if (course.pricing.type === 'standard') {
-      const inP = course.pricing.inPerson;
-      const onL = course.pricing.online;
-      return `
-        <div class="course-price-card">
-          <div class="price-pills-row">
+      const inP = course.pricing.inPerson || { current: 20000, original: 25000 };
+      const onL = course.pricing.online || { current: 15000, original: 20000 };
+
+      let pillsHtml = '';
+      if (allowInPerson && allowOnline) {
+        pillsHtml = `
             <div class="price-pill in-person">
               <span class="price-pill-lbl">حضوري بالمقر</span>
               <div class="price-pill-nums">
@@ -227,6 +336,39 @@ const HomePage = (() => {
                 ${onL.original > onL.current ? `<del class="price-orig">${Helpers.formatCurrency(onL.original)}</del>` : ''}
               </div>
             </div>
+        `;
+      } else if (allowInPerson && !allowOnline) {
+        pillsHtml = `
+            <div class="price-pill in-person" style="flex: 1;">
+              <span class="price-pill-lbl">حضوري بالمقر (متاح بالمقر فقط)</span>
+              <div class="price-pill-nums">
+                <span class="price-curr">${Helpers.formatCurrency(inP.current)}</span>
+                ${inP.original > inP.current ? `<del class="price-orig">${Helpers.formatCurrency(inP.original)}</del>` : ''}
+              </div>
+            </div>
+        `;
+      } else if (!allowInPerson && allowOnline) {
+        pillsHtml = `
+            <div class="price-pill online" style="flex: 1;">
+              <span class="price-pill-lbl">أونلاين (متاح عن بعد فقط)</span>
+              <div class="price-pill-nums">
+                <span class="price-curr">${Helpers.formatCurrency(onL.current)}</span>
+                ${onL.original > onL.current ? `<del class="price-orig">${Helpers.formatCurrency(onL.original)}</del>` : ''}
+              </div>
+            </div>
+        `;
+      } else {
+        pillsHtml = `
+            <div class="price-pill" style="flex: 1; background: #FEE2E2; border-color: #FCA5A5; color: #991B1B;">
+              <span class="price-pill-lbl" style="color: #991B1B;">التسجيل معلق حالياً لكافة الأنماط</span>
+            </div>
+        `;
+      }
+
+      return `
+        <div class="course-price-card">
+          <div class="price-pills-row">
+            ${pillsHtml}
           </div>
           <div class="price-cert-badge">
             <i data-lucide="award"></i>
@@ -322,9 +464,47 @@ const HomePage = (() => {
     const isConfirmed = enrolled >= min;
     const remainingToMin = Math.max(0, min - enrolled);
 
+    const allowInPerson = course.allowInPerson !== false;
+    const allowOnline = course.allowOnline !== false;
+
     const statusBadge = isConfirmed
       ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة</span>`
       : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
+
+    let rowsHtml = '';
+    if (allowInPerson) {
+      rowsHtml += `
+          <div class="capacity-mode-row inperson-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="map-pin" class="icon-inperson"></i>
+                <span>حضوري:</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-val-inperson count-inperson">${inPerson}</strong> طالب <span class="percent-val-inperson mode-percent">(${percentInPerson}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar inperson" title="المسجلون حضورياً: ${inPerson} طالب">
+              <div class="capacity-progress-fill fill-inperson" style="width: ${displayInPerson}%;"></div>
+            </div>
+          </div>
+      `;
+    }
+
+    if (allowOnline) {
+      rowsHtml += `
+          <div class="capacity-mode-row online-mode-row">
+            <div class="capacity-mode-info">
+              <span class="capacity-mode-label">
+                <i data-lucide="globe" class="icon-online"></i>
+                <span>أونلاين:</span>
+              </span>
+              <span class="capacity-mode-count"><strong class="count-val-online count-online">${online}</strong> طالب <span class="percent-val-online mode-percent">(${percentOnline}%)</span></span>
+            </div>
+            <div class="capacity-progress-bar-wrap mode-bar online" title="المسجلون أونلاين: ${online} طالب">
+              <div class="capacity-progress-fill fill-online" style="width: ${displayOnline}%;"></div>
+            </div>
+          </div>
+      `;
+    }
 
     return `
       <div class="course-capacity-card" id="capacity-card-${course.id}" data-course-id="${course.id}">
@@ -339,31 +519,7 @@ const HomePage = (() => {
         </div>
 
         <div class="capacity-dual-bars">
-          <div class="capacity-mode-row">
-            <div class="capacity-mode-info">
-              <span class="capacity-mode-label">
-                <i data-lucide="map-pin" class="icon-inperson"></i>
-                <span>حضوري:</span>
-              </span>
-              <span class="capacity-mode-count"><strong class="count-val-inperson count-inperson">${inPerson}</strong> طالب <span class="percent-val-inperson mode-percent">(${percentInPerson}%)</span></span>
-            </div>
-            <div class="capacity-progress-bar-wrap mode-bar inperson" title="المسجلون حضورياً: ${inPerson} طالب">
-              <div class="capacity-progress-fill fill-inperson" style="width: ${displayInPerson}%;"></div>
-            </div>
-          </div>
-
-          <div class="capacity-mode-row">
-            <div class="capacity-mode-info">
-              <span class="capacity-mode-label">
-                <i data-lucide="globe" class="icon-online"></i>
-                <span>أونلاين:</span>
-              </span>
-              <span class="capacity-mode-count"><strong class="count-val-online count-online">${online}</strong> طالب <span class="percent-val-online mode-percent">(${percentOnline}%)</span></span>
-            </div>
-            <div class="capacity-progress-bar-wrap mode-bar online" title="المسجلون أونلاين: ${online} طالب">
-              <div class="capacity-progress-fill fill-online" style="width: ${displayOnline}%;"></div>
-            </div>
-          </div>
+          ${rowsHtml}
         </div>
 
         <div class="capacity-footer-meta">
@@ -475,21 +631,36 @@ const HomePage = (() => {
     }
 
     const html = filtered.map(course => {
+      const isSuspended = course.status === 'suspended';
       const isDiploma = course.badge && course.badge.includes('دبلوم');
       const actionText = isDiploma ? 'سجل في هذا الدبلوم' : 'سجل في هذه الدورة';
 
       return `
-      <div class="course-card" data-track="${course.trackKey}">
+      <div class="course-card ${isSuspended ? 'is-suspended' : ''}" data-track="${course.trackKey}">
         <div>
+          ${isSuspended ? `
+            <div class="course-suspended-banner">
+              <i data-lucide="pause-circle"></i>
+              <span>التسجيل في هذه الدورة موقف حالياً</span>
+            </div>
+          ` : ''}
+
           <div class="course-card-top">
             <div class="course-icon-wrap" style="background: ${course.bgColor}; color: ${course.color};">
               <i data-lucide="${course.icon}"></i>
             </div>
-            ${course.badge ? `
-              <span class="course-badge" style="background: ${course.bgColor}; color: ${course.color};">
-                ${course.badge}
-              </span>
-            ` : ''}
+            <div style="display: flex; gap: 5px; align-items: center; flex-wrap: wrap;">
+              ${isSuspended ? `
+                <span class="course-badge is-suspended-badge">
+                  ⏸️ موقفة حالياً
+                </span>
+              ` : ''}
+              ${course.badge ? `
+                <span class="course-badge" style="background: ${course.bgColor}; color: ${course.color};">
+                  ${course.badge}
+                </span>
+              ` : ''}
+            </div>
           </div>
 
           <span class="course-track-tag">${Helpers.escape(course.track)}</span>
@@ -586,10 +757,17 @@ const HomePage = (() => {
           </div>
 
           <div class="course-card-footer">
-            <a href="register.html?course=${course.id}" class="btn-course-register">
-              <span>${actionText}</span>
-              <i data-lucide="arrow-left"></i>
-            </a>
+            ${isSuspended ? `
+              <div class="btn-course-register is-suspended" title="التسجيل في هذه الدورة معطل مؤقتاً">
+                <span>التسجيل موقف حالياً</span>
+                <i data-lucide="lock" style="width: 14px; height: 14px;"></i>
+              </div>
+            ` : `
+              <a href="register.html?course=${course.id}" class="btn-course-register">
+                <span>${actionText}</span>
+                <i data-lucide="arrow-left"></i>
+              </a>
+            `}
           </div>
         </div>
       </div>

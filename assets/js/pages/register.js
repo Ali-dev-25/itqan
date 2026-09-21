@@ -10,6 +10,10 @@ const RegisterPage = (() => {
   async function init() {
     Navbar.render('navbar-container');
     Footer.render('footer-container');
+
+    // 1. مزامنة الدورات وإعداداتها من السيرفر قبل تعبئة القائمة
+    await loadDynamicCourses();
+
     populateCoursesDropdown();
     checkUrlCourseParam();
     attachEvents();
@@ -50,14 +54,88 @@ const RegisterPage = (() => {
     return null;
   }
 
+  /**
+   * جلب بيانات الدورات المحدثة من السيرفر ومزامنتها محلياً
+   */
+  async function loadDynamicCourses() {
+    const api = getApi();
+    if (!api || typeof api.fetchCourses !== 'function') return;
+    try {
+      const dbCourses = await api.fetchCourses();
+      if (Array.isArray(dbCourses) && dbCourses.length > 0) {
+        mergeCoursesWithDB(dbCourses);
+      }
+    } catch (e) {
+      console.warn('Could not load dynamic courses:', e);
+    }
+  }
+
+  /**
+   * دمج الدورات القادمة من قاعدة البيانات مع مصفوفة الدورات
+   */
+  function mergeCoursesWithDB(dbCourses) {
+    if (typeof CoursesData === 'undefined') return;
+
+    dbCourses.forEach(dbCourse => {
+      const cid = dbCourse.id || dbCourse.course_id;
+      const existing = CoursesData.find(c => c.id === cid);
+      if (existing) {
+        existing.status = dbCourse.status || 'active';
+        existing.allowInPerson = dbCourse.allowInPerson !== false;
+        existing.allowOnline = dbCourse.allowOnline !== false;
+        if (dbCourse.title) existing.title = dbCourse.title;
+        if (dbCourse.description) existing.description = dbCourse.description;
+        if (dbCourse.badge) existing.badge = dbCourse.badge;
+        if (dbCourse.minStudents) existing.minStudents = dbCourse.minStudents;
+        if (dbCourse.maxStudents) existing.maxStudents = dbCourse.maxStudents;
+        if (dbCourse.topicsList && dbCourse.topicsList.length) existing.topics = dbCourse.topicsList;
+      } else {
+        CoursesData.push({
+          id: cid,
+          title: dbCourse.title,
+          track: dbCourse.track || 'برامج تدريبية تخصصية',
+          trackKey: dbCourse.trackKey || 'programming',
+          description: dbCourse.description || '',
+          duration: dbCourse.duration || 'شهر تدريبي (40 ساعة تدريبية)',
+          level: dbCourse.level || 'من الصفر والمبتدئين',
+          badge: dbCourse.badge || 'دورة جديدة',
+          icon: dbCourse.icon || 'book-open',
+          color: dbCourse.color || '#2563EB',
+          bgColor: dbCourse.bgColor || '#EFF6FF',
+          status: dbCourse.status || 'active',
+          allowInPerson: dbCourse.allowInPerson !== false,
+          allowOnline: dbCourse.allowOnline !== false,
+          minStudents: dbCourse.minStudents || 15,
+          maxStudents: dbCourse.maxStudents || 30,
+          featured: dbCourse.featured !== false,
+          prerequisite: dbCourse.prerequisite || '',
+          laptopRequired: !!dbCourse.laptopRequired,
+          topics: dbCourse.topicsList || []
+        });
+      }
+    });
+  }
+
   async function syncLiveStats() {
     const api = getApi();
     if (!api || typeof api.fetchRegistrationStats !== 'function') return;
     try {
       liveStats = await api.fetchRegistrationStats();
+      if (liveStats && liveStats.config && typeof liveStats.config === 'object' && typeof CoursesData !== 'undefined') {
+        Object.entries(liveStats.config).forEach(([cid, cfg]) => {
+          const course = CoursesData.find(c => c.id === cid);
+          if (course) {
+            course.status = cfg.status;
+            course.allowInPerson = cfg.allow_in_person;
+            course.allowOnline = cfg.allow_online;
+          }
+        });
+      }
       const select = document.getElementById('student-course-select');
       if (select && select.value) {
         updateCourseCapacityNotice(select.value);
+        applyCourseAttendanceRules(select.value);
+        checkCourseSuspension(select.value);
       }
     } catch (e) {}
   }
@@ -70,7 +148,7 @@ const RegisterPage = (() => {
   }
 
   /**
-   * تعبئة قائمة الدورات المتاحة من ملف courses.js
+   * تعبئة قائمة الدورات المتاحة من ملف courses.js وقاعدة البيانات
    */
   function populateCoursesDropdown() {
     const select = document.getElementById('student-course-select');
@@ -79,7 +157,9 @@ const RegisterPage = (() => {
     let optionsHtml = '<option value="">-- اختر الدبلوم أو البرنامج التدريبي * --</option>';
     CoursesData.forEach(c => {
       const typeBadge = c.badge && c.badge.includes('دبلوم') ? '🎓 دبلوم' : '📘 دورة';
-      optionsHtml += `<option value="${c.id}" data-title="${Helpers.escape(c.title)}">${typeBadge}: ${Helpers.escape(c.title)} (${c.duration})</option>`;
+      const isSuspended = c.status === 'suspended';
+      const suspendedNotice = isSuspended ? ' ⚠️ [موقفة حالياً]' : '';
+      optionsHtml += `<option value="${c.id}" data-title="${Helpers.escape(c.title)}" data-suspended="${isSuspended ? '1' : '0'}">${typeBadge}: ${Helpers.escape(c.title)} (${c.duration})${suspendedNotice}</option>`;
     });
 
     select.innerHTML = optionsHtml;
@@ -138,6 +218,8 @@ const RegisterPage = (() => {
         select.value = courseParam;
         updatePrerequisiteNotice(courseParam);
         updateCourseCapacityNotice(courseParam);
+        applyCourseAttendanceRules(courseParam);
+        checkCourseSuspension(courseParam);
         togglePythonTrack(courseParam);
         toggleTechLingoLevels(courseParam, levelParam ? levelParam.toUpperCase() : null);
       }
@@ -147,8 +229,147 @@ const RegisterPage = (() => {
         select.value = 'C008_TECHLINGO';
         updatePrerequisiteNotice('C008_TECHLINGO');
         updateCourseCapacityNotice('C008_TECHLINGO');
+        applyCourseAttendanceRules('C008_TECHLINGO');
+        checkCourseSuspension('C008_TECHLINGO');
         toggleTechLingoLevels('C008_TECHLINGO', levelParam.toUpperCase());
       }
+    }
+  }
+
+  /**
+   * فحص ما إذا كانت الدورة موقوفة حالياً وإظهار تنبيه وتعطيل زر الإرسال
+   */
+  function checkCourseSuspension(courseId) {
+    let noticeEl = document.getElementById('course-suspended-notice');
+    const submitBtn = document.getElementById('btn-submit-registration');
+    if (typeof CoursesData === 'undefined') return;
+
+    const course = CoursesData.find(c => c.id === courseId);
+    const isSuspended = course && course.status === 'suspended';
+
+    if (!noticeEl) {
+      const selectGroup = document.getElementById('student-course-select')?.closest('.form-group');
+      if (selectGroup) {
+        noticeEl = document.createElement('div');
+        noticeEl.id = 'course-suspended-notice';
+        noticeEl.style.cssText = 'display: none; margin-top: 8px; font-size: 0.8rem; color: #991B1B; background: #FEE2E2; border: 1.5px solid #FCA5A5; padding: 10px 14px; border-radius: var(--r-md); align-items: center; gap: 8px; font-weight: 700;';
+        selectGroup.appendChild(noticeEl);
+      }
+    }
+
+    if (noticeEl) {
+      if (isSuspended) {
+        noticeEl.innerHTML = `
+          <i data-lucide="alert-triangle" style="width: 18px; height: 18px; flex-shrink: 0; color: #DC2626;"></i>
+          <span>تنبيه إداري: نعتذر، التسجيل في هذه الدورة موقف حالياً بناءً على توجيهات الإدارة. يرجى اختيار دورة أخرى متاحة.</span>
+        `;
+        noticeEl.style.display = 'flex';
+        if (window.lucide) lucide.createIcons({ root: noticeEl });
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          if (!submitBtn.hasAttribute('data-orig-text')) {
+            submitBtn.setAttribute('data-orig-text', submitBtn.innerHTML);
+          }
+          submitBtn.style.opacity = '0.55';
+          submitBtn.style.cursor = 'not-allowed';
+          submitBtn.innerHTML = `<span>التسجيل موقف حالياً في هذه الدورة</span>`;
+        }
+      } else {
+        noticeEl.style.display = 'none';
+        if (submitBtn && submitBtn.hasAttribute('data-orig-text')) {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+          submitBtn.innerHTML = submitBtn.getAttribute('data-orig-text');
+          submitBtn.removeAttribute('data-orig-text');
+          if (window.lucide) lucide.createIcons({ root: submitBtn });
+        }
+      }
+    }
+  }
+
+  /**
+   * تطبيق قواعد الحضور (حضوري / أونلاين) حسب إعدادات الدورة في لوحة التحكم
+   */
+  function applyCourseAttendanceRules(courseId) {
+    const attendanceSelect = document.getElementById('student-attendance-mode');
+    const attendanceHint = document.getElementById('attendance-hint');
+    if (!attendanceSelect || typeof CoursesData === 'undefined') return;
+
+    const course = CoursesData.find(c => c.id === courseId);
+    const inPersonOption = attendanceSelect.querySelector('option[value="in_person"]');
+    const onlineOption = attendanceSelect.querySelector('option[value="online"]');
+
+    if (!course) {
+      if (inPersonOption) {
+        inPersonOption.disabled = false;
+        inPersonOption.textContent = '🏫 حضورياً (في مقر وقاعات المنصة بمأرب)';
+      }
+      if (onlineOption) {
+        onlineOption.disabled = false;
+        onlineOption.textContent = '🌐 عن بعد (أونلاين عبر الإنترنت)';
+      }
+      if (attendanceHint) {
+        attendanceHint.innerHTML = `<i data-lucide="info" style="width: 13px; height: 13px; flex-shrink: 0;"></i><span>متاح لكافة البرامج الاختيار بين الحضور المباشر في القاعات أو عن بعد تفاعلياً.</span>`;
+      }
+      return;
+    }
+
+    const allowInPerson = course.allowInPerson !== false;
+    const allowOnline = course.allowOnline !== false;
+
+    if (allowInPerson && !allowOnline) {
+      // التدريب متاح حضورياً فقط (مثل تعطيل الأونلاين لدورة ICDL أو غيرها)
+      if (onlineOption) {
+        onlineOption.disabled = true;
+        onlineOption.textContent = '🌐 عن بعد (غير متاح لهذه الدورة حالياً)';
+      }
+      if (inPersonOption) {
+        inPersonOption.disabled = false;
+        inPersonOption.textContent = '🏫 حضورياً (في مقر وقاعات المنصة بمأرب) — متاح';
+      }
+      attendanceSelect.value = 'in_person';
+      if (attendanceHint) {
+        attendanceHint.innerHTML = `<i data-lucide="alert-circle" style="width: 13px; height: 13px; flex-shrink: 0; color: #2563EB;"></i><span style="color: #1E40AF; font-weight: 700;">تنبيه: التدريب في هذه الدورة متاح حضورياً فقط بمقر وقاعات المنصة بمأرب.</span>`;
+      }
+    } else if (!allowInPerson && allowOnline) {
+      // التدريب متاح عن بعد أونلاين فقط
+      if (inPersonOption) {
+        inPersonOption.disabled = true;
+        inPersonOption.textContent = '🏫 حضورياً (غير متاح لهذه الدورة حالياً)';
+      }
+      if (onlineOption) {
+        onlineOption.disabled = false;
+        onlineOption.textContent = '🌐 عن بعد (أونلاين تفاعلياً عبر الإنترنت) — متاح';
+      }
+      attendanceSelect.value = 'online';
+      if (attendanceHint) {
+        attendanceHint.innerHTML = `<i data-lucide="alert-circle" style="width: 13px; height: 13px; flex-shrink: 0; color: #7C3AED;"></i><span style="color: #6D28D9; font-weight: 700;">تنبيه: التدريب في هذه الدورة متاح عن بعد (Online تفاعلياً) فقط.</span>`;
+      }
+    } else if (!allowInPerson && !allowOnline) {
+      if (inPersonOption) inPersonOption.disabled = true;
+      if (onlineOption) onlineOption.disabled = true;
+      attendanceSelect.value = '';
+      if (attendanceHint) {
+        attendanceHint.innerHTML = `<i data-lucide="alert-circle" style="width: 13px; height: 13px; flex-shrink: 0; color: #DC2626;"></i><span style="color: #DC2626; font-weight: 700;">التسجيل غير متاح حالياً لكلا النمطين.</span>`;
+      }
+    } else {
+      // متاح كلاهما
+      if (inPersonOption) {
+        inPersonOption.disabled = false;
+        inPersonOption.textContent = '🏫 حضورياً (في مقر وقاعات المنصة بمأرب)';
+      }
+      if (onlineOption) {
+        onlineOption.disabled = false;
+        onlineOption.textContent = '🌐 عن بعد (أونلاين عبر الإنترنت)';
+      }
+      if (attendanceHint) {
+        attendanceHint.innerHTML = `<i data-lucide="info" style="width: 13px; height: 13px; flex-shrink: 0;"></i><span>متاح لهذه الدورة الاختيار بين الحضور المباشر في القاعات أو عن بعد تفاعلياً.</span>`;
+      }
+    }
+
+    if (window.lucide && attendanceHint) {
+      lucide.createIcons({ root: attendanceHint });
     }
   }
 
@@ -216,24 +437,16 @@ const RegisterPage = (() => {
     const isConfirmed = enrolledTotal >= min;
     const remainingToMin = Math.max(0, min - enrolledTotal);
 
+    const allowInPerson = course.allowInPerson !== false;
+    const allowOnline = course.allowOnline !== false;
+
     const statusBadge = isConfirmed
       ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق</span>`
       : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
 
-    capacityNotice.innerHTML = `
-      <div class="course-capacity-card" style="margin-bottom: 0; margin-top: 10px; background: #F8FAFC; border: 1px solid #E2E8F0;">
-        <div class="capacity-header">
-          <div class="capacity-enrolled-wrap">
-            <i data-lucide="users"></i>
-            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolledTotal}</strong> طالب</span>
-          </div>
-          <div class="capacity-badge-wrap">
-            ${statusBadge}
-          </div>
-        </div>
-
-        <!-- شريطان منفصلان: خط للحضوري وخط للأونلاين (عن بعد) -->
-        <div class="capacity-dual-bars">
+    let barsHtml = '';
+    if (allowInPerson) {
+      barsHtml += `
           <!-- 1. شريط التدريب الحضوري -->
           <div class="capacity-mode-row">
             <div class="capacity-mode-info">
@@ -247,7 +460,11 @@ const RegisterPage = (() => {
               <div class="capacity-progress-fill fill-inperson" style="width: ${displayInPersonPercent}%;"></div>
             </div>
           </div>
+      `;
+    }
 
+    if (allowOnline) {
+      barsHtml += `
           <!-- 2. شريط التدريب عن بعد (Online) -->
           <div class="capacity-mode-row">
             <div class="capacity-mode-info">
@@ -261,6 +478,23 @@ const RegisterPage = (() => {
               <div class="capacity-progress-fill fill-online" style="width: ${displayOnlinePercent}%;"></div>
             </div>
           </div>
+      `;
+    }
+
+    capacityNotice.innerHTML = `
+      <div class="course-capacity-card" style="margin-bottom: 0; margin-top: 10px; background: #F8FAFC; border: 1px solid #E2E8F0;">
+        <div class="capacity-header">
+          <div class="capacity-enrolled-wrap">
+            <i data-lucide="users"></i>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolledTotal}</strong> طالب</span>
+          </div>
+          <div class="capacity-badge-wrap">
+            ${statusBadge}
+          </div>
+        </div>
+
+        <div class="capacity-dual-bars">
+          ${barsHtml}
         </div>
 
         <div class="capacity-footer-meta">
@@ -414,10 +648,13 @@ const RegisterPage = (() => {
     const courseSelect = document.getElementById('student-course-select');
     if (courseSelect) {
       courseSelect.addEventListener('change', (e) => {
-        updatePrerequisiteNotice(e.target.value);
-        updateCourseCapacityNotice(e.target.value);
-        togglePythonTrack(e.target.value);
-        toggleTechLingoLevels(e.target.value);
+        const val = e.target.value;
+        updatePrerequisiteNotice(val);
+        updateCourseCapacityNotice(val);
+        applyCourseAttendanceRules(val);
+        checkCourseSuspension(val);
+        togglePythonTrack(val);
+        toggleTechLingoLevels(val);
       });
     }
 
