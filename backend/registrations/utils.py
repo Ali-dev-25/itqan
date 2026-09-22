@@ -211,12 +211,12 @@ def build_excel_workbook_from_queryset(queryset):
         for col_idx, value in enumerate(row_data, 1):
             cell = ws.cell(row=row_num, column=col_idx, value=value)
             cell.font = data_font
-            cell.alignment = data_alignment_right if col_idx in [3, 4, 7, 12] else data_alignment_center
+            cell.alignment = data_alignment_right if col_idx in [3, 4, 9, 11] else data_alignment_center
             cell.border = thin_border
             cell.fill = row_fill
 
-            # تمييز خلية الحالة بلون الشارة
-            if col_idx == 10 and reg.status in status_fills:
+            # تمييز خلية الحالة بلون الشارة (العمود 12)
+            if col_idx == 12 and reg.status in status_fills:
                 cell.fill = status_fills[reg.status]
                 cell.font = status_fonts[reg.status]
 

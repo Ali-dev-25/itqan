@@ -566,3 +566,141 @@
     padding: 0.85rem 1rem;
   }
 }
+
+/* --------------------------------------------------------------------------
+   4. WELCOME GREETING POPUP & FLOATING LAUNCHER
+   بالون الترحيب العائم عند الدخول وزر الاستدعاء المصغر
+   -------------------------------------------------------------------------- */
+
+.fatin-tour-widget.greeting-mode .fatin-widget-card {
+  border: 2px solid #3B82F6;
+  box-shadow: 0 20px 45px -8px rgba(37, 99, 235, 0.32), 0 0 0 2px rgba(59, 130, 246, 0.25);
+  animation: greetingBubblePop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes greetingBubblePop {
+  0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.fatin-tour-widget.greeting-mode .fatin-widget-badge {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border-color: #BFDBFE;
+  font-weight: 800;
+}
+
+.fatin-tour-widget.greeting-mode .fatin-widget-title {
+  color: #1E3A8A;
+  font-size: 1.05rem;
+}
+
+.fatin-tour-widget.greeting-mode .btn-tour-next {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  padding: 0.6rem 1.4rem;
+  font-size: 0.88rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45);
+  animation: fatinAudioPulse 2s infinite ease-in-out;
+}
+
+.fatin-tour-widget.greeting-mode .btn-tour-next:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+}
+
+@keyframes fatinAudioPulse {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.75);
+  }
+}
+
+/* Floating Launcher Trigger Button when minimized */
+.fatin-floating-launcher {
+  position: fixed;
+  bottom: 24px;
+  left: 28px;
+  z-index: 2400;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  color: #1E293B;
+  border: 1.5px solid #BFDBFE;
+  border-radius: 9999px;
+  padding: 5px 16px 5px 6px;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(191, 219, 254, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.92);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  direction: rtl;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fatin-floating-launcher.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.fatin-floating-launcher:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 30px -5px rgba(37, 99, 235, 0.35);
+  border-color: #3B82F6;
+  color: #2563EB;
+}
+
+.fatin-launcher-avatar-wrap {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #EFF6FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid #DBEAFE;
+}
+
+.fatin-launcher-avatar {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.fatin-launcher-ping {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  background: #10B981;
+  border: 1.5px solid #FFFFFF;
+  border-radius: 50%;
+}
+
+.fatin-launcher-text {
+  font-size: 0.86rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .fatin-floating-launcher {
+    bottom: 14px;
+    left: 14px;
+    padding: 4px 12px 4px 4px;
+    font-size: 0.8rem;
+  }
+}

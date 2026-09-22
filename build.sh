@@ -11,6 +11,9 @@ python backend/manage.py collectstatic --no-input
 echo "🗄️ Applying database migrations..."
 python backend/manage.py migrate
 
+echo "📚 Seeding initial courses..."
+python backend/seed_courses.py
+
 echo "👤 Creating admin user..."
 python backend/manage.py shell <<EOF
 from django.contrib.auth import get_user_model

@@ -47,6 +47,7 @@ window.Fatin = (() => {
 
   let currentStepIndex = 0;
   let isTourActive = false;
+  let isGreetingActive = false;
   let preloadedImages = {};
   let currentHighlightEl = null;
 
@@ -301,7 +302,7 @@ window.Fatin = (() => {
     const ctaTourBtn = document.getElementById('btn-hero-cta-tour');
     if (ctaTourBtn) {
       ctaTourBtn.addEventListener('click', () => {
-        startTour(0);
+        startIntroAndTour();
       });
     }
 
@@ -310,15 +311,49 @@ window.Fatin = (() => {
       setTimeout(() => {
         startTour(0);
       }, 400);
+    } else {
+      // إظهار بالون الترحيب العائم فور فتح الصفحة
+      const dismissed = sessionStorage.getItem('fatin_welcome_dismissed');
+      if (dismissed === '1') {
+        showLauncher();
+      } else {
+        setTimeout(() => {
+          showWelcomeGreeting();
+        }, 1100);
+      }
     }
   }
 
   /**
-   * إنشاء الرفيق العائم للجولة التفاعلية في DOM
+   * إنشاء الرفيق العائم للجولة التفاعلية وزر الاستدعاء المصغر في DOM
    */
   function createTourWidget() {
     if (document.getElementById('fatin-tour-widget')) return;
 
+    // 1. زر الاستدعاء المصغر عند إغلاق البالون
+    if (!document.getElementById('fatin-floating-launcher')) {
+      const launcher = document.createElement('button');
+      launcher.type = 'button';
+      launcher.id = 'fatin-floating-launcher';
+      launcher.className = 'fatin-floating-launcher';
+      launcher.title = 'تحدث مع فَطِن رفيقك في إتقان 🦊';
+      launcher.setAttribute('aria-label', 'تحدث مع فَطِن رفيقك في إتقان');
+      launcher.innerHTML = `
+        <div class="fatin-launcher-avatar-wrap">
+          <img src="${POSE_PATH}greeting.webp?v=4" alt="فَطِن" class="fatin-launcher-avatar" />
+          <span class="fatin-launcher-ping"></span>
+        </div>
+        <span class="fatin-launcher-text">رفيقك فَطِن 🦊</span>
+      `;
+      launcher.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        startIntroAndTour();
+      });
+      document.body.appendChild(launcher);
+    }
+
+    // 2. الرفيق وفقاعة الحوار
     const widget = document.createElement('div');
     widget.id = 'fatin-tour-widget';
     widget.className = 'fatin-tour-widget';
@@ -333,7 +368,7 @@ window.Fatin = (() => {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
             <span id="fatin-step-number">1 - 7</span>
           </span>
-          <button type="button" class="btn-tour-skip" id="btn-tour-close" title="إغلاق الجولة (Esc)">
+          <button type="button" class="btn-tour-skip" id="btn-tour-close" title="إغلاق (Esc)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
@@ -354,7 +389,7 @@ window.Fatin = (() => {
 
       <!-- Mascot Avatar Directly Beneath Speech Bubble -->
       <div class="fatin-widget-avatar-wrap" id="fatin-widget-avatar-wrap" title="فَطِن - اضغط للمتابعة">
-        <img src="${POSE_PATH}greeting.webp?v=2" alt="فَطِن - المرشد التفاعلي" class="fatin-widget-avatar" id="fatin-widget-avatar" />
+        <img src="${POSE_PATH}greeting.webp?v=4" alt="فَطِن - المرشد التفاعلي" class="fatin-widget-avatar" id="fatin-widget-avatar" />
       </div>
     `;
 
@@ -369,7 +404,11 @@ window.Fatin = (() => {
       nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        next();
+        if (isGreetingActive) {
+          startIntroAndTour();
+        } else {
+          next();
+        }
       });
     }
 
@@ -377,7 +416,11 @@ window.Fatin = (() => {
       skipBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        stopTour();
+        if (isGreetingActive) {
+          dismissGreeting();
+        } else {
+          stopTour();
+        }
       });
     }
 
@@ -385,7 +428,11 @@ window.Fatin = (() => {
       closeBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        stopTour();
+        if (isGreetingActive) {
+          dismissGreeting();
+        } else {
+          stopTour();
+        }
       });
     }
 
@@ -393,8 +440,125 @@ window.Fatin = (() => {
       avatarWrap.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        next();
+        if (isGreetingActive) {
+          startIntroAndTour();
+        } else {
+          next();
+        }
       });
+    }
+  }
+
+  function showLauncher() {
+    const launcher = document.getElementById('fatin-floating-launcher');
+    if (launcher) launcher.classList.add('visible');
+  }
+
+  function hideLauncher() {
+    const launcher = document.getElementById('fatin-floating-launcher');
+    if (launcher) launcher.classList.remove('visible');
+  }
+
+  /**
+   * إظهار بالون الترحيب العائم عند الدخول لأول مرة
+   */
+  function showWelcomeGreeting() {
+    createTourWidget();
+    const widget = document.getElementById('fatin-tour-widget');
+    if (!widget || isTourActive) return;
+
+    isGreetingActive = true;
+    hideLauncher();
+
+    const stepBadge = document.getElementById('fatin-step-number');
+    const titleEl = document.getElementById('fatin-step-title');
+    const dialogueEl = document.getElementById('fatin-step-dialogue');
+    const nextTextEl = document.getElementById('fatin-btn-next-text');
+    const skipTextEl = document.getElementById('fatin-btn-skip-text');
+    const avatarImg = document.getElementById('fatin-widget-avatar');
+
+    if (stepBadge) stepBadge.innerHTML = 'مرشدك الذكي 🦊';
+    if (titleEl) titleEl.textContent = 'أهلاً بك في منصة إتقان! 👋';
+    if (dialogueEl) {
+      dialogueEl.innerHTML = 'أنا <strong>«فَطِن»</strong>، رفيقك في إتقان المعرفة. هل تود أن أعرّفك على المنصة وبرامجنا التدريبية؟';
+    }
+    if (nextTextEl) {
+      nextTextEl.innerHTML = '🔊 استمع للترحيب وابدأ الجولة';
+    }
+    if (skipTextEl) skipTextEl.textContent = 'تصفح بنفسك';
+
+    if (avatarImg) {
+      setAvatarPose(avatarImg, 'greeting.webp');
+    }
+
+    widget.classList.add('active');
+    widget.classList.add('greeting-mode');
+  }
+
+  /**
+   * إغلاق بالون الترحيب وحفظ عدم الإزعاج
+   */
+  function dismissGreeting() {
+    sessionStorage.setItem('fatin_welcome_dismissed', '1');
+    isGreetingActive = false;
+    const widget = document.getElementById('fatin-tour-widget');
+    if (widget) {
+      widget.classList.remove('active');
+      widget.classList.remove('greeting-mode');
+    }
+    showLauncher();
+  }
+
+  /**
+   * بدء الترحيب الصوتي الكامل ثم الانتقال للجولة
+   */
+  function startIntroAndTour() {
+    isGreetingActive = false;
+    isTourActive = true;
+    hideLauncher();
+
+    const widget = document.getElementById('fatin-tour-widget');
+    if (widget) {
+      widget.classList.add('active');
+      widget.classList.remove('greeting-mode');
+    }
+
+    const stepBadge = document.getElementById('fatin-step-number');
+    const titleEl = document.getElementById('fatin-step-title');
+    const dialogueEl = document.getElementById('fatin-step-dialogue');
+    const nextTextEl = document.getElementById('fatin-btn-next-text');
+    const skipTextEl = document.getElementById('fatin-btn-skip-text');
+    const avatarWrap = document.getElementById('fatin-widget-avatar-wrap');
+    const avatarImg = document.getElementById('fatin-widget-avatar');
+
+    if (stepBadge) stepBadge.textContent = 'مرحباً بك 🦊';
+    if (titleEl) titleEl.textContent = 'فَطِن — رفيقكم في إتقان المعرفة';
+    if (dialogueEl) dialogueEl.textContent = 'مرحبًا! أنا فَطِن، رفيقكم في إتقان المعرفة. يسعدني تواجدكم معنا في منصة إتقان!';
+    if (nextTextEl) nextTextEl.textContent = 'بدء الجولة 🚀';
+    if (skipTextEl) skipTextEl.textContent = 'إنهاء الجولة';
+
+    if (avatarImg) {
+      setAvatarPose(avatarImg, 'greeting.webp');
+    }
+
+    const heroEl = document.getElementById('hero');
+    if (heroEl) {
+      heroEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const introScenes = window.FatinIntroScenes || {};
+    const scene1 = introScenes.greeting;
+
+    if (scene1) {
+      playSynchronizedScene(scene1, avatarWrap, avatarImg, () => {
+        setTimeout(() => {
+          if (isTourActive) {
+            startTour(0);
+          }
+        }, 350);
+      });
+    } else {
+      startTour(0);
     }
   }
 
@@ -435,12 +599,15 @@ window.Fatin = (() => {
   function startTour(startIndex = 0) {
     if (typeof window.FatinTourSteps === 'undefined' || !window.FatinTourSteps.length) return;
 
+    hideLauncher();
+    isGreetingActive = false;
     isTourActive = true;
     currentStepIndex = startIndex;
 
     const widget = document.getElementById('fatin-tour-widget');
     if (widget) {
       widget.classList.add('active');
+      widget.classList.remove('greeting-mode');
     }
 
     renderCurrentStep();
@@ -581,17 +748,21 @@ window.Fatin = (() => {
    */
   function stopTour() {
     isTourActive = false;
+    isGreetingActive = false;
     stopAudio();
 
     const widget = document.getElementById('fatin-tour-widget');
     if (widget) {
       widget.classList.remove('active');
+      widget.classList.remove('greeting-mode');
     }
 
     if (currentHighlightEl) {
       currentHighlightEl.classList.remove('fatin-section-highlight');
       currentHighlightEl = null;
     }
+
+    showLauncher();
   }
 
   /**
@@ -618,6 +789,8 @@ window.Fatin = (() => {
   return {
     initStandalonePage,
     initSiteTour,
+    showWelcomeGreeting,
+    startIntroAndTour,
     startTour,
     next,
     prev,

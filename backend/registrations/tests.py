@@ -9,13 +9,55 @@ from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
-from .models import Registration
+from .models import Registration, Course
 
 
 class RegistrationAPITests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.url = reverse('api-registration-create')
+        Course.objects.get_or_create(
+            course_id='C001',
+            defaults={
+                'title': 'تطوير واجهات الويب الحديثة',
+                'track': 'تطوير الويب',
+                'track_key': 'web',
+                'description': 'دورة تطوير الويب الشاملة',
+                'duration': 'شهر تدريبي',
+                'level': 'مبتدئ',
+                'badge': 'دورة أساسيات',
+                'status': 'active',
+                'allow_in_person': True,
+                'allow_online': True,
+                'min_students': 10,
+                'max_students': 25,
+                'price_in_person_current': 20000,
+                'price_online_current': 15000,
+                'price_certificate': 'شاملة الشهادة',
+                'topics': 'HTML, CSS, JS'
+            }
+        )
+        Course.objects.get_or_create(
+            course_id='C002',
+            defaults={
+                'title': 'تصميم UI/UX',
+                'track': 'التصميم',
+                'track_key': 'design',
+                'description': 'دورة تصميم واجهات وتجربة المستخدم',
+                'duration': 'شهر تدريبي',
+                'level': 'مبتدئ',
+                'badge': 'دورة تخصصية',
+                'status': 'active',
+                'allow_in_person': True,
+                'allow_online': True,
+                'min_students': 10,
+                'max_students': 25,
+                'price_in_person_current': 20000,
+                'price_online_current': 15000,
+                'price_certificate': 'شاملة الشهادة',
+                'topics': 'Figma, Prototyping'
+            }
+        )
 
     def create_dummy_image(self, name='test_receipt.jpg'):
         """إنشاء صورة وهمية للاختبار"""
@@ -32,6 +74,8 @@ class RegistrationAPITests(TestCase):
             'fullNameAr': 'أحمد محمد علي السالمي',
             'fullNameEn': 'Ahmed Mohammed Ali',
             'phone': '771234567',
+            'residenceLocation': 'inside_yemen',
+            'attendanceMode': 'in_person',
             'courseId': 'C001',
             'courseTitle': 'تطوير واجهات الويب الحديثة',
             'birthDate': '2001-05-14',
@@ -72,9 +116,14 @@ class RegistrationAPITests(TestCase):
 
         payload1 = {
             'fullNameAr': 'علي صالح',
+            'fullNameEn': 'Ali Saleh',
             'phone': '770000000',
+            'residenceLocation': 'inside_yemen',
+            'attendanceMode': 'in_person',
             'courseId': 'C001',
             'courseTitle': 'تطوير واجهات الويب الحديثة',
+            'birthDate': '2000-01-01',
+            'birthPlace': 'صنعاء',
             'receiptFile': image1
         }
         res1 = self.client.post(self.url, payload1, format='multipart')
@@ -83,9 +132,14 @@ class RegistrationAPITests(TestCase):
         # محاولة التسجيل مرة أخرى بنفس الرقم والدورة
         payload2 = {
             'fullNameAr': 'علي صالح',
+            'fullNameEn': 'Ali Saleh',
             'phone': '770000000',
+            'residenceLocation': 'inside_yemen',
+            'attendanceMode': 'in_person',
             'courseId': 'C001',
             'courseTitle': 'تطوير واجهات الويب الحديثة',
+            'birthDate': '2000-01-01',
+            'birthPlace': 'صنعاء',
             'receiptFile': image2
         }
         res2 = self.client.post(self.url, payload2, format='multipart')
@@ -97,9 +151,14 @@ class RegistrationAPITests(TestCase):
         fake_file = SimpleUploadedFile("danger.exe", b"binary content", content_type="application/octet-stream")
         payload = {
             'fullNameAr': 'سعيد محمد',
+            'fullNameEn': 'Saeed Mohammed',
             'phone': '773333333',
+            'residenceLocation': 'inside_yemen',
+            'attendanceMode': 'in_person',
             'courseId': 'C002',
             'courseTitle': 'تصميم UI/UX',
+            'birthDate': '1999-03-20',
+            'birthPlace': 'عدن',
             'receiptFile': fake_file
         }
         response = self.client.post(self.url, payload, format='multipart')
