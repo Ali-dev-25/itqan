@@ -48,6 +48,7 @@ window.Fatin = (() => {
   let currentStepIndex = 0;
   let isTourActive = false;
   let isGreetingActive = false;
+  let introPhase = 0; // 0: idle, 1: greeting, 2: platform overview
   let preloadedImages = {};
   let currentHighlightEl = null;
 
@@ -460,7 +461,7 @@ window.Fatin = (() => {
   }
 
   /**
-   * إظهار بالون الترحيب العائم عند الدخول لأول مرة
+   * إظهار بالون الترحيب العائم عند الدخول لأول مرة مع نبذة موجزة
    */
   function showWelcomeGreeting() {
     createTourWidget();
@@ -468,6 +469,7 @@ window.Fatin = (() => {
     if (!widget || isTourActive) return;
 
     isGreetingActive = true;
+    introPhase = 0;
     hideLauncher();
 
     const stepBadge = document.getElementById('fatin-step-number');
@@ -477,13 +479,20 @@ window.Fatin = (() => {
     const skipTextEl = document.getElementById('fatin-btn-skip-text');
     const avatarImg = document.getElementById('fatin-widget-avatar');
 
-    if (stepBadge) stepBadge.innerHTML = 'مرشدك الذكي 🦊';
-    if (titleEl) titleEl.textContent = 'أهلاً بك في منصة إتقان! 👋';
+    if (stepBadge) stepBadge.innerHTML = 'نبذة عن إتقان 🌟';
+    if (titleEl) titleEl.textContent = 'أهلاً بك في منصة إتقان! 🎓';
     if (dialogueEl) {
-      dialogueEl.innerHTML = 'أنا <strong>«فَطِن»</strong>، رفيقك في إتقان المعرفة. هل تود أن أعرّفك على المنصة وبرامجنا التدريبية؟';
+      dialogueEl.innerHTML = `
+        <div style="font-size: 0.93rem; font-weight: 700; color: #1E3A8A; margin-bottom: 6px;">
+          أنا «فَطِن»، رفيقك في إتقان المعرفة 👋
+        </div>
+        <div style="font-size: 0.86rem; color: #334155; line-height: 1.68;">
+          منصة إتقان هي صرحكم الرائد للتعليم والتدريب التقني، وتأهيل المبرمجين عبر دورات عملية ومشاريع برمجية حقيقية متكاملة لسوق العمل.
+        </div>
+      `;
     }
     if (nextTextEl) {
-      nextTextEl.innerHTML = '🔊 استمع للترحيب وابدأ الجولة';
+      nextTextEl.innerHTML = '🔊 استمع للترحيب والنبذة';
     }
     if (skipTextEl) skipTextEl.textContent = 'تصفح بنفسك';
 
@@ -501,6 +510,7 @@ window.Fatin = (() => {
   function dismissGreeting() {
     sessionStorage.setItem('fatin_welcome_dismissed', '1');
     isGreetingActive = false;
+    introPhase = 0;
     const widget = document.getElementById('fatin-tour-widget');
     if (widget) {
       widget.classList.remove('active');
@@ -510,11 +520,12 @@ window.Fatin = (() => {
   }
 
   /**
-   * بدء الترحيب الصوتي الكامل ثم الانتقال للجولة
+   * 1. بدء الترحيب: "مرحبا أنا فطن"
    */
   function startIntroAndTour() {
     isGreetingActive = false;
     isTourActive = true;
+    introPhase = 1;
     hideLauncher();
 
     const widget = document.getElementById('fatin-tour-widget');
@@ -531,10 +542,10 @@ window.Fatin = (() => {
     const avatarWrap = document.getElementById('fatin-widget-avatar-wrap');
     const avatarImg = document.getElementById('fatin-widget-avatar');
 
-    if (stepBadge) stepBadge.textContent = 'مرحباً بك 🦊';
-    if (titleEl) titleEl.textContent = 'فَطِن — رفيقكم في إتقان المعرفة';
+    if (stepBadge) stepBadge.textContent = 'الترحيب 🦊';
+    if (titleEl) titleEl.textContent = 'فَطِن يرحب بكم في إتقان';
     if (dialogueEl) dialogueEl.textContent = 'مرحبًا! أنا فَطِن، رفيقكم في إتقان المعرفة. يسعدني تواجدكم معنا في منصة إتقان!';
-    if (nextTextEl) nextTextEl.textContent = 'بدء الجولة 🚀';
+    if (nextTextEl) nextTextEl.textContent = 'نبذة عن المنصة 🌟';
     if (skipTextEl) skipTextEl.textContent = 'إنهاء الجولة';
 
     if (avatarImg) {
@@ -551,14 +562,60 @@ window.Fatin = (() => {
 
     if (scene1) {
       playSynchronizedScene(scene1, avatarWrap, avatarImg, () => {
-        setTimeout(() => {
-          if (isTourActive) {
-            startTour(0);
-          }
-        }, 350);
+        // بمجرد انتهاء التحية الصوتية، ينتقل فوراً للمرحلة الثانية: نبذة عن المنصة
+        if (isTourActive && introPhase === 1) {
+          playPlatformOverviewPhase();
+        }
       });
     } else {
-      startTour(0);
+      playPlatformOverviewPhase();
+    }
+  }
+
+  /**
+   * 2. نبذة مبسطة وموجزة عن المنصة وما تقدمه من تعليم ومشاريع
+   */
+  function playPlatformOverviewPhase() {
+    if (!isTourActive) return;
+    introPhase = 2;
+
+    const stepBadge = document.getElementById('fatin-step-number');
+    const titleEl = document.getElementById('fatin-step-title');
+    const dialogueEl = document.getElementById('fatin-step-dialogue');
+    const nextTextEl = document.getElementById('fatin-btn-next-text');
+    const skipTextEl = document.getElementById('fatin-btn-skip-text');
+    const avatarWrap = document.getElementById('fatin-widget-avatar-wrap');
+    const avatarImg = document.getElementById('fatin-widget-avatar');
+
+    if (stepBadge) stepBadge.textContent = 'نبذة عن المنصة 🌟';
+    if (titleEl) titleEl.textContent = 'رسالة وأهداف منصة إتقان';
+    if (dialogueEl) {
+      dialogueEl.innerHTML = '«<strong>منصة إتقان</strong> صرح تدريبي وتعليمي رائد، يهدف إلى تأهيلكم بالمهارات البرمجية والتقنية، وبناء مشاريع عملية حقيقية، وتحويل المعرفة النظرية إلى تطبيق عملي لسوق العمل.»';
+    }
+    if (nextTextEl) nextTextEl.textContent = 'استكشف الدورات 💻';
+    if (skipTextEl) skipTextEl.textContent = 'إنهاء الجولة';
+
+    if (avatarImg) {
+      setAvatarPose(avatarImg, 'learning.webp');
+    }
+
+    const aboutScene = (window.FatinTour && window.FatinTour.about) ? window.FatinTour.about : null;
+    if (aboutScene) {
+      playSynchronizedScene(aboutScene, avatarWrap, avatarImg, () => {
+        setTimeout(() => {
+          if (isTourActive && introPhase === 2) {
+            introPhase = 0;
+            startTour(1); // الانتقال المباشر لقسم الدورات التدريبية
+          }
+        }, 550);
+      });
+    } else {
+      setTimeout(() => {
+        if (isTourActive && introPhase === 2) {
+          introPhase = 0;
+          startTour(1);
+        }
+      }, 3500);
     }
   }
 
@@ -601,6 +658,7 @@ window.Fatin = (() => {
 
     hideLauncher();
     isGreetingActive = false;
+    introPhase = 0;
     isTourActive = true;
     currentStepIndex = startIndex;
 
@@ -724,6 +782,21 @@ window.Fatin = (() => {
    * الانتقال للفقرة التالية
    */
   function next() {
+    if (isGreetingActive) {
+      startIntroAndTour();
+      return;
+    }
+    if (introPhase === 1) {
+      stopAudio();
+      playPlatformOverviewPhase();
+      return;
+    }
+    if (introPhase === 2) {
+      stopAudio();
+      introPhase = 0;
+      startTour(1);
+      return;
+    }
     if (typeof window.FatinTourSteps === 'undefined') return;
     if (currentStepIndex < window.FatinTourSteps.length - 1) {
       currentStepIndex++;
@@ -749,6 +822,7 @@ window.Fatin = (() => {
   function stopTour() {
     isTourActive = false;
     isGreetingActive = false;
+    introPhase = 0;
     stopAudio();
 
     const widget = document.getElementById('fatin-tour-widget');
