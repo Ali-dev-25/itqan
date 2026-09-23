@@ -51,7 +51,7 @@
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="assets/css/design-system.css">
   <link rel="stylesheet" href="assets/css/public.css">
-  <link rel="stylesheet" href="assets/css/register.css?v=21">
+  <link rel="stylesheet" href="assets/css/register.css?v=20">
 
   <!-- Structured Data / JSON-LD -->
   <script type="application/ld+json">
@@ -270,20 +270,20 @@
             <div class="input-wrap">
               <select id="techlingo-level-select" class="form-select" style="background: white; border-color: #8B5CF6;">
                 <option value="">-- اختر المستوى المطلوب للتسجيل * --</option>
-                <option value="1A">📘 المستوى 1A — أساسيات مصطلحات وتواصل IT (للمبتدئين ومن الصفر)</option>
-                <option value="1B">🌐 المستوى 1B — الشبكات والدعم الفني وأمن المعلومات (لمن أتم 1A)</option>
-                <option value="2A">💻 المستوى 2A — الأنظمة والبرمجيات والبنية التقنية (لمن أتم 1B)</option>
-                <option value="2B">📊 المستوى 2B — تطوير الأنظمة وإدارة مشاريع IT (لمن أتم 2A)</option>
-                <option value="3A">🚀 المستوى 3A — الحاسوب والشبكات والويب المتقدم (لمن أتم 2B)</option>
-                <option value="3B">🎯 المستوى 3B — التقنيات الحديثة والمقابلات والمهارات المهنية (لمن أتم 3A)</option>
-                <option value="ALL">🎓 الدبلوم الشامل بالكامل (كافة المستويات الـ 6 من 1A حتى 3B)</option>
+                <option value="1A">📘 المستوى 1A — أساسيات مصطلحات وتواصل IT (10,000 ر.ي)</option>
+                <option value="1B">🌐 المستوى 1B — الشبكات والدعم الفني وأمن المعلومات (10,000 ر.ي)</option>
+                <option value="2A">💻 المستوى 2A — الأنظمة والبرمجيات والبنية التقنية (10,000 ر.ي)</option>
+                <option value="2B">📊 المستوى 2B — تطوير الأنظمة وإدارة مشاريع IT (10,000 ر.ي)</option>
+                <option value="3A">🚀 المستوى 3A — الحاسوب والشبكات والويب المتقدم (10,000 ر.ي)</option>
+                <option value="3B">🎯 المستوى 3B — التقنيات الحديثة والمقابلات والمهارات المهنية (10,000 ر.ي)</option>
+                <option value="ALL">🎓 الدبلوم الشامل بالكامل (كافة المستويات الـ 6 — 50,000 ر.ي عرض خاص)</option>
               </select>
               <span class="input-icon" style="color: #8B5CF6;"><i data-lucide="layers"></i></span>
             </div>
             <div class="form-error" id="techlingo-level-select-error"></div>
             <div style="font-size: 0.78rem; color: #5B21B6; margin-top: 6px; display: flex; align-items: center; gap: 6px;">
               <i data-lucide="info" style="width: 14px; height: 14px; flex-shrink: 0;"></i>
-              <span>يمكنك التسجيل في أي مستوى بشكل مستقل إذا كنت قد اجتزت المستوى السابق (مثال: أتممت 1A وترغب بـ 1B)، أو التسجيل في الدبلوم كاملاً.</span>
+              <span>رسوم كل مستوى مستقل هي <strong>10,000 ر.ي فقط</strong> شاملة الشهادة المعتمدة. يمكنك التسجيل في أي مستوى بشكل مستقل أو في الدبلوم كاملاً.</span>
             </div>
           </div>
 
@@ -488,123 +488,98 @@
   <div class="success-modal-backdrop" id="registration-success-modal">
     <div class="success-modal-card">
       
-      <!-- ================= PRINT-ONLY OFFICIAL VOUCHER HEADER ================= -->
-      <div class="print-voucher-header">
-        <div class="pvh-right">
-          <img src="assets/images/logo-mono.svg" alt="منصة إتقان" class="pvh-logo" />
-          <div class="pvh-org-info">
-            <h3 class="pvh-org-name">منصة إتقان للتعليم والتدريب التقني</h3>
-            <p class="pvh-org-sub">إدارة القبول والتسجيل — وثيقة قيد رسمية</p>
+      <!-- Official Platform Monochrome Logo -->
+      <div class="success-modal-brand">
+        <img src="assets/images/logo-mono.svg" alt="منصة إتقان للتعليم والتدريب التقني" class="success-brand-logo-mono" />
+      </div>
+
+      <!-- Watermark behind card content -->
+      <div class="success-card-watermark" aria-hidden="true">
+        <img src="assets/images/logo-icon-mono.svg" alt="" />
+      </div>
+
+      <div class="success-icon-badge">
+        <i data-lucide="check"></i>
+      </div>
+
+      <h2 class="success-title" id="success-title">تم استلام طلب التسجيل بنجاح!</h2>
+      <p class="success-subtitle" id="success-subtitle">
+        شكراً لك. تم استلام بياناتك وسند السداد بنجاح. <strong>يرجى الاحتفاظ بهذا السند وطباعته أو حفظه</strong>، حيث يمثل وثيقتك المعتمدة لتأكيد القبول ومتابعة الطلب.
+      </p>
+
+      <!-- Reference ID Box -->
+      <div class="reference-pill-box">
+        <span class="reference-label">الرقم المرجعي لطلب التسجيل:</span>
+        <div class="reference-code-row">
+          <span class="reference-code" id="success-reference-code">ITQ-2026-5821</span>
+          <button type="button" class="btn-copy-ref" id="btn-copy-reference" title="نسخ الرقم المرجعي">
+            <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+            <span>نسخ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prominent International Student WhatsApp Payment Contact Card (For students from outside Yemen) -->
+      <div class="whatsapp-international-card" id="whatsapp-international-box" style="display: none;">
+        <div class="wa-card-header">
+          <div class="wa-icon-glow">
+            <i data-lucide="message-circle"></i>
+          </div>
+          <div>
+            <h4 class="wa-title">إرسال سند التسديد وتأكيد التسجيل عبر واتساب</h4>
+            <p class="wa-desc">
+              عزيزي المتدرب من خارج الوطن، يرجى التواصل مباشرة عبر واتساب مع إدارة المنصة على <strong>أي من الرقمين التاليين</strong> وإرسال صورة إشعار أو سند التسديد مع رقمك المرجعي ليتم اعتماد تسجيلك وتزويدك بروابط التدريب:
+            </p>
           </div>
         </div>
-        <div class="pvh-center">
-          <span class="pvh-badge">سند تسجيل رسمي معتمد</span>
-          <h4 class="pvh-doc-title">إشعار قبول وتسجيل متدرب</h4>
-        </div>
-        <div class="pvh-left">
-          <div class="pvh-meta-box">
-            <div class="pvh-meta-row">
-              <span class="pvh-meta-label">رقم السند:</span>
-              <strong class="pvh-meta-val" id="pvh-ref-code">ITQ-2026-5821</strong>
+
+        <div class="wa-numbers-grid">
+          <!-- WhatsApp Number 1 -->
+          <div class="wa-number-item">
+            <div class="wa-number-top">
+              <span class="wa-badge">الرقم الأول</span>
+              <span class="wa-phone-text" dir="ltr">+967 771 807 595</span>
             </div>
-            <div class="pvh-meta-row">
-              <span class="pvh-meta-label">تاريخ الإصدار:</span>
-              <span class="pvh-meta-val" id="pvh-issue-date">—</span>
+            <div class="wa-actions-wrap">
+              <a href="https://wa.me/967771807595" id="btn-wa-link-1" target="_blank" rel="noopener noreferrer" class="btn-wa-direct">
+                <i data-lucide="send"></i>
+                <span>مراسلة واتساب (1) ↗</span>
+              </a>
+              <button type="button" class="btn-wa-copy" data-copy="967771807595" title="نسخ الرقم">
+                <i data-lucide="copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- WhatsApp Number 2 (Added as requested) -->
+          <div class="wa-number-item">
+            <div class="wa-number-top">
+              <span class="wa-badge" style="background: #E0E7FF; color: #4338CA;">الرقم الثاني</span>
+              <span class="wa-phone-text" dir="ltr">+967 778 37 5155</span>
+            </div>
+            <div class="wa-actions-wrap">
+              <a href="https://wa.me/967778375155" id="btn-wa-link-2" target="_blank" rel="noopener noreferrer" class="btn-wa-direct" style="background: #15803D;">
+                <i data-lucide="send"></i>
+                <span>مراسلة واتساب (2) ↗</span>
+              </a>
+              <button type="button" class="btn-wa-copy" data-copy="96778375155" title="نسخ الرقم">
+                <i data-lucide="copy"></i>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ================= SCREEN-ONLY DIALOG CONTENT ================= -->
-      <div class="screen-only-content">
-        <!-- Official Platform Monochrome Logo -->
-        <div class="success-modal-brand">
-          <img src="assets/images/logo-mono.svg" alt="منصة إتقان للتعليم والتدريب التقني" class="success-brand-logo-mono" />
+      <!-- Prominent Student Retention & Print Alert Box (For inside Yemen or general retention) -->
+      <div class="receipt-retention-alert" id="success-retention-alert">
+        <div class="alert-icon-wrap">
+          <i data-lucide="printer"></i>
         </div>
-
-        <div class="success-icon-badge">
-          <i data-lucide="check"></i>
-        </div>
-
-        <h2 class="success-title" id="success-title">تم استلام طلب التسجيل بنجاح!</h2>
-        <p class="success-subtitle" id="success-subtitle">
-          شكراً لك. تم استلام بياناتك وسند السداد بنجاح. <strong>يرجى الاحتفاظ بهذا السند وطباعته أو حفظه</strong>، حيث يمثل وثيقتك المعتمدة لتأكيد القبول ومتابعة الطلب.
-        </p>
-
-        <!-- Reference ID Box -->
-        <div class="reference-pill-box">
-          <span class="reference-label">الرقم المرجعي لطلب التسجيل:</span>
-          <div class="reference-code-row">
-            <span class="reference-code" id="success-reference-code">ITQ-2026-5821</span>
-            <button type="button" class="btn-copy-ref" id="btn-copy-reference" title="نسخ الرقم المرجعي">
-              <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
-              <span>نسخ</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Prominent International Student WhatsApp Payment Contact Card (For students from outside Yemen) -->
-        <div class="whatsapp-international-card" id="whatsapp-international-box" style="display: none;">
-          <div class="wa-card-header">
-            <div class="wa-icon-glow">
-              <i data-lucide="message-circle"></i>
-            </div>
-            <div>
-              <h4 class="wa-title">إرسال سند التسديد وتأكيد التسجيل عبر واتساب</h4>
-              <p class="wa-desc">
-                عزيزي المتدرب من خارج الوطن، يرجى التواصل مباشرة عبر واتساب مع إدارة المنصة على <strong>أي من الرقمين التاليين</strong> وإرسال صورة إشعار أو سند التسديد مع رقمك المرجعي ليتم اعتماد تسجيلك وتزويدك بروابط التدريب:
-              </p>
-            </div>
-          </div>
-
-          <div class="wa-numbers-grid">
-            <!-- WhatsApp Number 1 -->
-            <div class="wa-number-item">
-              <div class="wa-number-top">
-                <span class="wa-badge">الرقم الأول</span>
-                <span class="wa-phone-text" dir="ltr">+967 771 807 595</span>
-              </div>
-              <div class="wa-actions-wrap">
-                <a href="https://wa.me/967771807595" id="btn-wa-link-1" target="_blank" rel="noopener noreferrer" class="btn-wa-direct">
-                  <i data-lucide="send"></i>
-                  <span>مراسلة واتساب (1) ↗</span>
-                </a>
-                <button type="button" class="btn-wa-copy" data-copy="967771807595" title="نسخ الرقم">
-                  <i data-lucide="copy"></i>
-                </button>
-              </div>
-            </div>
-
-            <!-- WhatsApp Number 2 (Added as requested) -->
-            <div class="wa-number-item">
-              <div class="wa-number-top">
-                <span class="wa-badge" style="background: #E0E7FF; color: #4338CA;">الرقم الثاني</span>
-                <span class="wa-phone-text" dir="ltr">+967 778 37 5155</span>
-              </div>
-              <div class="wa-actions-wrap">
-                <a href="https://wa.me/967778375155" id="btn-wa-link-2" target="_blank" rel="noopener noreferrer" class="btn-wa-direct" style="background: #15803D;">
-                  <i data-lucide="send"></i>
-                  <span>مراسلة واتساب (2) ↗</span>
-                </a>
-                <button type="button" class="btn-wa-copy" data-copy="96778375155" title="نسخ الرقم">
-                  <i data-lucide="copy"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Prominent Student Retention & Print Alert Box (For inside Yemen or general retention) -->
-        <div class="receipt-retention-alert" id="success-retention-alert">
-          <div class="alert-icon-wrap">
-            <i data-lucide="printer"></i>
-          </div>
-          <div class="alert-content">
-            <strong class="alert-title">تنبيه هام ومطلوب للمتدرب:</strong>
-            <p class="alert-desc" id="retention-desc">
-              يرجى <strong>الاحتفاظ بهذا السند وطباعته فوراً</strong> (أو حفظه كملف PDF / لقطة شاشة)، حيث يُعد وثيقتك المرجعية الرسمية لإتمام إجراءات القبول ومطابقة الحساب عند بدء التدريب.
-            </p>
-          </div>
+        <div class="alert-content">
+          <strong class="alert-title">تنبيه هام ومطلوب للمتدرب:</strong>
+          <p class="alert-desc" id="retention-desc">
+            يرجى <strong>الاحتفاظ بهذا السند وطباعته فوراً</strong> (أو حفظه كملف PDF / لقطة شاشة)، حيث يُعد وثيقتك المرجعية الرسمية لإتمام إجراءات القبول ومطابقة الحساب عند بدء التدريب.
+          </p>
         </div>
       </div>
 
@@ -643,29 +618,7 @@
         </div>
       </div>
 
-      <!-- ================= PRINT-ONLY OFFICIAL VOUCHER FOOTER (SEAL & AUTH) ================= -->
-      <div class="print-voucher-footer">
-        <div class="pvf-stamp-wrap">
-          <div class="official-seal-badge">
-            <span class="seal-star">★ ★ ★</span>
-            <span class="seal-org">منصة إتقان</span>
-            <span class="seal-dept">شؤون المتدربين</span>
-            <span class="seal-status">معتمد إلكترونياً</span>
-            <span class="seal-en">ITQAN ACADEMY</span>
-          </div>
-        </div>
-        <div class="pvf-notes-wrap">
-          <p class="pvf-legal-note">
-            <strong>إشعار رسمي:</strong> يُعد هذا السند وثيقة قيد رسمية معتمدة صادرة إلكترونياً عن منصة إتقان للتعليم والتدريب التقني، ويُعتد بها لإثبات قيد المتدرب ومطابقة الرسوم وبدء التدريب.
-          </p>
-          <div class="pvf-auth-line">
-            <span>البوابة الإلكترونية: <strong>itqans.men</strong></span>
-            <span>الرقم المرجعي: <code id="pvf-bottom-ref">ITQ-2026-5821</code></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Official Institutional Footer Note (Screen only) -->
+      <!-- Official Institutional Footer Note -->
       <div class="receipt-footer-note">
         <i data-lucide="shield-check"></i>
         <span>سند إلكتروني رسمي معتمد صادر عن منصة إتقان للتعليم والتدريب التقني (itqans.men)</span>
@@ -706,14 +659,14 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Application Modules -->
-  <script src="assets/js/data/courses.js?v=21"></script>
-  <script src="assets/js/utils/helpers.js?v=21"></script>
-  <script src="assets/js/components/toast.js?v=21"></script>
-  <script src="assets/js/utils/api.js?v=21"></script>
-  <script src="assets/js/components/navbar.js?v=21"></script>
-  <script src="assets/js/components/footer.js?v=21"></script>
+  <script src="assets/js/data/courses.js?v=22"></script>
+  <script src="assets/js/utils/helpers.js?v=22"></script>
+  <script src="assets/js/components/toast.js?v=22"></script>
+  <script src="assets/js/utils/api.js?v=22"></script>
+  <script src="assets/js/components/navbar.js?v=22"></script>
+  <script src="assets/js/components/footer.js?v=22"></script>
 
   <!-- Page Logic -->
-  <script src="assets/js/pages/register.js?v=21"></script>
+  <script src="assets/js/pages/register.js?v=22"></script>
 </body>
 </html>

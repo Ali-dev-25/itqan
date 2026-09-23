@@ -1684,9 +1684,40 @@
   padding-inline-end: 0;
 }
 
+/* TechLingo Level Price Pill */
+.techlingo-level-price-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FAF5FF;
+  border: 1px solid #E9D5FF;
+  border-radius: var(--r-md);
+  padding: 4px 10px;
+  margin-top: auto;
+  margin-bottom: var(--sp-2);
+  transition: all var(--tr-fast);
+}
+
+.techlingo-level-col:hover .techlingo-level-price-pill {
+  background: #F3E8FF;
+  border-color: #C084FC;
+}
+
+.techlingo-level-price-pill .level-price-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #7E22CE;
+}
+
+.techlingo-level-price-pill .level-price-val {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #6B21A8;
+  letter-spacing: -0.01em;
+}
+
 /* TechLingo Individual Level Capacity Card */
 .techlingo-level-capacity-container {
-  margin-top: auto;
   margin-bottom: var(--sp-2);
 }
 
