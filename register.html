@@ -51,7 +51,7 @@
   <!-- Core Stylesheets -->
   <link rel="stylesheet" href="assets/css/design-system.css">
   <link rel="stylesheet" href="assets/css/public.css">
-  <link rel="stylesheet" href="assets/css/register.css">
+  <link rel="stylesheet" href="assets/css/register.css?v=20">
 
   <!-- Structured Data / JSON-LD -->
   <script type="application/ld+json">
@@ -630,10 +630,23 @@
           <i data-lucide="printer"></i>
           <span>طباعة وحفظ السند (مستحسن)</span>
         </button>
+        <button type="button" class="btn-success-copy-all" id="btn-copy-receipt-all" title="نسخ كافة تفاصيل السند كنص">
+          <i data-lucide="copy"></i>
+          <span>نسخ بيانات السند</span>
+        </button>
         <a href="index.html" class="btn-success-home">
           <i data-lucide="home"></i>
-          <span>العودة للصفحة الرئيسية</span>
+          <span>العودة للرئيسية</span>
         </a>
+      </div>
+
+      <!-- Mobile & In-App Browser Guidance Note -->
+      <div class="mobile-print-hint" id="mobile-print-hint">
+        <i data-lucide="smartphone"></i>
+        <div class="mobile-hint-text">
+          <strong>إرشاد لمستخدمي الجوال (تيليجرام / واتساب):</strong>
+          <span>إذا كنت تتصفح من داخل تطبيق، يمكنك <strong>التقاط لقطة شاشة (Screenshot)</strong> للسند للاحتفاظ به، أو الضغط على (⋮) واختيار <strong>«فتح في المتصفح»</strong> لحفظه بصيغة PDF.</span>
+        </div>
       </div>
 
     </div>
@@ -646,14 +659,14 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Application Modules -->
-  <script src="assets/js/data/courses.js?v=19"></script>
-  <script src="assets/js/utils/helpers.js?v=19"></script>
-  <script src="assets/js/components/toast.js?v=19"></script>
-  <script src="assets/js/utils/api.js?v=19"></script>
-  <script src="assets/js/components/navbar.js?v=19"></script>
-  <script src="assets/js/components/footer.js?v=19"></script>
+  <script src="assets/js/data/courses.js?v=20"></script>
+  <script src="assets/js/utils/helpers.js?v=20"></script>
+  <script src="assets/js/components/toast.js?v=20"></script>
+  <script src="assets/js/utils/api.js?v=20"></script>
+  <script src="assets/js/components/navbar.js?v=20"></script>
+  <script src="assets/js/components/footer.js?v=20"></script>
 
   <!-- Page Logic -->
-  <script src="assets/js/pages/register.js?v=19"></script>
+  <script src="assets/js/pages/register.js?v=20"></script>
 </body>
 </html>

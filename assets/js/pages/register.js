@@ -712,12 +712,94 @@ const RegisterPage = (() => {
       });
     }
 
-    // 5. أحداث شاشة النجاح والطباعة ونسخ أرقام الواتساب
+    // 5. أحداث شاشة النجاح والطباعة ونسخ السند
     const printBtn = document.getElementById('btn-print-receipt');
     if (printBtn) {
       printBtn.addEventListener('click', () => {
-        window.print();
+        const ua = navigator.userAgent || '';
+        const isInApp = /Telegram|WhatsApp|FBAN|FBAV|Instagram|Line|Twitter/i.test(ua);
+
+        if (isInApp) {
+          Toast.info('المتصفح الداخلي لتيليجرام/واتساب لا يدعم نافذة الطباعة. التقط لقطة شاشة للسند فوراً، أو اضغط على (⋮) وافتح الرابط في المتصفح الخارجي للطباعة كملف PDF.', 6500);
+        }
+
+        // فك قفل التمرير مؤقتاً لضمان توافق محركات طباعة الجوال (Safari iOS / Chrome Android)
+        const prevBodyOverflow = document.body.style.overflow;
+        const prevHtmlOverflow = document.documentElement.style.overflow;
+        document.body.style.overflow = 'visible';
+        document.documentElement.style.overflow = 'visible';
+
+        try {
+          window.print();
+        } catch (err) {
+          console.warn('Print command error or unsupported:', err);
+          Toast.warning('تعذر بدء الطباعة التلقائية. يرجى التقاط لقطة شاشة للسند أو نسخ بياناته بالزر المجاور.');
+        }
+
+        const restoreOverflow = () => {
+          document.body.style.overflow = prevBodyOverflow || 'hidden';
+          document.documentElement.style.overflow = prevHtmlOverflow || '';
+        };
+
+        if ('onafterprint' in window) {
+          window.addEventListener('afterprint', restoreOverflow, { once: true });
+        } else {
+          setTimeout(restoreOverflow, 1200);
+        }
       });
+    }
+
+    // زر نسخ ملخص السند بالكامل (مثالي للجوال ومستخدمي الواتساب)
+    const copyReceiptAllBtn = document.getElementById('btn-copy-receipt-all');
+    if (copyReceiptAllBtn) {
+      copyReceiptAllBtn.addEventListener('click', () => {
+        const refCode = document.getElementById('success-reference-code')?.innerText.trim() || '—';
+        const studentName = document.getElementById('summary-student-name')?.innerText.trim() || '—';
+        const courseTitle = document.getElementById('summary-course-title')?.innerText.trim() || '—';
+        const attendance = document.getElementById('summary-attendance-mode')?.innerText.trim() || '—';
+        const residence = document.getElementById('summary-residence-location')?.innerText.trim() || '—';
+        const phone = document.getElementById('summary-phone')?.innerText.trim() || '—';
+        const timestamp = document.getElementById('summary-timestamp')?.innerText.trim() || '—';
+
+        const receiptText = 
+`📄 *سند تسجيل إلكتروني رسمي — منصة إتقان*
+━━━━━━━━━━━━━━━━━━
+🔹 *الرقم المرجعي للطلب:* ${refCode}
+👤 *اسم المتدرب:* ${studentName}
+📚 *الدورة التدريبية:* ${courseTitle}
+🏫 *طريقة الحضور:* ${attendance}
+🌍 *موقع الإقامة:* ${residence}
+📱 *رقم الجوال:* ${phone}
+🕒 *تاريخ ووقت الإرسال:* ${timestamp}
+━━━━━━━━━━━━━━━━━━
+🌐 منصة إتقان للتعليم والتدريب التقني (itqans.men)`;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(receiptText).then(() => {
+            Toast.success('تم نسخ كافة بيانات السند بنجاح إلى الحافظة');
+          }).catch(() => {
+            copyTextFallback(receiptText);
+          });
+        } else {
+          copyTextFallback(receiptText);
+        }
+      });
+    }
+
+    function copyTextFallback(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        Toast.success('تم نسخ كافة بيانات السند بنجاح');
+      } catch (e) {
+        Toast.warning('يرجى تصوير الشاشة للاحتفاظ بالسند');
+      }
+      document.body.removeChild(ta);
     }
 
     const copyRefBtn = document.getElementById('btn-copy-reference');
