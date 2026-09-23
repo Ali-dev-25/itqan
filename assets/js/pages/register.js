@@ -1206,7 +1206,7 @@ const RegisterPage = (() => {
         if (waLink1) waLink1.href = `https://wa.me/967771807595?text=${encodedMsg}`;
 
         const waLink2 = document.getElementById('btn-wa-link-2');
-        if (waLink2) waLink2.href = `https://wa.me/967778375155?text=${encodedMsg}`;
+        if (waLink2) waLink2.href = `https://wa.me/967779958316?text=${encodedMsg}`;
       }
 
       // تحديث حالة السند في الجدول
