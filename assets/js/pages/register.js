@@ -1156,6 +1156,14 @@ const RegisterPage = (() => {
     const refEl = document.getElementById('success-reference-code');
     if (refEl) refEl.textContent = response.reference;
 
+    // تحديث حقول سند التسجيل الرسمي المطبوع
+    const pvhRef = document.getElementById('pvh-ref-code');
+    if (pvhRef) pvhRef.textContent = response.reference;
+    const pvhDate = document.getElementById('pvh-issue-date');
+    if (pvhDate) pvhDate.textContent = response.timestamp;
+    const pvfRef = document.getElementById('pvf-bottom-ref');
+    if (pvfRef) pvfRef.textContent = response.reference;
+
     // تحديث بيانات المتدرب
     const nameEl = document.getElementById('summary-student-name');
     if (nameEl) nameEl.textContent = studentName;

@@ -1267,8 +1267,14 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
   margin-bottom: 2px;
 }
 
+/* Print Voucher Header & Footer (Hidden on screen) */
+.print-voucher-header,
+.print-voucher-footer {
+  display: none;
+}
+
 /* --------------------------------------------------------------------------
-   7. PRINT STYLES FOR RECEIPT (@media print)
+   7. PRINT STYLES FOR OFFICIAL REGISTRATION VOUCHER (@media print)
    -------------------------------------------------------------------------- */
 @media print {
   @page {
@@ -1276,26 +1282,22 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     size: A4 portrait;
   }
 
-  /* 1. إخفاء شجرة التخطيط لكافة الأجزاء غير المتعلقة بالسند نهائياً لضمان عدم حجز أي مساحة خالية */
+  /* 1. إخفاء كل ما هو خارج سند التسجيل نهائياً من شجرة التخطيط */
   #navbar-container,
   .register-main,
   #footer-container,
   .fatin-tour-widget,
   .fatin-launcher,
-  .toast-container {
+  .toast-container,
+  .screen-only-content,
+  .receipt-footer-note,
+  .success-actions-row,
+  .btn-copy-ref,
+  .mobile-print-hint {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
     overflow: hidden !important;
-  }
-
-  /* إخفاء عناصر التحكم غير المخصصة للورقة المطبوعة */
-  .success-actions-row,
-  .btn-copy-ref,
-  .wa-actions-wrap,
-  .btn-wa-copy,
-  .mobile-print-hint {
-    display: none !important;
   }
 
   /* تنظيف خلفية وهوامش وتمرير الصفحة بالكامل */
@@ -1312,7 +1314,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     print-color-adjust: exact !important;
   }
 
-  /* جعل الغلاف شفافاً ومستوياً تماماً لضمان عدم حجب الطباعة في متصفحات الجوال */
   .success-modal-backdrop {
     position: static !important;
     inset: auto !important;
@@ -1327,16 +1328,16 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     box-shadow: none !important;
   }
 
-  /* بطاقة السند: تصميم مدمج ومتناسق ليتسع في صفحة A4 واحدة بالتمام */
+  /* بطاقة السند: وثيقة رسمية مؤطرة وأنيقة تتسع في صفحة واحدة A4 تماماً */
   .success-modal-card {
     position: relative !important;
     box-shadow: none !important;
-    border: 1.5px solid #CBD5E1 !important;
-    border-radius: 12px !important;
+    border: 2px solid #0F172A !important;
+    border-radius: 10px !important;
     max-width: 100% !important;
     width: 100% !important;
     transform: none !important;
-    padding: 16px 20px !important;
+    padding: 20px 24px !important;
     margin: 0 auto !important;
     max-height: none !important;
     height: auto !important;
@@ -1345,103 +1346,253 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     break-inside: avoid !important;
   }
 
-  .success-modal-brand {
-    margin-bottom: 8px !important;
-  }
-
-  .success-brand-logo-mono {
-    height: 48px !important;
-  }
-
   .success-card-watermark {
-    opacity: 0.035 !important;
+    opacity: 0.04 !important;
   }
 
-  .success-icon-badge {
-    width: 44px !important;
-    height: 44px !important;
-    margin-bottom: 8px !important;
-    border-width: 1.5px !important;
+  /* 2. إظهار وتنسيق الترويسة الرسمية لسند التسجيل المعتمد */
+  .print-voucher-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #0F172A;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    direction: rtl;
   }
 
-  .success-icon-badge svg {
-    width: 22px !important;
-    height: 22px !important;
+  .pvh-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: right;
   }
 
-  .success-title {
-    font-size: 1.25rem !important;
-    margin-bottom: 4px !important;
+  .pvh-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
   }
 
-  .success-subtitle {
-    font-size: 0.8rem !important;
-    line-height: 1.5 !important;
-    margin-bottom: 10px !important;
+  .pvh-org-name {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #0F172A;
+    margin: 0 0 2px 0;
   }
 
-  .reference-pill-box {
-    padding: 8px 12px !important;
-    margin-bottom: 10px !important;
+  .pvh-org-sub {
+    font-size: 0.78rem;
+    color: #475569;
+    margin: 0;
   }
 
-  .reference-code {
-    font-size: 1.25rem !important;
+  .pvh-center {
+    text-align: center;
   }
 
-  .receipt-retention-alert {
-    background: #F8FAFC !important;
-    border: 1.5px solid #94A3B8 !important;
-    border-right: 4px solid #2563EB !important;
-    box-shadow: none !important;
-    color: #0F172A !important;
-    padding: 8px 12px !important;
-    margin-bottom: 10px !important;
-  }
-
-  .receipt-retention-alert .alert-icon-wrap {
-    background: #2563EB !important;
+  .pvh-badge {
+    display: inline-block;
+    background: #0F172A;
     color: #FFFFFF !important;
-    width: 28px !important;
-    height: 28px !important;
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    margin-bottom: 3px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .receipt-retention-alert .alert-icon-wrap svg {
-    width: 15px !important;
-    height: 15px !important;
+  .pvh-doc-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1E3A8A;
+    margin: 0;
   }
 
-  .receipt-retention-alert .alert-title {
-    color: #0F172A !important;
-    font-size: 0.82rem !important;
+  .pvh-left {
+    text-align: left;
+    direction: ltr;
   }
 
-  .receipt-retention-alert .alert-desc {
-    color: #334155 !important;
-    font-size: 0.76rem !important;
-    line-height: 1.5 !important;
+  .pvh-meta-box {
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    padding: 6px 10px;
+    background: #F8FAFC;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .whatsapp-international-card {
-    padding: 10px 14px !important;
-    margin-bottom: 10px !important;
+  .pvh-meta-row {
+    font-size: 0.76rem;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 2px;
+    direction: rtl;
   }
 
+  .pvh-meta-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .pvh-meta-label {
+    color: #64748B;
+  }
+
+  .pvh-meta-val {
+    color: #0F172A;
+    font-weight: 800;
+    font-family: monospace;
+  }
+
+  /* 3. تنسيق جدول بيانات السند كجدول رسمي مؤطر */
   .success-summary-list {
-    padding: 10px 14px !important;
-    margin-bottom: 10px !important;
-    gap: 5px !important;
+    background: #FFFFFF !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    padding: 0 !important;
+    margin-bottom: 16px !important;
+    overflow: hidden !important;
   }
 
   .summary-row {
-    padding-bottom: 4px !important;
-    font-size: 0.82rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 8px 14px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    font-size: 0.85rem !important;
   }
 
-  .receipt-footer-note {
-    margin-bottom: 0 !important;
-    padding: 6px 10px !important;
-    font-size: 0.7rem !important;
+  .summary-row:nth-child(even) {
+    background: #F8FAFC !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .summary-row:last-child {
+    border-bottom: none !important;
+  }
+
+  .summary-label {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    width: 28% !important;
+  }
+
+  .summary-val {
+    color: #0F172A !important;
+    font-weight: 800 !important;
+    font-size: 0.86rem !important;
+    flex: 1 !important;
+    text-align: right !important;
+  }
+
+  /* 4. إظهار وتنسيق تذييل السند وختم الاعتماد الرسمي */
+  .print-voucher-footer {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1.5px dashed #94A3B8;
+    padding-top: 14px;
+    margin-top: 10px;
+    direction: rtl;
+  }
+
+  .pvf-stamp-wrap {
+    flex-shrink: 0;
+  }
+
+  .official-seal-badge {
+    width: 94px;
+    height: 94px;
+    border-radius: 50%;
+    border: 2.5px solid #1E3A8A;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #1E3A8A;
+    background: #EFF6FF;
+    transform: rotate(-6deg);
+    box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #1E3A8A;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .seal-star {
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .seal-org {
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .seal-dept {
+    font-size: 0.55rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .seal-status {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: #16A34A;
+    border-top: 1px solid #93C5FD;
+    border-bottom: 1px solid #93C5FD;
+    padding: 1px 4px;
+    margin: 2px 0;
+  }
+
+  .seal-en {
+    font-size: 0.45rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+  }
+
+  .pvf-notes-wrap {
+    flex: 1;
+    margin-right: 18px;
+    text-align: right;
+  }
+
+  .pvf-legal-note {
+    font-size: 0.75rem;
+    color: #334155;
+    line-height: 1.6;
+    margin: 0 0 8px 0;
+  }
+
+  .pvf-auth-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: #64748B;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 4px;
+    padding: 4px 8px;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .pvf-auth-line code {
+    font-family: monospace;
+    font-weight: 800;
+    color: #0F172A;
   }
 }
 
