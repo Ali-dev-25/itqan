@@ -175,11 +175,14 @@ class RegistrationAdmin(admin.ModelAdmin):
         if obj.is_exported:
             batch_text = obj.export_batch or 'مؤرشف'
             return format_html(
-                '<span style="background-color: #64748B; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;" title="تم التصدير: {}">📦 مؤرشف (مصدّر)</span>',
+                '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;" title="تم التصدير: {}">📦 مؤرشف (مصدّر)</span>',
+                '#64748B',
                 batch_text
             )
         return format_html(
-            '<span style="background-color: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">⚡ نشط في العداد</span>'
+            '<span style="background-color: {}; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">{}</span>',
+            '#059669',
+            '⚡ نشط في العداد'
         )
 
     @admin.display(description='نمط الحضور')
