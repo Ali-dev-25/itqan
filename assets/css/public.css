@@ -1042,6 +1042,12 @@
   border: 1px solid #FDE68A;
 }
 
+.capacity-status-badge.full {
+  background: #E0E7FF;
+  color: #3730A3;
+  border: 1px solid #C7D2FE;
+}
+
 /* Dual Mode Progress Bars (حضوري وعن بعد) */
 .capacity-dual-bars {
   display: flex;
@@ -1119,6 +1125,13 @@
   margin: 2px 0;
 }
 
+.capacity-progress-bar-wrap.total-bar {
+  height: 8px;
+  background: #E2E8F0;
+  margin: 5px 0 7px 0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
 .capacity-progress-bar-wrap.mode-bar {
   height: 5px;
   margin: 1px 0;
@@ -1127,8 +1140,23 @@
 .capacity-progress-fill {
   height: 100%;
   border-radius: var(--r-full);
-  background: linear-gradient(90deg, #3B82F6 0%, #2563EB 100%);
-  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+}
+
+.capacity-progress-fill.is-enrolling {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+.capacity-progress-fill.is-confirmed {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.capacity-progress-fill.is-full {
+  background: linear-gradient(90deg, #059669 0%, #047857 100%);
+  box-shadow: 0 0 10px rgba(5, 150, 105, 0.4);
 }
 
 .capacity-progress-fill.fill-inperson {
@@ -1137,10 +1165,6 @@
 
 .capacity-progress-fill.fill-online {
   background: linear-gradient(90deg, #A78BFA 0%, #7C3AED 100%);
-}
-
-.capacity-progress-fill.is-confirmed {
-  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
 }
 
 .capacity-footer-meta {

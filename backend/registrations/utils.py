@@ -54,16 +54,25 @@ def format_arabic_timestamp(dt=None):
     return f"{dt.day} {month_name} {dt.year} - {hour:02d}:{dt.minute:02d} {period}"
 
 
-def build_excel_workbook_from_queryset(queryset):
+def build_excel_workbook_from_queryset(queryset, course_title=None, batch_name=None):
     """
     بناء ملف Excel كامل بتنسيق احترافي معتمد من منصة إتقان (يشمل الشعار، الترويسة، ألوان الهوية، والـ RTL)
+    مع دعم التصدير المخصص لكل دورة تدريبية على حدة وتوثيق الدفعة
     """
+    import re
     from openpyxl.drawing.image import Image as OpenpyxlImage
     from openpyxl.utils import get_column_letter
 
     wb = Workbook()
     ws = wb.active
-    ws.title = 'بيانات الطلاب المسجلين'
+    
+    # اسم ورقة العمل مع تنظيف الرموز الممنوعة في إكسل وضمان عدم تجاوز 31 حرفاً
+    if course_title:
+        clean_name = re.sub(r'[\/:*?\"<>|\[\]]', '', course_title).strip()[:24]
+        ws.title = f"دورة {clean_name}"[:31] if clean_name else 'بيانات الدورة'
+    else:
+        ws.title = 'بيانات الطلاب المسجلين'
+
     ws.sheet_view.rightToLeft = True  # اتجاه الكتابة من اليمين لليسار (RTL)
     ws.sheet_view.showGridLines = True
 
@@ -85,15 +94,22 @@ def build_excel_workbook_from_queryset(queryset):
     ws.row_dimensions[3].height = 20
     ws.row_dimensions[4].height = 18
 
-    # اسم المنصة
+    # اسم المنصة / الدورة
     cell_title = ws["B2"]
-    cell_title.value = "مـنـصـة إتـقـان للتعليم والتدريب التقني"
+    if course_title:
+        cell_title.value = f"مـنـصـة إتـقـان للتعليم والتدريب التقني — {course_title}"
+    else:
+        cell_title.value = "مـنـصـة إتـقـان للتعليم والتدريب التقني"
     cell_title.font = Font(name="Arial", size=15, bold=True, color="1E3A8A")
     cell_title.alignment = Alignment(horizontal="right", vertical="center")
 
     # العنوان الفرعي
     cell_sub = ws["B3"]
-    cell_sub.value = "سجل طلبات التسجيل وبيانات الطلاب المسجلين عبر البوابة الإلكترونية"
+    if course_title:
+        current_batch_label = batch_name or "الدفعة المصدّرة الجديدة"
+        cell_sub.value = f"سجل الطلاب المقبولين والمسجلين في هذه الدورة التدريبية | {current_batch_label}"
+    else:
+        cell_sub.value = "سجل طلبات التسجيل وبيانات الطلاب المسجلين عبر البوابة الإلكترونية"
     cell_sub.font = Font(name="Arial", size=11, bold=True, color="475569")
     cell_sub.alignment = Alignment(horizontal="right", vertical="center")
 
@@ -101,7 +117,8 @@ def build_excel_workbook_from_queryset(queryset):
     cell_meta = ws["B4"]
     now_str = format_arabic_timestamp()
     total_count = queryset.count() if hasattr(queryset, 'count') else len(queryset)
-    cell_meta.value = f"تاريخ الاستخراج: {now_str}  |  إجمالي الطلبات: {total_count} طالب  |  نظام إتقان المعتمد"
+    batch_info = f"  |  الدفعة: {batch_name}" if batch_name else ""
+    cell_meta.value = f"تاريخ الاستخراج: {now_str}  |  إجمالي الطلاب: {total_count} طالب{batch_info}  |  نظام إتقان المعتمد"
     cell_meta.font = Font(name="Arial", size=9, italic=True, color="64748B")
     cell_meta.alignment = Alignment(horizontal="right", vertical="center")
 
@@ -119,6 +136,7 @@ def build_excel_workbook_from_queryset(queryset):
         'تاريخ الميلاد',
         'مكان الميلاد',
         'حالة الطلب',
+        'دفعة التصدير والأرشفة',
         'تاريخ ووقت التقديم',
         'ملف السند المرفوع',
     ]
@@ -179,6 +197,7 @@ def build_excel_workbook_from_queryset(queryset):
         birth_str = reg.birth_date.strftime('%Y-%m-%d') if reg.birth_date else '—'
         created_str = reg.created_at.strftime('%Y-%m-%d %H:%M') if reg.created_at else '—'
         file_name = reg.receipt_file.name if reg.receipt_file else 'لا يوجد ملف (خارج الوطن)'
+        batch_val = getattr(reg, 'export_batch', None) or batch_name or ('دفعة مؤرشفة' if getattr(reg, 'is_exported', False) else 'دفعة نشطة')
 
         row_data = [
             idx,
@@ -193,6 +212,7 @@ def build_excel_workbook_from_queryset(queryset):
             birth_str,
             reg.birth_place or '—',
             status_map.get(reg.status, reg.status),
+            batch_val,
             created_str,
             file_name,
         ]

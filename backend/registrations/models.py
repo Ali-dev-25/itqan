@@ -104,6 +104,24 @@ class Registration(models.Model):
         verbose_name='حالة الطلب'
     )
 
+    # أرشفة التصدير إلى Excel وتصفير العداد النشط للدفعة
+    is_exported = models.BooleanField(
+        default=False,
+        verbose_name='تم التصدير إلى Excel (أرشفة الدفعة)',
+        help_text='عند التصدير، يتم استبعاد الطالب من عداد المقاعد النشط بالواجهة لتبدأ دفعة جديدة من صفر'
+    )
+    exported_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='تاريخ التصدير لملف Excel'
+    )
+    export_batch = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True,
+        verbose_name='اسم/رمز دفعة التصدير'
+    )
+
     # التواريخ
     created_at = models.DateTimeField(
         auto_now_add=True,

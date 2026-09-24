@@ -17,7 +17,7 @@ from django.conf import settings
 
 @admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
-    # استخدام قالب مخصص لإضافة زر التصدير في أعلى اللائحة
+    # استخدام قالب مخصص لإضافة أزرار التصدير وقائمة الدورات في أعلى اللائحة
     change_list_template = "admin/registrations_change_list.html"
 
     list_display = (
@@ -25,21 +25,26 @@ class RegistrationAdmin(admin.ModelAdmin):
         'full_name_ar',
         'phone',
         'course_title',
+        'is_exported_badge',
         'attendance_badge',
         'residence_badge',
         'status_badge',
         'receipt_preview',
         'created_at'
     )
-    list_filter = ('status', 'attendance_mode', 'residence_location', 'course_id', 'created_at')
-    search_fields = ('reference_number', 'full_name_ar', 'full_name_en', 'phone', 'course_title')
-    readonly_fields = ('reference_number', 'created_at', 'updated_at', 'receipt_preview_large')
+    list_filter = ('is_exported', 'status', 'attendance_mode', 'residence_location', 'course_id', 'created_at')
+    search_fields = ('reference_number', 'full_name_ar', 'full_name_en', 'phone', 'course_title', 'export_batch')
+    readonly_fields = ('reference_number', 'created_at', 'updated_at', 'receipt_preview_large', 'exported_at')
     list_per_page = 25
     date_hierarchy = 'created_at'
 
     fieldsets = (
         ('بيانات الطلب الرئيسية', {
             'fields': ('reference_number', 'status', 'created_at', 'updated_at')
+        }),
+        ('بيانات الأرشفة والتصدير إلى Excel (تصفير العداد)', {
+            'fields': ('is_exported', 'exported_at', 'export_batch'),
+            'description': 'عند تصدير الدفعة، يتم تفعيل "تم التصدير" وتاريخ التصدير، مما يصفر عداد المقاعد النشط في الموقع لتلك الدورة.'
         }),
         ('بيانات الطالب الشخصية', {
             'fields': ('full_name_ar', 'full_name_en', 'phone', 'residence_location', 'attendance_mode', 'birth_date', 'birth_place')
@@ -52,32 +57,130 @@ class RegistrationAdmin(admin.ModelAdmin):
         }),
     )
 
-    actions = ['export_selected_to_excel', 'mark_as_approved', 'mark_as_rejected']
+    actions = [
+        'export_and_archive_selected_to_excel',
+        'export_selected_to_excel',
+        'unarchive_selected',
+        'mark_as_approved',
+        'mark_as_rejected',
+    ]
+
+    def changelist_view(self, request, extra_context=None):
+        """تزويد القالب بقائمة الدورات المعتمدة لتصدير كل دورة منفصلة"""
+        extra_context = extra_context or {}
+        courses_list = list(Course.objects.filter(status='active').order_by('sort_order', 'id'))
+        
+        # إضافة مستويات TechLingo الإضافية للتصدير المستقل لكل مستوى
+        extra_levels = [
+            {'course_id': 'C008_TECHLINGO_1A', 'title': 'دبلوم TechLingo - المستوى 1A'},
+            {'course_id': 'C008_TECHLINGO_1B', 'title': 'دبلوم TechLingo - المستوى 1B'},
+            {'course_id': 'C008_TECHLINGO_2A', 'title': 'دبلوم TechLingo - المستوى 2A'},
+            {'course_id': 'C008_TECHLINGO_2B', 'title': 'دبلوم TechLingo - المستوى 2B'},
+            {'course_id': 'C008_TECHLINGO_3A', 'title': 'دبلوم TechLingo - المستوى 3A'},
+            {'course_id': 'C008_TECHLINGO_3B', 'title': 'دبلوم TechLingo - المستوى 3B'},
+        ]
+        
+        extra_context['available_courses'] = courses_list
+        extra_context['techlingo_levels'] = extra_levels
+        return super().changelist_view(request, extra_context=extra_context)
 
     def get_urls(self):
-        """إضافة مسار مخصص لتصدير كافة الطلاب بنقرة واحدة"""
+        """إضافة مسارات مخصصة لتصدير كافة الطلاب أو تصدير دورة معينة وتصفير عدادها"""
         urls = super().get_urls()
         custom_urls = [
             path('export-all-excel/', self.admin_site.admin_view(self.export_all_excel_view), name='registrations-export-all-excel'),
+            path('export-course-excel/<str:course_id>/', self.admin_site.admin_view(self.export_course_excel_view), name='registrations-export-course-excel'),
         ]
         return custom_urls + urls
 
     def export_all_excel_view(self, request):
-        """عرض لتنزيل ملف Excel لكافة الطلاب المسجلين فوراً"""
+        """تنزيل ملف Excel لكافة الطلاب المسجلين"""
         queryset = Registration.objects.all().order_by('-created_at')
-        wb = build_excel_workbook_from_queryset(queryset)
+        wb = build_excel_workbook_from_queryset(queryset, course_title="كافة الدورات", batch_name="السجل العام الشامل")
         
         output = io.BytesIO()
         wb.save(output)
         output.seek(0)
 
-        filename = f"itqan_students_{timezone.now().strftime('%Y%m%d_%H%M')}.xlsx"
+        filename = f"itqan_all_students_{timezone.now().strftime('%Y%m%d_%H%M')}.xlsx"
         response = HttpResponse(
             output.getvalue(),
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+    def export_course_excel_view(self, request, course_id):
+        """
+        تصدير الطلاب المقبولين في دورة معينة إلى ملف Excel مستقل مخصص
+        مع أرشفة الطلاب المصدّرين وتصفير عداد المقاعد لتلك الدورة فوراً في الموقع (إرجاع الخط لـ 0)
+        """
+        from django.db import models as db_models
+        cid_clean = (course_id or '').strip()
+        
+        # استعلام مخصص لـ TechLingo بحسب المستوى أو المعرف العام
+        if cid_clean.startswith('C008_TECHLINGO_'):
+            lvl = cid_clean.replace('C008_TECHLINGO_', '').strip()
+            course_filter = (
+                db_models.Q(course_id__iexact=cid_clean) |
+                db_models.Q(course_title__icontains=f"المستوى {lvl}") |
+                db_models.Q(course_title__icontains=f"Level {lvl}")
+            )
+        else:
+            course_filter = db_models.Q(course_id__iexact=cid_clean)
+
+        # 1. جلب كافة الطلاب غير المصدّرين حالياً لهذه الدورة
+        queryset = Registration.objects.filter(course_filter, is_exported=False).order_by('created_at')
+
+        # وإذا تم تصدير الجميع مسبقاً، نصدّر الدفعة الكاملة للاطلاع
+        if not queryset.exists():
+            queryset = Registration.objects.filter(course_filter).order_by('-created_at')
+
+        # اسم الدورة
+        course_obj = Course.objects.filter(course_id=cid_clean).first()
+        if course_obj:
+            course_title = course_obj.title
+        elif queryset.exists():
+            course_title = queryset.first().course_title
+        else:
+            course_title = cid_clean
+
+        now_dt = timezone.now()
+        batch_name = f"دفعة {now_dt.strftime('%Y-%m-%d')} ({course_title[:25]})"
+
+        # توليد ملف Excel مخصص بالكامل لهذه الدورة
+        wb = build_excel_workbook_from_queryset(queryset, course_title=course_title, batch_name=batch_name)
+
+        # أرشفة الطلاب وتصفير العداد فوراً بالواجهة
+        queryset.filter(is_exported=False).update(
+            is_exported=True,
+            exported_at=now_dt,
+            export_batch=batch_name
+        )
+
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        filename = f"itqan_{cid_clean}_{now_dt.strftime('%Y%m%d_%H%M')}.xlsx"
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+    @admin.display(description='حالة العداد والأرشفة')
+    def is_exported_badge(self, obj):
+        if obj.is_exported:
+            batch_text = obj.export_batch or 'مؤرشف'
+            return format_html(
+                '<span style="background-color: #64748B; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;" title="تم التصدير: {}">📦 مؤرشف (مصدّر)</span>',
+                batch_text
+            )
+        return format_html(
+            '<span style="background-color: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 11px;">⚡ نشط في العداد</span>'
+        )
 
     @admin.display(description='نمط الحضور')
     def attendance_badge(self, obj):
@@ -153,7 +256,34 @@ class RegistrationAdmin(admin.ModelAdmin):
                 )
         return "لا يوجد ملف مرفق"
 
-    @admin.action(description='📊 تصدير الطلبات المحددة إلى ملف Excel')
+    @admin.action(description='📦 تصدير الطلبات المحددة وأرشفتها (تصفير العداد في الموقع)')
+    def export_and_archive_selected_to_excel(self, request, queryset):
+        now_dt = timezone.now()
+        batch_name = f"دفعة تصدير يدوي {now_dt.strftime('%Y-%m-%d %H:%M')}"
+        
+        # توليد الملف
+        wb = build_excel_workbook_from_queryset(queryset, course_title="طلبات محددة", batch_name=batch_name)
+        
+        # أرشفة السجلات وتصفير عدادها
+        count = queryset.update(
+            is_exported=True,
+            exported_at=now_dt,
+            export_batch=batch_name
+        )
+        
+        output = io.BytesIO()
+        wb.save(output)
+        output.seek(0)
+
+        filename = f"itqan_archived_{now_dt.strftime('%Y%m%d_%H%M')}.xlsx"
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+    @admin.action(description='📊 تصدير الطلبات المحددة إلى Excel (بدون تصفير العداد)')
     def export_selected_to_excel(self, request, queryset):
         wb = build_excel_workbook_from_queryset(queryset)
         output = io.BytesIO()
@@ -167,6 +297,11 @@ class RegistrationAdmin(admin.ModelAdmin):
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
         return response
+
+    @admin.action(description='🔄 إعادة الطلبات المحددة إلى العداد النشط (إلغاء الأرشفة)')
+    def unarchive_selected(self, request, queryset):
+        count = queryset.update(is_exported=False, exported_at=None, export_batch=None)
+        self.message_user(request, f'تمت إعادة {count} طالب إلى العداد النشط في الموقع بنجاح.')
 
     @admin.action(description='✅ تغيير حالة الطلبات المحددة إلى "مقبول"')
     def mark_as_approved(self, request, queryset):
@@ -189,6 +324,7 @@ class CourseAdmin(admin.ModelAdmin):
         'in_person_badge',
         'online_badge',
         'enrolled_count_display',
+        'export_action_link',
         'sort_order'
     )
     list_editable = ('sort_order',)
@@ -277,15 +413,26 @@ class CourseAdmin(admin.ModelAdmin):
             '✗ معطل'
         )
 
-    @admin.display(description='المقبولون (حضوري / عن بعد)')
+    @admin.display(description='المقبولون النشطون (في عداد الموقع)')
     def enrolled_count_display(self, obj):
-        regs = Registration.objects.filter(course_id=obj.course_id, status='approved')
+        regs = Registration.objects.filter(course_id=obj.course_id, status='approved', is_exported=False)
         in_p = regs.filter(attendance_mode='in_person').count()
         on_l = regs.filter(attendance_mode='online').count()
         total = in_p + on_l
+        archived = Registration.objects.filter(course_id=obj.course_id, status='approved', is_exported=True).count()
+        archived_info = f' | مؤرشف: {archived}' if archived > 0 else ''
         return format_html(
-            '<span title="المجموع: {} (حضوري: {} | عن بعد: {})"><strong>{}</strong> طالب <small style="color: #64748B;">({}ح / {}ع)</small></span>',
-            total, in_p, on_l, total, in_p, on_l
+            '<span title="النشطون بالعداد: {} (حضوري: {} | عن بعد: {}){}"><strong>{}</strong> طالب <small style="color: #64748B;">({}ح / {}ع)</small></span>',
+            total, in_p, on_l, archived_info, total, in_p, on_l
+        )
+
+    @admin.display(description='تصدير الدورة إلى Excel')
+    def export_action_link(self, obj):
+        url = f"/admin/registrations/registration/export-course-excel/{obj.course_id}/"
+        return format_html(
+            '<a href="{}" class="button" style="background-color: #0284C7; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="تصدير طلاب هذه الدورة فقط إلى Excel وتصفير عدادها في الموقع">'
+            '<span>📊 تصدير وتصفير</span></a>',
+            url
         )
 
     @admin.action(description='⏸️ إيقاف / تعطيل الدورات المحددة مؤقتاً')

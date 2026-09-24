@@ -174,8 +174,8 @@ class RegistrationStatsAPIView(APIView):
             'C009_ICDL': 0,
         }
         
-        # استعلام الطلبات المقبولة فقط (status='approved')
-        approved_registrations = Registration.objects.filter(status='approved')
+        # استعلام الطلبات المقبولة النشطة فقط بالدفعة الحالية (غير المصدّرة للإكسل)
+        approved_registrations = Registration.objects.filter(status='approved', is_exported=False)
 
         # قاموس تفصيلي لتقسيم الحضور (حضوري وعن بعد)
         breakdown = {}

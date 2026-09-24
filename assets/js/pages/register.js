@@ -413,8 +413,8 @@ const RegisterPage = (() => {
       return;
     }
 
-    const min = course.minStudents || 15;
-    const max = course.maxStudents || 30;
+    const min = 15;
+    const max = 30;
 
     // استخراج أعداد المسجلين للحضوري وعن بعد
     const inPersonCount = (liveStats && typeof liveStats[`${course.id}_in_person`] === 'number')
@@ -429,20 +429,31 @@ const RegisterPage = (() => {
       ? liveStats[course.id]
       : (inPersonCount + onlineCount);
 
+    const totalPercent = Math.min(100, Math.round((enrolledTotal / max) * 100));
+    const displayTotalPercent = enrolledTotal > 0 ? Math.max(6, totalPercent) : 0;
+
     const percentInPerson = Math.min(100, Math.round((inPersonCount / max) * 100));
     const percentOnline = Math.min(100, Math.round((onlineCount / max) * 100));
     const displayInPersonPercent = inPersonCount > 0 ? Math.max(5, percentInPerson) : 0;
     const displayOnlinePercent = onlineCount > 0 ? Math.max(5, percentOnline) : 0;
 
-    const isConfirmed = enrolledTotal >= min;
     const remainingToMin = Math.max(0, min - enrolledTotal);
 
     const allowInPerson = course.allowInPerson !== false;
     const allowOnline = course.allowOnline !== false;
 
-    const statusBadge = isConfirmed
-      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق</span>`
-      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+    let colorClass = 'is-enrolling';
+    let statusBadge = '';
+    if (enrolledTotal >= max) {
+      colorClass = 'is-full';
+      statusBadge = `<span class="capacity-status-badge full"><i data-lucide="lock" style="width: 11px; height: 11px;"></i> مكتملة المقاعد 🔒</span>`;
+    } else if (enrolledTotal >= min) {
+      colorClass = 'is-confirmed';
+      statusBadge = `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق ✅</span>`;
+    } else {
+      colorClass = 'is-enrolling';
+      statusBadge = `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin} طلاب للبدء</span>`;
+    }
 
     let barsHtml = '';
     if (allowInPerson) {
@@ -486,11 +497,16 @@ const RegisterPage = (() => {
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
-            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolledTotal}</strong> طالب</span>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolledTotal}</strong> / ${max} طالب</span>
           </div>
           <div class="capacity-badge-wrap">
             ${statusBadge}
           </div>
+        </div>
+
+        <!-- الخط الإجمالي الذي يزيد بزيادة العدد (0-15 برتقالي، 15-30 أخضر) -->
+        <div class="capacity-progress-bar-wrap total-bar" title="إجمالي المقبولين: ${enrolledTotal} من ${max} مقعد (${totalPercent}%)">
+          <div class="capacity-progress-fill fill-total ${colorClass}" style="width: ${displayTotalPercent}%;"></div>
         </div>
 
         <div class="capacity-dual-bars">

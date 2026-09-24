@@ -202,15 +202,30 @@ const HomePage = (() => {
       const card = document.getElementById(`capacity-card-${course.id}`);
       
       if (card) {
-        const min = course.minStudents || 15;
-        const max = course.maxStudents || 30;
-        const isConfirmed = newCount >= min;
+        const min = 15;
+        const max = 30;
         const remainingToMin = Math.max(0, min - newCount);
+
+        const totalPercent = Math.min(100, Math.round((newCount / max) * 100));
+        const totalDisplayPercent = newCount > 0 ? Math.max(6, totalPercent) : 0;
 
         const percentInPerson = Math.min(100, Math.round((inPerson / max) * 100));
         const percentOnline = Math.min(100, Math.round((online / max) * 100));
         const displayInPerson = inPerson > 0 ? Math.max(5, percentInPerson) : 0;
         const displayOnline = online > 0 ? Math.max(5, percentOnline) : 0;
+
+        let colorClass = 'is-enrolling';
+        let newBadgeHTML = '';
+        if (newCount >= max) {
+          colorClass = 'is-full';
+          newBadgeHTML = `<span class="capacity-status-badge full"><i data-lucide="lock" style="width: 11px; height: 11px;"></i> مكتملة المقاعد 🔒</span>`;
+        } else if (newCount >= min) {
+          colorClass = 'is-confirmed';
+          newBadgeHTML = `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق ✅</span>`;
+        } else {
+          colorClass = 'is-enrolling';
+          newBadgeHTML = `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
+        }
 
         const countEl = card.querySelector('.enrolled-count');
         if (countEl) {
@@ -220,6 +235,14 @@ const HomePage = (() => {
             void countEl.offsetWidth; // trigger reflow for smooth pulse animation
             countEl.classList.add('is-updated');
           }
+        }
+
+        // تحديث الخط الإجمالي الذي يزيد بزيادة العدد (0-15 برتقالي، 15-30 أخضر)
+        const fillTotalEl = card.querySelector('.fill-total');
+        if (fillTotalEl) {
+          fillTotalEl.style.width = `${totalDisplayPercent}%`;
+          fillTotalEl.classList.remove('is-enrolling', 'is-confirmed', 'is-full');
+          fillTotalEl.classList.add(colorClass);
         }
 
         // تحديث أعداد ونسب الحضوري
@@ -240,10 +263,6 @@ const HomePage = (() => {
 
         const badgeWrap = card.querySelector('.capacity-badge-wrap');
         if (badgeWrap) {
-          const newBadgeHTML = isConfirmed
-            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة</span>`
-            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
-          
           if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
             badgeWrap.innerHTML = newBadgeHTML;
             if (window.lucide) {
@@ -265,9 +284,21 @@ const HomePage = (() => {
         const min = 15;
         const max = 30;
         const percent = Math.min(100, Math.round((newCount / max) * 100));
-        const displayPercent = newCount > 0 ? Math.max(8, percent) : 0;
-        const isConfirmed = newCount >= min;
+        const displayPercent = newCount > 0 ? Math.max(6, percent) : 0;
         const remainingToMin = Math.max(0, min - newCount);
+
+        let lvlColorClass = 'is-enrolling';
+        let newLvlBadgeHTML = '';
+        if (newCount >= max) {
+          lvlColorClass = 'is-full';
+          newLvlBadgeHTML = `<span class="capacity-status-badge full"><i data-lucide="lock" style="width: 10px; height: 10px;"></i> مكتملة 🔒</span>`;
+        } else if (newCount >= min) {
+          lvlColorClass = 'is-confirmed';
+          newLvlBadgeHTML = `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة ✅</span>`;
+        } else {
+          lvlColorClass = 'is-enrolling';
+          newLvlBadgeHTML = `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
+        }
 
         const countEl = card.querySelector('.enrolled-count');
         if (countEl && countEl.textContent !== String(newCount)) {
@@ -280,20 +311,14 @@ const HomePage = (() => {
         const fillEl = card.querySelector('.capacity-progress-fill');
         if (fillEl) {
           fillEl.style.width = `${displayPercent}%`;
-          if (isConfirmed) {
-            fillEl.classList.add('is-confirmed');
-          } else {
-            fillEl.classList.remove('is-confirmed');
-          }
+          fillEl.classList.remove('is-enrolling', 'is-confirmed', 'is-full');
+          fillEl.classList.add(lvlColorClass);
         }
 
         const badgeWrap = card.querySelector('.capacity-badge-wrap');
         if (badgeWrap) {
-          const newBadgeHTML = isConfirmed
-            ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة</span>`
-            : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
-          if (badgeWrap.innerHTML.trim() !== newBadgeHTML.trim()) {
-            badgeWrap.innerHTML = newBadgeHTML;
+          if (badgeWrap.innerHTML.trim() !== newLvlBadgeHTML.trim()) {
+            badgeWrap.innerHTML = newLvlBadgeHTML;
             if (window.lucide) {
               lucide.createIcons({ root: badgeWrap });
             }
@@ -440,9 +465,12 @@ const HomePage = (() => {
   /**
    * عنصر عرض سعة الدورة والمقاعد المسجلة الفعّلية (المقبولة من الأدمن)
    */
+  /**
+   * عنصر عرض سعة الدورة والمقاعد المسجلة الفعّلية (المقبولة من الأدمن)
+   */
   function getCourseCapacityHTML(course) {
-    const min = course.minStudents || 15;
-    const max = course.maxStudents || 30;
+    const min = 15;
+    const max = 30;
 
     const inPerson = (liveStats && typeof liveStats[`${course.id}_in_person`] === 'number')
       ? liveStats[`${course.id}_in_person`]
@@ -456,20 +484,31 @@ const HomePage = (() => {
       ? liveStats[course.id]
       : (inPerson + online);
 
+    const totalPercent = Math.min(100, Math.round((enrolled / max) * 100));
+    const displayTotal = enrolled > 0 ? Math.max(6, totalPercent) : 0;
+
     const percentInPerson = Math.min(100, Math.round((inPerson / max) * 100));
     const percentOnline = Math.min(100, Math.round((online / max) * 100));
     const displayInPerson = inPerson > 0 ? Math.max(5, percentInPerson) : 0;
     const displayOnline = online > 0 ? Math.max(5, percentOnline) : 0;
 
-    const isConfirmed = enrolled >= min;
     const remainingToMin = Math.max(0, min - enrolled);
 
     const allowInPerson = course.allowInPerson !== false;
     const allowOnline = course.allowOnline !== false;
 
-    const statusBadge = isConfirmed
-      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة</span>`
-      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
+    let colorClass = 'is-enrolling';
+    let statusBadge = '';
+    if (enrolled >= max) {
+      colorClass = 'is-full';
+      statusBadge = `<span class="capacity-status-badge full"><i data-lucide="lock" style="width: 11px; height: 11px;"></i> مكتملة المقاعد 🔒</span>`;
+    } else if (enrolled >= min) {
+      colorClass = 'is-confirmed';
+      statusBadge = `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 11px; height: 11px;"></i> مؤكدة الانطلاق ✅</span>`;
+    } else {
+      colorClass = 'is-enrolling';
+      statusBadge = `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 11px; height: 11px;"></i> متبقي ${remainingToMin}</span>`;
+    }
 
     let rowsHtml = '';
     if (allowInPerson) {
@@ -511,11 +550,16 @@ const HomePage = (() => {
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users"></i>
-            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+            <span>المسجلون (المقبولون): <strong class="enrolled-count">${enrolled}</strong> / ${max} طالب</span>
           </div>
           <div class="capacity-badge-wrap">
             ${statusBadge}
           </div>
+        </div>
+
+        <!-- الخط الإجمالي الذي يزيد بزيادة العدد (0-15 برتقالي، 15-30 أخضر) -->
+        <div class="capacity-progress-bar-wrap total-bar" title="إجمالي المقبولين: ${enrolled} من ${max} مقعد (${totalPercent}%)">
+          <div class="capacity-progress-fill fill-total ${colorClass}" style="width: ${displayTotal}%;"></div>
         </div>
 
         <div class="capacity-dual-bars">
@@ -529,7 +573,7 @@ const HomePage = (() => {
           </div>
           <div class="capacity-meta-item">
             <i data-lucide="user-check" style="width: 11px; height: 11px; color: var(--clr-text-muted);"></i>
-            <span>السعة: <strong>${max} مقعد</strong></span>
+            <span>السعة القصوى: <strong>${max} مقعد</strong></span>
           </div>
         </div>
       </div>
@@ -547,27 +591,35 @@ const HomePage = (() => {
     const max = 30;
     const enrolled = (liveStats && typeof liveStats[levelId] === 'number') ? liveStats[levelId] : 0;
     const percent = Math.min(100, Math.round((enrolled / max) * 100));
-    const displayPercent = enrolled > 0 ? Math.max(8, percent) : 0;
-    const isConfirmed = enrolled >= min;
+    const displayPercent = enrolled > 0 ? Math.max(6, percent) : 0;
     const remainingToMin = Math.max(0, min - enrolled);
 
-    const statusBadge = isConfirmed
-      ? `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة</span>`
-      : `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
+    let colorClass = 'is-enrolling';
+    let statusBadge = '';
+    if (enrolled >= max) {
+      colorClass = 'is-full';
+      statusBadge = `<span class="capacity-status-badge full"><i data-lucide="lock" style="width: 10px; height: 10px;"></i> مكتملة 🔒</span>`;
+    } else if (enrolled >= min) {
+      colorClass = 'is-confirmed';
+      statusBadge = `<span class="capacity-status-badge confirmed"><i data-lucide="check-circle" style="width: 10px; height: 10px;"></i> مؤكدة ✅</span>`;
+    } else {
+      colorClass = 'is-enrolling';
+      statusBadge = `<span class="capacity-status-badge enrolling"><i data-lucide="clock" style="width: 10px; height: 10px;"></i> متبقي ${remainingToMin}</span>`;
+    }
 
     return `
       <div class="course-capacity-card techlingo-level-capacity-card" id="capacity-card-${levelId}" data-course-id="${levelId}">
         <div class="capacity-header">
           <div class="capacity-enrolled-wrap">
             <i data-lucide="users" style="width: 13px; height: 13px;"></i>
-            <span>المقبولون: <strong class="enrolled-count">${enrolled}</strong> طالب</span>
+            <span>المقبولون: <strong class="enrolled-count">${enrolled}</strong> / ${max} طالب</span>
           </div>
           <div class="capacity-badge-wrap">
             ${statusBadge}
           </div>
         </div>
-        <div class="capacity-progress-bar-wrap" title="نسبة المقبولين في المستوى ${levelCode}: ${percent}%">
-          <div class="capacity-progress-fill ${isConfirmed ? 'is-confirmed' : ''}" style="width: ${displayPercent}%;"></div>
+        <div class="capacity-progress-bar-wrap" title="نسبة المقبولين في المستوى ${levelCode}: ${percent}% (${enrolled} من ${max} مقعد)">
+          <div class="capacity-progress-fill ${colorClass}" style="width: ${displayPercent}%;"></div>
         </div>
         <div class="capacity-footer-meta">
           <div class="capacity-meta-item">
