@@ -29,13 +29,8 @@ cd backend
 
 # 2. تشغيل السيرفر
 python manage.py runserver 8000
-```
-- **البوابة الافتتاحية مع فِطِن:** `http://localhost:8000/fatin.html`
-- **الموقع التعريفي العام:** `http://localhost:8000/index.html`
-- **صفحة التسجيل الإلكتروني:** `http://localhost:8000/register.html`
-- **لوحة الإدارة:** `http://localhost:8000/admin/` *(المشرف: `admin` / `admin123`)*
 
----
+--
 
 ## 🌐 خطوات رفع ونشر المنصة على Render مجاناً (Step-by-Step)
 
